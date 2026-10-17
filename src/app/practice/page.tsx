@@ -1,563 +1,927 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import { BlockMath } from "react-katex";
-import { questions } from "@/data/questions";
+import "katex/dist/katex.min.css";
+
+import SiteHeader from "@/components/SiteHeader";
 import { createClient } from "@/lib/supabase/client";
+import {
+  practiceTopics,
+  questions,
+} from "@/data/questions";
+
+type Topic =
+  (typeof practiceTopics)[number];
 
 export default function PracticePage() {
-  const supabase = createClient();
+  const supabase = useMemo(
+    () => createClient(),
+    []
+  );
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [selected, setSelected] = useState<string | null>(null);
-  const [submitted, setSubmitted] = useState(false);
+  const [selectedTopic, setSelectedTopic] =
+    useState<Topic>(practiceTopics[0]);
 
-  const [attemptStatus, setAttemptStatus] = useState<
-    "idle" | "saving" | "saved" | "login" | "error"
-  >("idle");
+  const [questionIndex, setQuestionIndex] =
+    useState(0);
 
-  const [mistakeStatus, setMistakeStatus] = useState<
-    "idle" | "saving" | "saved" | "duplicate" | "login" | "error"
-  >("idle");
+  const [selectedAnswer, setSelectedAnswer] =
+    useState<string | null>(null);
 
-  const question = questions[currentIndex];
+  const [submitted, setSubmitted] =
+    useState(false);
 
-  const isCorrect =
-    selected === question.correctAnswer;
+  const [submitting, setSubmitting] =
+    useState(false);
 
-  async function saveAttempt(
-    userId: string,
-    answer: string
-  ) {
-    const { error } = await supabase
-      .from("practice_attempts")
-      .insert({
-        user_id: userId,
-        question_id: question.id,
-        topic: question.topic,
-        selected_answer: answer,
-        correct_answer: question.correctAnswer,
-        is_correct:
-          answer === question.correctAnswer,
-      });
+  const [userId, setUserId] =
+    useState<string | null>(null);
 
-    if (error) {
-      console.error(
-        "保存答题记录失败：",
-        error
-      );
+  const [email, setEmail] =
+    useState<string | null>(null);
 
-      setAttemptStatus("error");
-      return false;
+  const [authChecked, setAuthChecked] =
+    useState(false);
+
+  const [sessionTotal, setSessionTotal] =
+    useState(0);
+
+  const [sessionCorrect, setSessionCorrect] =
+    useState(0);
+
+  const [sessionWrong, setSessionWrong] =
+    useState(0);
+
+  const [saveMessage, setSaveMessage] =
+    useState("");
+
+  /* =========================
+     登录状态
+  ========================= */
+
+  useEffect(() => {
+    async function initializeAuth() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      setUserId(user?.id ?? null);
+      setEmail(user?.email ?? null);
+      setAuthChecked(true);
     }
 
-    setAttemptStatus("saved");
-    return true;
+    initializeAuth();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        const user =
+          session?.user ?? null;
+
+        setUserId(user?.id ?? null);
+        setEmail(user?.email ?? null);
+        setAuthChecked(true);
+      }
+    );
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
+
+  /* =========================
+     当前专题题目
+  ========================= */
+
+  const topicQuestions = questions.filter(
+    (question) =>
+      question.topic === selectedTopic
+  );
+
+  const currentQuestion =
+    topicQuestions[questionIndex];
+
+  const progress =
+    topicQuestions.length === 0
+      ? 0
+      : Math.round(
+          ((questionIndex + 1) /
+            topicQuestions.length) *
+            100
+        );
+
+  const sessionAccuracy =
+    sessionTotal === 0
+      ? 0
+      : Math.round(
+          (sessionCorrect /
+            sessionTotal) *
+            100
+        );
+
+  const selectedOption =
+    currentQuestion?.options.find(
+      (option) =>
+        option.key === selectedAnswer
+    );
+
+  const correctOption =
+    currentQuestion?.options.find(
+      (option) =>
+        option.key ===
+        currentQuestion.correctAnswer
+    );
+
+  const isCorrect =
+    submitted &&
+    selectedAnswer ===
+      currentQuestion?.correctAnswer;
+
+  /* =========================
+     切换专题
+  ========================= */
+
+  function changeTopic(topic: Topic) {
+    setSelectedTopic(topic);
+    setQuestionIndex(0);
+    setSelectedAnswer(null);
+    setSubmitted(false);
+    setSaveMessage("");
   }
 
-  async function saveMistake(
-    userId: string,
-    answer: string
+  /* =========================
+     选择答案
+  ========================= */
+
+  function chooseAnswer(
+    answerKey: string
   ) {
-    setMistakeStatus("saving");
+    if (submitted || submitting) {
+      return;
+    }
 
-    const { error } = await supabase
-      .from("mistakes")
-      .insert({
-        user_id: userId,
-        question_id: question.id,
-        topic: question.topic,
-        question: `${question.title}：${question.question}`,
-        user_answer: answer,
-        correct_answer:
-          question.correctAnswer,
-        explanation:
-          question.explanation,
-      });
+    setSelectedAnswer(answerKey);
+  }
 
-    if (error) {
-      // 23505 表示同一个学生已经保存过这道错题
-      if (error.code === "23505") {
-        setMistakeStatus("duplicate");
+  /* =========================
+     提交答案
+  ========================= */
+
+  async function submitAnswer() {
+    if (
+      !currentQuestion ||
+      !selectedAnswer ||
+      submitted ||
+      submitting
+    ) {
+      return;
+    }
+
+    const answerKey = selectedAnswer;
+
+    const answerIsCorrect =
+      answerKey ===
+      currentQuestion.correctAnswer;
+
+    setSubmitting(true);
+    setSaveMessage("");
+
+    /*
+      先本地显示结果，
+      即使未登录也可以正常做题
+    */
+    setSubmitted(true);
+
+    setSessionTotal(
+      (value) => value + 1
+    );
+
+    if (answerIsCorrect) {
+      setSessionCorrect(
+        (value) => value + 1
+      );
+    } else {
+      setSessionWrong(
+        (value) => value + 1
+      );
+    }
+
+    /*
+      未登录：
+      正常判题，但不保存云端
+    */
+    if (!userId) {
+      setSaveMessage(
+        "当前未登录，本次答题不会保存到云端。"
+      );
+
+      setSubmitting(false);
+      return;
+    }
+
+    /* =========================
+       保存练习记录
+    ========================= */
+
+    const { error: attemptError } =
+      await supabase
+        .from("practice_attempts")
+        .insert({
+          user_id: userId,
+          question_id:
+            currentQuestion.id,
+          topic:
+            currentQuestion.topic,
+          selected_answer:
+            answerKey,
+          correct_answer:
+            currentQuestion.correctAnswer,
+          is_correct:
+            answerIsCorrect,
+        });
+
+    if (attemptError) {
+      console.error(
+        "保存练习记录失败：",
+        attemptError
+      );
+
+      setSaveMessage(
+        "判题成功，但云端练习记录保存失败。"
+      );
+
+      setSubmitting(false);
+      return;
+    }
+
+    /* =========================
+       答错 → 自动加入错题本
+    ========================= */
+
+    if (!answerIsCorrect) {
+      const { error: mistakeError } =
+        await supabase
+          .from("mistakes")
+          .insert({
+            user_id: userId,
+            question_id:
+              currentQuestion.id,
+            topic:
+              currentQuestion.topic,
+            question:
+              currentQuestion.question,
+            user_answer:
+              answerKey,
+            correct_answer:
+              currentQuestion.correctAnswer,
+            explanation:
+              currentQuestion.explanation,
+          });
+
+      /*
+        23505 = 已经存在同一道错题
+        这种情况不算真正错误
+      */
+      if (
+        mistakeError &&
+        mistakeError.code !== "23505"
+      ) {
+        console.error(
+          "保存错题失败：",
+          mistakeError
+        );
+
+        setSaveMessage(
+          "练习记录已保存，但错题保存失败。"
+        );
+
+        setSubmitting(false);
         return;
       }
 
-      console.error(
-        "保存错题失败：",
-        error
+      setSaveMessage(
+        "答题记录已保存，错误题目已加入错题本。"
       );
-
-      setMistakeStatus("error");
-      return;
+    } else {
+      setSaveMessage(
+        "答题记录已保存到云端。"
+      );
     }
 
-    setMistakeStatus("saved");
+    setSubmitting(false);
   }
 
-  async function submitAnswer() {
-    if (!selected) {
+  /* =========================
+     上一题
+  ========================= */
+
+  function previousQuestion() {
+    if (questionIndex <= 0) {
       return;
     }
 
-    setSubmitted(true);
-    setAttemptStatus("saving");
-
-    const answer = selected;
-
-    // 获取当前登录学生
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
-
-    // 没登录也允许做题，只是不保存云端记录
-    if (userError || !user) {
-      setAttemptStatus("login");
-
-      if (
-        answer !== question.correctAnswer
-      ) {
-        setMistakeStatus("login");
-      }
-
-      return;
-    }
-
-    // 1. 每一次答题都保存
-    await saveAttempt(
-      user.id,
-      answer
+    setQuestionIndex(
+      (index) => index - 1
     );
 
-    // 2. 如果答错，再保存到错题本
-    if (
-      answer !== question.correctAnswer
-    ) {
-      await saveMistake(
-        user.id,
-        answer
-      );
-    }
-  }
-
-  function resetQuestion() {
-    setSelected(null);
+    setSelectedAnswer(null);
     setSubmitted(false);
-
-    setAttemptStatus("idle");
-    setMistakeStatus("idle");
+    setSaveMessage("");
   }
+
+  /* =========================
+     下一题
+  ========================= */
 
   function nextQuestion() {
     if (
-      currentIndex >=
-      questions.length - 1
+      questionIndex >=
+      topicQuestions.length - 1
     ) {
       return;
     }
 
-    setCurrentIndex(
-      currentIndex + 1
+    setQuestionIndex(
+      (index) => index + 1
     );
 
-    setSelected(null);
+    setSelectedAnswer(null);
     setSubmitted(false);
-
-    setAttemptStatus("idle");
-    setMistakeStatus("idle");
+    setSaveMessage("");
   }
 
-  function previousQuestion() {
-    if (currentIndex <= 0) {
-      return;
-    }
+  /* =========================
+     重新作答当前题
+  ========================= */
 
-    setCurrentIndex(
-      currentIndex - 1
-    );
-
-    setSelected(null);
+  function resetCurrentQuestion() {
+    setSelectedAnswer(null);
     setSubmitted(false);
-
-    setAttemptStatus("idle");
-    setMistakeStatus("idle");
+    setSaveMessage("");
   }
 
   return (
-    <main className="min-h-screen bg-slate-50">
-      {/* 顶部导航 */}
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-          <a
-            href="/"
-            className="text-xl font-bold text-slate-900"
-          >
-            高中数学学习平台
-          </a>
+    <main className="min-h-screen bg-[#fafafa]">
+      <SiteHeader />
 
-          <nav className="flex items-center gap-7 text-sm text-slate-600">
-            <a
-              href="/"
-              className="hover:text-blue-600"
-            >
-              首页
-            </a>
+      <div className="mx-auto max-w-7xl px-4 pb-20 pt-10 sm:px-6 lg:px-8">
+        {/* =====================
+            页面标题
+        ====================== */}
+        <section className="border-b border-slate-200 pb-9">
+          <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+            <div>
+              <p className="text-sm font-medium text-blue-600">
+                彻凌数学 · 专题训练
+              </p>
 
-            <a
-              href="/grade1"
-              className="hover:text-blue-600"
-            >
-              高一数学
-            </a>
+              <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+                高一数学专题训练
+              </h1>
 
-            <a
-              href="/mistakes"
-              className="hover:text-blue-600"
-            >
-              我的错题
-            </a>
-          </nav>
-        </div>
-      </header>
+              <p className="mt-4 max-w-2xl text-base leading-8 text-slate-500">
+                选择一个专题进行练习。
+                提交答案后自动判题，
+                登录账号后练习记录和错题会保存到云端。
+              </p>
+            </div>
 
-      {/* 主体 */}
-      <section className="mx-auto max-w-4xl px-6 py-14">
-        {/* 标题 */}
-        <div className="flex items-end justify-between">
-          <div>
-            <p className="text-sm font-semibold text-blue-600">
-              PRACTICE
-            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/mistakes"
+                className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+              >
+                我的错题
+              </Link>
 
-            <h1 className="mt-3 text-4xl font-bold text-slate-900">
-              专题练习
-            </h1>
-
-            <p className="mt-3 text-slate-600">
-              函数的单调性
-            </p>
+              <Link
+                href="/report"
+                className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+              >
+                学习报告
+              </Link>
+            </div>
           </div>
+        </section>
 
-          <div className="text-sm text-slate-500">
-            第 {currentIndex + 1} 题
-            {" / "}
-            共 {questions.length} 题
-          </div>
-        </div>
+        {/* =====================
+            主体
+        ====================== */}
+        <div className="grid gap-8 pt-8 lg:grid-cols-[280px_1fr]">
+          {/* =====================
+              左侧专题列表
+          ====================== */}
+          <aside>
+            <div className="sticky top-24 space-y-4">
+              <div className="rounded-xl border border-slate-200 bg-white p-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-slate-900">
+                    训练专题
+                  </p>
 
-        {/* 进度条 */}
-        <div className="mt-8 h-2 overflow-hidden rounded-full bg-slate-200">
-          <div
-            className="h-full bg-blue-600 transition-all"
-            style={{
-              width: `${
-                ((currentIndex + 1) /
-                  questions.length) *
-                100
-              }%`,
-            }}
-          />
-        </div>
+                  <span className="text-xs text-slate-400">
+                    {practiceTopics.length} 个
+                  </span>
+                </div>
 
-        {/* 题目卡 */}
-        <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-          <p className="text-sm font-semibold text-blue-600">
-            {question.topic}
-          </p>
+                <div className="mt-4 space-y-1">
+                  {practiceTopics.map(
+                    (topic, index) => {
+                      const active =
+                        topic ===
+                        selectedTopic;
 
-          <h2 className="mt-3 text-xl font-bold text-slate-900">
-            {question.title}
-          </h2>
+                      return (
+                        <button
+                          key={topic}
+                          type="button"
+                          onClick={() =>
+                            changeTopic(
+                              topic
+                            )
+                          }
+                          className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition ${
+                            active
+                              ? "bg-blue-50 font-medium text-blue-700"
+                              : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                          }`}
+                        >
+                          <span
+                            className={`w-6 text-xs ${
+                              active
+                                ? "text-blue-500"
+                                : "text-slate-300"
+                            }`}
+                          >
+                            {String(
+                              index +
+                                1
+                            ).padStart(
+                              2,
+                              "0"
+                            )}
+                          </span>
 
-          {/* 公式 */}
-          <div className="mt-6 rounded-xl bg-slate-50 p-5">
-            <BlockMath
-              math={question.formula}
-            />
-          </div>
-
-          {/* 问题 */}
-          <p className="mt-6 leading-7 text-slate-700">
-            {question.question}
-          </p>
-
-          {/* 选项 */}
-          <div className="mt-6 space-y-3">
-            {question.options.map(
-              (option) => {
-                let optionStyle =
-                  "border-slate-200 bg-white hover:border-slate-400";
-
-                // 未提交时选中
-                if (
-                  !submitted &&
-                  selected === option.id
-                ) {
-                  optionStyle =
-                    "border-blue-500 bg-blue-50";
-                }
-
-                // 提交后标记正确答案
-                if (
-                  submitted &&
-                  option.id ===
-                    question.correctAnswer
-                ) {
-                  optionStyle =
-                    "border-green-400 bg-green-50";
-                }
-
-                // 提交后标记学生错误答案
-                if (
-                  submitted &&
-                  selected === option.id &&
-                  selected !==
-                    question.correctAnswer
-                ) {
-                  optionStyle =
-                    "border-red-400 bg-red-50";
-                }
-
-                return (
-                  <button
-                    key={option.id}
-                    disabled={submitted}
-                    onClick={() =>
-                      setSelected(
-                        option.id
-                      )
+                          <span>
+                            {topic}
+                          </span>
+                        </button>
+                      );
                     }
-                    className={`flex w-full items-start gap-4 rounded-xl border p-4 text-left transition ${optionStyle} ${
-                      submitted
-                        ? "cursor-default"
-                        : "cursor-pointer"
-                    }`}
-                  >
-                    <span className="font-bold text-slate-900">
-                      {option.id}.
+                  )}
+                </div>
+              </div>
+
+              {/* 当前账号 */}
+              <div className="rounded-xl border border-slate-200 bg-white p-5">
+                <p className="text-xs text-slate-400">
+                  当前账号
+                </p>
+
+                {!authChecked ? (
+                  <p className="mt-2 text-sm text-slate-500">
+                    正在检查登录状态...
+                  </p>
+                ) : email ? (
+                  <>
+                    <p className="mt-2 break-all text-sm font-medium text-slate-800">
+                      {email}
+                    </p>
+
+                    <p className="mt-2 text-xs leading-5 text-emerald-600">
+                      练习记录将自动保存到云端
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="mt-2 text-sm leading-6 text-slate-500">
+                      未登录也可以练习，
+                      但记录不会保存。
+                    </p>
+
+                    <Link
+                      href="/login"
+                      className="mt-3 inline-block text-sm font-medium text-blue-600"
+                    >
+                      登录 / 注册 →
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
+          </aside>
+
+          {/* =====================
+              右侧训练区域
+          ====================== */}
+          <div className="min-w-0">
+            {/* 当前专题 */}
+            <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+              <div>
+                <p className="text-xs text-slate-400">
+                  当前专题
+                </p>
+
+                <h2 className="mt-1 text-xl font-bold text-slate-900">
+                  {selectedTopic}
+                </h2>
+
+                <p className="mt-1 text-sm text-slate-500">
+                  本专题共{" "}
+                  {topicQuestions.length}{" "}
+                  道练习题
+                </p>
+              </div>
+
+              <div className="text-sm text-slate-500">
+                第{" "}
+                <span className="font-semibold text-slate-900">
+                  {topicQuestions.length ===
+                  0
+                    ? 0
+                    : questionIndex +
+                      1}
+                </span>{" "}
+                /{" "}
+                {topicQuestions.length} 题
+              </div>
+            </div>
+
+            {/* 进度条 */}
+            <div className="mb-6 h-2 overflow-hidden rounded-full bg-slate-100">
+              <div
+                className="h-full rounded-full bg-blue-600 transition-all"
+                style={{
+                  width: `${progress}%`,
+                }}
+              />
+            </div>
+
+            {!currentQuestion ? (
+              <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center">
+                <h2 className="text-lg font-bold text-slate-900">
+                  当前专题暂无题目
+                </h2>
+
+                <p className="mt-2 text-sm text-slate-500">
+                  请切换其他专题。
+                </p>
+              </div>
+            ) : (
+              <>
+                {/* =====================
+                    题目卡片
+                ====================== */}
+                <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600">
+                      第{" "}
+                      {questionIndex +
+                        1}{" "}
+                      题
                     </span>
 
-                    <span className="text-slate-700">
-                      {option.text}
+                    <span className="text-xs text-slate-400">
+                      {
+                        currentQuestion.title
+                      }
                     </span>
+                  </div>
+
+                  <h3 className="mt-5 text-lg font-semibold leading-8 text-slate-900">
+                    {
+                      currentQuestion.question
+                    }
+                  </h3>
+
+                  {/* 数学公式 */}
+                  {currentQuestion.formula && (
+                    <div className="my-6 overflow-x-auto rounded-xl bg-slate-50 px-4 py-5 text-center">
+                      <BlockMath
+                        math={
+                          currentQuestion.formula
+                        }
+                      />
+                    </div>
+                  )}
+
+                  {/* =====================
+                      选项
+                  ====================== */}
+                  <div className="mt-6 grid gap-3">
+                    {currentQuestion.options.map(
+                      (option) => {
+                        const chosen =
+                          selectedAnswer ===
+                          option.key;
+
+                        const correct =
+                          submitted &&
+                          option.key ===
+                            currentQuestion.correctAnswer;
+
+                        const wrong =
+                          submitted &&
+                          chosen &&
+                          option.key !==
+                            currentQuestion.correctAnswer;
+
+                        return (
+                          <button
+                            key={
+                              option.key
+                            }
+                            type="button"
+                            disabled={
+                              submitted
+                            }
+                            onClick={() =>
+                              chooseAnswer(
+                                option.key
+                              )
+                            }
+                            className={`flex w-full items-start gap-3 rounded-xl border px-4 py-4 text-left text-sm transition ${
+                              correct
+                                ? "border-emerald-300 bg-emerald-50 text-emerald-700"
+                                : wrong
+                                  ? "border-red-300 bg-red-50 text-red-600"
+                                  : chosen
+                                    ? "border-blue-400 bg-blue-50 text-blue-700"
+                                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                            }`}
+                          >
+                            <span
+                              className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md border text-xs font-semibold ${
+                                correct
+                                  ? "border-emerald-300 bg-white text-emerald-600"
+                                  : wrong
+                                    ? "border-red-300 bg-white text-red-500"
+                                    : chosen
+                                      ? "border-blue-300 bg-white text-blue-600"
+                                      : "border-slate-200 bg-slate-50 text-slate-500"
+                              }`}
+                            >
+                              {
+                                option.key
+                              }
+                            </span>
+
+                            <span className="pt-0.5 leading-6">
+                              {
+                                option.text
+                              }
+                            </span>
+                          </button>
+                        );
+                      }
+                    )}
+                  </div>
+
+                  {/* =====================
+                      提交
+                  ====================== */}
+                  {!submitted ? (
+                    <button
+                      type="button"
+                      disabled={
+                        !selectedAnswer ||
+                        submitting
+                      }
+                      onClick={
+                        submitAnswer
+                      }
+                      className="mt-6 rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-30"
+                    >
+                      {submitting
+                        ? "正在提交..."
+                        : "提交答案"}
+                    </button>
+                  ) : (
+                    /* =====================
+                       答题结果
+                    ====================== */
+                    <div className="mt-7 border-t border-slate-200 pt-6">
+                      <div
+                        className={`rounded-xl p-5 ${
+                          isCorrect
+                            ? "bg-emerald-50/70"
+                            : "bg-red-50/70"
+                        }`}
+                      >
+                        <div className="flex flex-wrap items-center gap-3">
+                          <p
+                            className={`font-semibold ${
+                              isCorrect
+                                ? "text-emerald-700"
+                                : "text-red-600"
+                            }`}
+                          >
+                            {isCorrect
+                              ? "回答正确"
+                              : "回答错误"}
+                          </p>
+
+                          {!isCorrect && (
+                            <span className="text-sm text-slate-500">
+                              正确答案：
+                              {
+                                currentQuestion.correctAnswer
+                              }
+                            </span>
+                          )}
+                        </div>
+
+                        {!isCorrect &&
+                          selectedOption && (
+                            <p className="mt-3 text-sm leading-6 text-slate-500">
+                              你的答案：
+                              {
+                                selectedOption.key
+                              }
+                              .{" "}
+                              {
+                                selectedOption.text
+                              }
+                            </p>
+                          )}
+
+                        {correctOption && (
+                          <p className="mt-3 text-sm leading-6 text-slate-600">
+                            正确选项：
+                            {
+                              correctOption.key
+                            }
+                            .{" "}
+                            {
+                              correctOption.text
+                            }
+                          </p>
+                        )}
+
+                        <div className="mt-4 border-t border-black/5 pt-4">
+                          <p className="text-xs font-medium text-slate-400">
+                            解析
+                          </p>
+
+                          <p className="mt-2 text-sm leading-7 text-slate-600">
+                            {
+                              currentQuestion.explanation
+                            }
+                          </p>
+                        </div>
+                      </div>
+
+                      {saveMessage && (
+                        <p className="mt-3 text-xs text-slate-400">
+                          {saveMessage}
+                        </p>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={
+                          resetCurrentQuestion
+                        }
+                        className="mt-4 text-sm text-slate-400 transition hover:text-slate-700"
+                      >
+                        重新作答
+                      </button>
+                    </div>
+                  )}
+                </section>
+
+                {/* =====================
+                    上一题 / 下一题
+                ====================== */}
+                <div className="mt-5 flex items-center justify-between">
+                  <button
+                    type="button"
+                    disabled={
+                      questionIndex === 0
+                    }
+                    onClick={
+                      previousQuestion
+                    }
+                    className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-30"
+                  >
+                    ← 上一题
                   </button>
-                );
-              }
+
+                  {questionIndex <
+                  topicQuestions.length -
+                    1 ? (
+                    <button
+                      type="button"
+                      onClick={
+                        nextQuestion
+                      }
+                      className="rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-700"
+                    >
+                      下一题 →
+                    </button>
+                  ) : (
+                    <div className="flex gap-3">
+                      <Link
+                        href="/mistakes"
+                        className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50"
+                      >
+                        查看错题
+                      </Link>
+
+                      <Link
+                        href="/report"
+                        className="rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-slate-700"
+                      >
+                        查看报告
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
+                {/* =====================
+                    当前练习统计
+                ====================== */}
+                <section className="mt-8 border-t border-slate-200 pt-8">
+                  <div className="mb-4">
+                    <h2 className="text-lg font-bold text-slate-900">
+                      本次练习
+                    </h2>
+
+                    <p className="mt-1 text-sm text-slate-500">
+                      当前打开专题训练页面后的答题统计。
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-slate-200 bg-slate-200 sm:grid-cols-4">
+                    <SessionStat
+                      label="已答"
+                      value={
+                        sessionTotal
+                      }
+                      suffix="题"
+                    />
+
+                    <SessionStat
+                      label="答对"
+                      value={
+                        sessionCorrect
+                      }
+                      suffix="题"
+                    />
+
+                    <SessionStat
+                      label="答错"
+                      value={
+                        sessionWrong
+                      }
+                      suffix="题"
+                    />
+
+                    <SessionStat
+                      label="正确率"
+                      value={
+                        sessionAccuracy
+                      }
+                      suffix="%"
+                    />
+                  </div>
+                </section>
+              </>
             )}
           </div>
-
-          {/* 提交按钮 */}
-          {!submitted && (
-            <button
-              onClick={submitAnswer}
-              disabled={!selected}
-              className={`mt-6 rounded-lg px-6 py-3 text-sm font-medium text-white transition ${
-                selected
-                  ? "bg-slate-900 hover:bg-slate-700"
-                  : "cursor-not-allowed bg-slate-300"
-              }`}
-            >
-              提交答案
-            </button>
-          )}
-
-          {/* 提交结果 */}
-          {submitted && (
-            <div className="mt-6">
-              {/* 正确 */}
-              {isCorrect ? (
-                <div className="rounded-xl bg-green-50 p-5">
-                  <p className="text-lg font-bold text-green-700">
-                    ✓ 回答正确
-                  </p>
-
-                  <p className="mt-2 text-slate-700">
-                    正确答案：
-                    {
-                      question.correctAnswer
-                    }
-                  </p>
-                </div>
-              ) : (
-                /* 错误 */
-                <div className="rounded-xl bg-red-50 p-5">
-                  <p className="text-lg font-bold text-red-700">
-                    ✕ 回答错误
-                  </p>
-
-                  <p className="mt-2 text-slate-700">
-                    你的答案：
-                    {selected}
-                  </p>
-
-                  <p className="mt-1 text-slate-700">
-                    正确答案：
-                    {
-                      question.correctAnswer
-                    }
-                  </p>
-                </div>
-              )}
-
-              {/* 云端答题记录状态 */}
-              <div className="mt-4">
-                {attemptStatus ===
-                  "saving" && (
-                  <div className="rounded-lg bg-slate-50 px-4 py-3 text-sm text-slate-500">
-                    正在同步答题记录...
-                  </div>
-                )}
-
-                {attemptStatus ===
-                  "saved" && (
-                  <div className="rounded-lg bg-blue-50 px-4 py-3 text-sm text-blue-700">
-                    ✓ 本次答题记录已同步到云端
-                  </div>
-                )}
-
-                {attemptStatus ===
-                  "login" && (
-                  <div className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                    当前未登录，本次答题不会同步到云端。
-                    <a
-                      href="/login"
-                      className="ml-2 font-medium text-blue-600 hover:underline"
-                    >
-                      去登录 →
-                    </a>
-                  </div>
-                )}
-
-                {attemptStatus ===
-                  "error" && (
-                  <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
-                    答题记录同步失败，请稍后重试。
-                  </div>
-                )}
-              </div>
-
-              {/* 错题同步状态 */}
-              {!isCorrect && (
-                <div className="mt-3">
-                  {mistakeStatus ===
-                    "saving" && (
-                    <p className="text-sm text-slate-500">
-                      正在加入云端错题本...
-                    </p>
-                  )}
-
-                  {mistakeStatus ===
-                    "saved" && (
-                    <div className="flex items-center gap-4">
-                      <span className="text-sm font-medium text-green-700">
-                        ✓ 已加入云端错题本
-                      </span>
-
-                      <a
-                        href="/mistakes"
-                        className="text-sm font-medium text-blue-600 hover:underline"
-                      >
-                        查看错题 →
-                      </a>
-                    </div>
-                  )}
-
-                  {mistakeStatus ===
-                    "duplicate" && (
-                    <div className="flex items-center gap-4">
-                      <span className="text-sm text-slate-600">
-                        这道题已经在错题本里了
-                      </span>
-
-                      <a
-                        href="/mistakes"
-                        className="text-sm font-medium text-blue-600 hover:underline"
-                      >
-                        查看错题 →
-                      </a>
-                    </div>
-                  )}
-
-                  {mistakeStatus ===
-                    "login" && (
-                    <p className="text-sm text-amber-700">
-                      登录后才能同步错题。
-                    </p>
-                  )}
-
-                  {mistakeStatus ===
-                    "error" && (
-                    <p className="text-sm text-red-600">
-                      错题保存失败，请稍后再试。
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {/* 解析 */}
-              <div className="mt-5 rounded-xl bg-slate-50 p-6">
-                <p className="font-bold text-slate-900">
-                  题目解析
-                </p>
-
-                <p className="mt-3 leading-7 text-slate-700">
-                  {
-                    question.explanation
-                  }
-                </p>
-              </div>
-
-              {/* 重做 */}
-              <button
-                onClick={resetQuestion}
-                className="mt-5 rounded-lg border border-slate-300 bg-white px-5 py-2 text-sm text-slate-700 hover:bg-slate-100"
-              >
-                重新作答
-              </button>
-            </div>
-          )}
         </div>
-
-        {/* 翻题 */}
-        <div className="mt-6 flex items-center justify-between">
-          <button
-            onClick={previousQuestion}
-            disabled={
-              currentIndex === 0
-            }
-            className={`rounded-lg border px-5 py-3 text-sm ${
-              currentIndex === 0
-                ? "cursor-not-allowed border-slate-200 text-slate-300"
-                : "border-slate-300 bg-white text-slate-700 hover:bg-slate-100"
-            }`}
-          >
-            ← 上一题
-          </button>
-
-          <a
-            href="/mistakes"
-            className="text-sm font-medium text-blue-600 hover:underline"
-          >
-            查看我的错题
-          </a>
-
-          <button
-            onClick={nextQuestion}
-            disabled={
-              currentIndex ===
-              questions.length - 1
-            }
-            className={`rounded-lg px-5 py-3 text-sm text-white ${
-              currentIndex ===
-              questions.length - 1
-                ? "cursor-not-allowed bg-slate-300"
-                : "bg-slate-900 hover:bg-slate-700"
-            }`}
-          >
-            下一题 →
-          </button>
-        </div>
-      </section>
+      </div>
     </main>
+  );
+}
+
+function SessionStat({
+  label,
+  value,
+  suffix,
+}: {
+  label: string;
+  value: number;
+  suffix: string;
+}) {
+  return (
+    <div className="bg-white p-5">
+      <p className="text-xs text-slate-400">
+        {label}
+      </p>
+
+      <div className="mt-2 flex items-end gap-1">
+        <span className="text-xl font-bold text-slate-900">
+          {value}
+        </span>
+
+        <span className="pb-0.5 text-xs text-slate-400">
+          {suffix}
+        </span>
+      </div>
+    </div>
   );
 }
