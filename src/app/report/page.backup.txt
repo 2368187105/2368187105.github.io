@@ -1,0 +1,1056 @@
+
+"use client";
+
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import SiteHeader from "@/components/SiteHeader";
+import { createClient } from "@/lib/supabase/client";
+import { practiceTopics } from "@/data/questions";
+
+/* =========================
+   数据类型
+========================= */
+
+type Attempt = {
+  id: number | string;
+  user_id: string;
+  question_id: string;
+  topic: string;
+  selected_answer: string;
+  correct_answer: string;
+  is_correct: boolean;
+  created_at: string;
+};
+
+type TopicStat = {
+  topic: string;
+  total: number;
+  correct: number;
+  wrong: number;
+  accuracy: number;
+};
+
+/* =========================
+   章节名称
+   每个章节对应五个专题
+========================= */
+
+const chapterNames = [
+  "集合与常用逻辑用语",
+  "一元二次函数、方程和不等式",
+  "函数的概念与性质",
+  "指数函数与对数函数",
+  "三角函数",
+  "平面向量",
+  "复数",
+  "立体几何初步",
+  "统计",
+  "概率",
+];
+
+/* =========================
+   专题复习建议
+========================= */
+
+const reviewAdvice: Record<string, string> = {
+  // 第一章
+  "集合的概念":
+    "重点复习集合与元素、确定性、互异性和无序性，区分元素属于与集合包含。",
+
+  "集合间的基本关系":
+    "重点复习子集、真子集、空集和集合相等，注意符号及关系的区别。",
+
+  "集合的基本运算":
+    "重点复习交集、并集和补集，可结合数轴或韦恩图分析集合运算。",
+
+  "充分条件与必要条件":
+    "分别判断两个命题之间能否相互推出，明确充分条件、必要条件和充要条件。",
+
+  "全称量词与存在量词":
+    "重点复习全称量词、存在量词及命题的否定，注意量词与结论需要同时改变。",
+
+  // 第二章
+  "等式与不等式的基本性质":
+    "重点复习不等式变形，尤其注意两边同乘或同除负数时，不等号需要改变方向。",
+
+  "基本不等式":
+    "重点检查基本不等式的使用条件，特别是正数条件、定值条件及等号成立条件。",
+
+  "一元二次函数与一元二次方程":
+    "结合抛物线图象，复习判别式、方程实根和函数零点之间的联系。",
+
+  "一元二次不等式":
+    "重点掌握二次函数图象与不等式解集的关系，注意开口方向和根的情况。",
+
+  "二次函数、方程与不等式的综合应用":
+    "重点练习二次函数最值、判别式、根与系数关系及综合参数问题。",
+
+  // 第三章
+  "函数的概念":
+    "重新理解函数的定义和对应关系，重点复习如何判断两个函数是否相同。",
+
+  "定义域与值域":
+    "重点检查分母不为零、偶次根式非负等限制条件，并复习函数值域的求法。",
+
+  "函数的单调性":
+    "结合函数图象理解递增和递减，尤其注意单调区间与二次函数对称轴。",
+
+  "函数的奇偶性":
+    "先检查定义域是否关于原点对称，再比较 f(-x) 与 f(x) 的关系。",
+
+  "函数的最大值与最小值":
+    "重点复习配方法、单调性及闭区间端点比较等求最值的方法。",
+
+  // 第六章：平面向量
+  "平面向量的概念与表示":
+    "重点复习向量的模、方向、零向量、单位向量及相等向量。判断向量相等需要同时满足模相等、方向相同。",
+
+  "平面向量的线性运算":
+    "重点复习向量加减法的三角形法则、平行四边形法则及向量数乘，注意有向线段的方向。",
+
+  "平面向量基本定理与坐标表示":
+    "重点复习平面向量基本定理、两点确定向量的坐标、坐标运算及共线判定。记住终点坐标减去起点坐标。",
+
+  "平面向量的数量积":
+    "重点复习数量积的定义和坐标公式，掌握通过数量积判断垂直、计算模长及求两个非零向量的夹角。",
+
+  "平面向量的综合应用":
+    "重点练习向量在三角形、中点、重心、长度和夹角问题中的应用，学会根据图形建立向量等式。",
+};
+
+/* =========================
+   复习建议补充规则
+========================= */
+
+function getReviewAdvice(topic: string) {
+  if (reviewAdvice[topic]) {
+    return reviewAdvice[topic];
+  }
+
+  // 第四章相关专题
+  if (
+    topic.includes("指数") ||
+    topic.includes("根式") ||
+    topic.includes("分数指数")
+  ) {
+    return "建议复习指数运算法则、指数函数图象和性质，特别注意底数范围以及单调性。";
+  }
+
+  if (topic.includes("对数")) {
+    return "建议复习对数定义与运算法则、对数函数的定义域和单调性，注意真数必须大于零。";
+  }
+
+  // 第五章相关专题
+  if (
+    topic.includes("弧度") ||
+    topic.includes("任意角")
+  ) {
+    return "建议复习任意角、终边相同的角、弧度制以及角度与弧度之间的换算。";
+  }
+
+  if (topic.includes("诱导公式")) {
+    return "重点复习三角函数诱导公式，理解角的终边及符号变化，不要只机械记忆公式。";
+  }
+
+  if (
+    topic.includes("三角") ||
+    topic.includes("正弦") ||
+    topic.includes("余弦")
+  ) {
+    return "重点复习三角函数的定义、图象、周期性及恒等变换，注意角的范围和三角函数符号。";
+  }
+
+  return "建议重新学习对应章节，整理相关公式和易错点，再完成一组专题训练。";
+}
+
+/* =========================
+   历史专题名称兼容
+========================= */
+
+function normalizeTopic(topic: string) {
+  const value = (topic ?? "").trim();
+
+  // 优先匹配当前题库中的完整专题名称
+  if (
+    practiceTopics.some(
+      (practiceTopic) => practiceTopic === value
+    )
+  ) {
+    return value;
+  }
+
+  // 第六章：优先识别，避免和其他章节混淆
+  if (value.includes("平面向量")) {
+    if (
+      value.includes("概念") ||
+      value.includes("表示") &&
+        !value.includes("坐标")
+    ) {
+      return "平面向量的概念与表示";
+    }
+
+    if (
+      value.includes("线性") ||
+      value.includes("加法") ||
+      value.includes("减法")
+    ) {
+      return "平面向量的线性运算";
+    }
+
+    if (
+      value.includes("基本定理") ||
+      value.includes("坐标")
+    ) {
+      return "平面向量基本定理与坐标表示";
+    }
+
+    if (
+      value.includes("数量积") ||
+      value.includes("点积")
+    ) {
+      return "平面向量的数量积";
+    }
+
+    if (value.includes("综合应用")) {
+      return "平面向量的综合应用";
+    }
+  }
+
+  // 第一章
+  if (value.includes("集合的概念")) {
+    return "集合的概念";
+  }
+
+  if (
+    value.includes("集合间") ||
+    value.includes("集合关系")
+  ) {
+    return "集合间的基本关系";
+  }
+
+  if (
+    value.includes("集合的基本运算") ||
+    value.includes("集合运算")
+  ) {
+    return "集合的基本运算";
+  }
+
+  if (
+    value.includes("充分条件") ||
+    value.includes("必要条件")
+  ) {
+    return "充分条件与必要条件";
+  }
+
+  if (
+    value.includes("全称量词") ||
+    value.includes("存在量词")
+  ) {
+    return "全称量词与存在量词";
+  }
+
+  // 第二章
+  if (
+    value.includes("等式与不等式的基本性质") ||
+    value.includes("不等式基本性质")
+  ) {
+    return "等式与不等式的基本性质";
+  }
+
+  if (value.includes("基本不等式")) {
+    return "基本不等式";
+  }
+
+  if (
+    value.includes("一元二次函数与一元二次方程") ||
+    value.includes("二次函数与方程")
+  ) {
+    return "一元二次函数与一元二次方程";
+  }
+
+  if (value.includes("一元二次不等式")) {
+    return "一元二次不等式";
+  }
+
+  if (
+    value.includes("二次函数、方程与不等式") ||
+    value.includes("二次函数综合应用")
+  ) {
+    return "二次函数、方程与不等式的综合应用";
+  }
+
+  // 第三章
+  if (value.includes("函数的概念")) {
+    return "函数的概念";
+  }
+
+  if (
+    value.includes("定义域") ||
+    value.includes("值域")
+  ) {
+    return "定义域与值域";
+  }
+
+  if (value.includes("单调")) {
+    return "函数的单调性";
+  }
+
+  if (value.includes("奇偶")) {
+    return "函数的奇偶性";
+  }
+
+  if (
+    value.includes("最大值") ||
+    value.includes("最小值") ||
+    value.includes("最值")
+  ) {
+    return "函数的最大值与最小值";
+  }
+
+  return value;
+}
+
+/* =========================
+   页面
+========================= */
+
+export default function ReportPage() {
+  const supabase = useMemo(
+    () => createClient(),
+    []
+  );
+
+  const [attempts, setAttempts] =
+    useState<Attempt[]>([]);
+
+  const [email, setEmail] =
+    useState<string | null>(null);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [authChecked, setAuthChecked] =
+    useState(false);
+
+  const [errorMessage, setErrorMessage] =
+    useState("");
+
+  /* =========================
+     加载云端答题记录
+  ========================= */
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadReport() {
+      setLoading(true);
+      setErrorMessage("");
+
+      try {
+        const {
+          data: { user },
+          error: authError,
+        } = await supabase.auth.getUser();
+
+        if (!active) return;
+
+        setAuthChecked(true);
+
+        if (authError || !user) {
+          setEmail(null);
+          setAttempts([]);
+          setLoading(false);
+          return;
+        }
+
+        setEmail(user.email ?? null);
+
+        const { data, error } = await supabase
+          .from("practice_attempts")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", {
+            ascending: false,
+          });
+
+        if (!active) return;
+
+        if (error) {
+          setErrorMessage(
+            "学习记录加载失败，请稍后刷新页面。"
+          );
+          setAttempts([]);
+        } else {
+          setAttempts((data ?? []) as Attempt[]);
+        }
+      } catch {
+        if (!active) return;
+
+        setErrorMessage(
+          "无法连接学习数据，请检查网络后刷新页面。"
+        );
+      } finally {
+        if (active) {
+          setAuthChecked(true);
+          setLoading(false);
+        }
+      }
+    }
+
+    void loadReport();
+
+    return () => {
+      active = false;
+    };
+  }, [supabase]);
+
+  /* =========================
+     总体统计
+  ========================= */
+
+  const total = attempts.length;
+
+  const correct = attempts.filter(
+    (attempt) => attempt.is_correct
+  ).length;
+
+  const wrong = total - correct;
+
+  const accuracy =
+    total === 0
+      ? 0
+      : Math.round((correct / total) * 100);
+
+  /* =========================
+     各专题统计
+  ========================= */
+
+  const topicStats: TopicStat[] =
+    practiceTopics.map((topic) => {
+      const topicAttempts = attempts.filter(
+        (attempt) =>
+          normalizeTopic(attempt.topic) === topic
+      );
+
+      const topicTotal = topicAttempts.length;
+
+      const topicCorrect = topicAttempts.filter(
+        (attempt) => attempt.is_correct
+      ).length;
+
+      return {
+        topic,
+        total: topicTotal,
+        correct: topicCorrect,
+        wrong: topicTotal - topicCorrect,
+        accuracy:
+          topicTotal === 0
+            ? 0
+            : Math.round(
+                (topicCorrect / topicTotal) * 100
+              ),
+      };
+    });
+
+  /* =========================
+     按章节分组
+  ========================= */
+
+  const topicGroups = Array.from(
+    {
+      length: Math.ceil(topicStats.length / 5),
+    },
+    (_, index) => ({
+      number: String(index + 1).padStart(2, "0"),
+      title:
+        chapterNames[index] ??
+        `第 ${index + 1} 章`,
+      topics: topicStats.slice(
+        index * 5,
+        index * 5 + 5
+      ),
+    })
+  );
+
+  /* =========================
+     强弱专题统计
+  ========================= */
+
+  const studiedTopics = topicStats.filter(
+    (item) => item.total > 0
+  );
+
+  const strongestTopic =
+    studiedTopics.length === 0
+      ? null
+      : [...studiedTopics].sort((a, b) => {
+          if (a.accuracy !== b.accuracy) {
+            return b.accuracy - a.accuracy;
+          }
+
+          return b.total - a.total;
+        })[0];
+
+  const weakestTopic =
+    studiedTopics.length === 0
+      ? null
+      : [...studiedTopics].sort((a, b) => {
+          if (a.accuracy !== b.accuracy) {
+            return a.accuracy - b.accuracy;
+          }
+
+          return b.total - a.total;
+        })[0];
+
+  const recentAttempts = attempts.slice(0, 10);
+
+  /* =========================
+     正在加载
+  ========================= */
+
+  if (!authChecked || loading) {
+    return (
+      <main className="min-h-screen bg-[#fafafa]">
+        <SiteHeader />
+
+        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="rounded-2xl border border-slate-200 bg-white p-8">
+            <p className="text-sm text-slate-500">
+              正在加载学习报告...
+            </p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  /* =========================
+     未登录
+  ========================= */
+
+  if (!email) {
+    return (
+      <main className="min-h-screen bg-[#fafafa]">
+        <SiteHeader />
+
+        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-xl rounded-2xl border border-slate-200 bg-white p-8 text-center">
+            <p className="text-sm font-medium text-blue-600">
+              学习报告
+            </p>
+
+            <h1 className="mt-3 text-2xl font-bold text-slate-900">
+              登录后查看学习报告
+            </h1>
+
+            <p className="mt-3 text-sm leading-7 text-slate-500">
+              登录后可以查看答题次数、正确率、
+              薄弱专题和最近练习记录。
+            </p>
+
+            <Link
+              href="/login"
+              className="mt-6 inline-block rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-700"
+            >
+              去登录
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  /* =========================
+     登录后的学习报告
+  ========================= */
+
+  return (
+    <main className="min-h-screen bg-[#fafafa]">
+      <SiteHeader />
+
+      <div className="mx-auto max-w-6xl px-4 pb-20 pt-10 sm:px-6 lg:px-8">
+        {/* 页面标题 */}
+        <section className="border-b border-slate-200 pb-10">
+          <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+            <div>
+              <p className="text-sm font-medium text-blue-600">
+                学习数据
+              </p>
+
+              <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+                学习报告
+              </h1>
+
+              <p className="mt-4 max-w-2xl text-base leading-8 text-slate-500">
+                根据专题训练记录统计学习情况，
+                分析整体正确率、各章节掌握情况和薄弱知识点，
+                帮助你制定更清晰的复习计划。
+              </p>
+
+              <p className="mt-3 text-sm text-slate-400">
+                当前账号：{email}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/practice"
+                className="rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-700"
+              >
+                继续训练
+              </Link>
+
+              <Link
+                href="/mistakes"
+                className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              >
+                查看错题
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {errorMessage && (
+          <div className="mt-8 rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-600">
+            {errorMessage}
+          </div>
+        )}
+
+        {/* 总体统计 */}
+        <section className="py-10">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900">
+                学习数据概览
+              </h2>
+
+              <p className="mt-2 text-sm text-slate-500">
+                统计已保存的专题训练记录。
+              </p>
+            </div>
+
+            <span className="text-sm text-slate-400">
+              当前题库共 {practiceTopics.length} 个专题
+            </span>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard
+              label="累计答题"
+              value={String(total)}
+              suffix="题次"
+            />
+
+            <StatCard
+              label="答对"
+              value={String(correct)}
+              suffix="题次"
+            />
+
+            <StatCard
+              label="答错"
+              value={String(wrong)}
+              suffix="题次"
+            />
+
+            <StatCard
+              label="总体正确率"
+              value={`${accuracy}%`}
+            />
+          </div>
+        </section>
+
+        {/* 没有学习记录时 */}
+        {total === 0 && !errorMessage && (
+          <section className="pb-10">
+            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-7">
+              <h2 className="text-lg font-bold text-slate-900">
+                还没有练习记录
+              </h2>
+
+              <p className="mt-3 text-sm leading-7 text-slate-500">
+                你可以先完成任意一个专题的练习。
+                提交答案后，学习报告将自动计算正确率，
+                并根据你的表现生成复习建议。
+              </p>
+
+              <Link
+                href="/practice"
+                className="mt-5 inline-block rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-700"
+              >
+                开始专题训练
+              </Link>
+            </div>
+          </section>
+        )}
+
+        {/* 优势与薄弱专题 */}
+        {studiedTopics.length > 0 && (
+          <section className="border-t border-slate-200 py-10">
+            <div className="mb-6">
+              <h2 className="text-xl font-bold text-slate-900">
+                专题掌握分析
+              </h2>
+
+              <p className="mt-2 text-sm text-slate-500">
+                根据已经完成的练习，识别当前表现较好和需要加强的专题。
+              </p>
+            </div>
+
+            <div className="grid gap-4 lg:grid-cols-2">
+              {/* 优势专题 */}
+              <div className="rounded-2xl border border-slate-200 bg-white p-6">
+                <p className="text-xs font-medium text-emerald-600">
+                  当前优势专题
+                </p>
+
+                {strongestTopic && (
+                  <>
+                    <h3 className="mt-3 text-xl font-bold text-slate-900">
+                      {strongestTopic.topic}
+                    </h3>
+
+                    <p className="mt-3 text-sm text-slate-500">
+                      已练习 {strongestTopic.total} 题次，
+                      正确率 {strongestTopic.accuracy}%。
+                    </p>
+
+                    <div className="mt-5 h-2 overflow-hidden rounded-full bg-slate-100">
+                      <div
+                        className="h-full rounded-full bg-emerald-500"
+                        style={{
+                          width: `${strongestTopic.accuracy}%`,
+                        }}
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* 薄弱专题 */}
+              <div className="rounded-2xl border border-slate-200 bg-white p-6">
+                <p className="text-xs font-medium text-blue-600">
+                  优先复习专题
+                </p>
+
+                {weakestTopic && (
+                  <>
+                    <h3 className="mt-3 text-xl font-bold text-slate-900">
+                      {weakestTopic.topic}
+                    </h3>
+
+                    <p className="mt-3 text-sm text-slate-500">
+                      已练习 {weakestTopic.total} 题次，
+                      正确率 {weakestTopic.accuracy}%。
+                    </p>
+
+                    <div className="mt-5 rounded-xl bg-slate-50 p-4">
+                      <p className="text-xs font-medium text-slate-400">
+                        针对性复习建议
+                      </p>
+
+                      <p className="mt-2 text-sm leading-7 text-slate-600">
+                        {getReviewAdvice(weakestTopic.topic)}
+                      </p>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <p className="mt-4 text-xs leading-6 text-slate-400">
+              提示：优势和薄弱专题根据当前正确率排序，
+              答题次数较少时，结果仅供参考。
+            </p>
+          </section>
+        )}
+
+        {/* 各章节与专题统计 */}
+        <section className="border-t border-slate-200 py-10">
+          <div className="mb-7">
+            <h2 className="text-xl font-bold text-slate-900">
+              各章节掌握情况
+            </h2>
+
+            <p className="mt-2 text-sm leading-7 text-slate-500">
+              当前共有 {topicGroups.length} 个已开放训练章节、
+              {practiceTopics.length} 个训练专题。
+              未练习的专题不会计入个人正确率。
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            {topicGroups.map((group) => {
+              const groupTotal = group.topics.reduce(
+                (sum, item) => sum + item.total,
+                0
+              );
+
+              const groupCorrect = group.topics.reduce(
+                (sum, item) => sum + item.correct,
+                0
+              );
+
+              const groupAccuracy =
+                groupTotal === 0
+                  ? 0
+                  : Math.round(
+                      (groupCorrect / groupTotal) * 100
+                    );
+
+              return (
+                <div
+                  key={group.number}
+                  className="overflow-hidden rounded-2xl border border-slate-200 bg-white"
+                >
+                  {/* 章节标题 */}
+                  <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 bg-slate-50/70 px-5 py-5 sm:px-6">
+                    <div className="flex items-center gap-4">
+                      <span className="text-sm font-semibold text-blue-600">
+                        {group.number}
+                      </span>
+
+                      <div>
+                        <h3 className="font-semibold text-slate-900">
+                          {group.title}
+                        </h3>
+
+                        <p className="mt-1 text-xs text-slate-400">
+                          {group.topics.length} 个专题
+                          {" · "}
+                          已练习 {groupTotal} 题次
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="text-right">
+                      <p className="text-sm font-semibold text-slate-800">
+                        {groupTotal === 0
+                          ? "尚未练习"
+                          : `${groupAccuracy}%`}
+                      </p>
+
+                      <p className="mt-1 text-xs text-slate-400">
+                        章节正确率
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 章节专题列表 */}
+                  <div className="divide-y divide-slate-100">
+                    {group.topics.map((item) => (
+                      <TopicRow
+                        key={item.topic}
+                        item={item}
+                      />
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* 最近练习 */}
+        {recentAttempts.length > 0 && (
+          <section className="border-t border-slate-200 py-10">
+            <div className="mb-7">
+              <h2 className="text-xl font-bold text-slate-900">
+                最近练习
+              </h2>
+
+              <p className="mt-2 text-sm text-slate-500">
+                显示最近 10 次答题记录。
+              </p>
+            </div>
+
+            <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+              {recentAttempts.map((attempt, index) => (
+                <div
+                  key={attempt.id}
+                  className={`flex flex-col justify-between gap-3 px-5 py-4 sm:flex-row sm:items-center ${
+                    index === recentAttempts.length - 1
+                      ? ""
+                      : "border-b border-slate-100"
+                  }`}
+                >
+                  <div>
+                    <p className="text-sm font-medium text-slate-800">
+                      {normalizeTopic(attempt.topic)}
+                    </p>
+
+                    <p className="mt-1 text-xs text-slate-400">
+                      {formatDate(attempt.created_at)}
+                    </p>
+                  </div>
+
+                  <span
+                    className={`w-fit rounded-full px-2.5 py-1 text-xs font-medium ${
+                      attempt.is_correct
+                        ? "bg-emerald-50 text-emerald-600"
+                        : "bg-red-50 text-red-500"
+                    }`}
+                  >
+                    {attempt.is_correct
+                      ? "回答正确"
+                      : "回答错误"}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* 底部入口 */}
+        <section className="border-t border-slate-200 pt-10">
+          <div className="grid gap-4 sm:grid-cols-3">
+            <ActionCard
+              href="/practice"
+              title="继续专题训练"
+              description="完成更多专题练习，逐步提高知识掌握程度。"
+            />
+
+            <ActionCard
+              href="/mistakes"
+              title="复习错题"
+              description="重新查看之前答错的题目，巩固薄弱知识点。"
+            />
+
+            <ActionCard
+              href="/grade1"
+              title="返回课程"
+              description="回到高一数学目录，重新学习需要加强的章节。"
+            />
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+}
+
+/* =========================
+   统计卡片
+========================= */
+
+function StatCard({
+  label,
+  value,
+  suffix,
+}: {
+  label: string;
+  value: string;
+  suffix?: string;
+}) {
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-5">
+      <p className="text-xs text-slate-400">
+        {label}
+      </p>
+
+      <div className="mt-3 flex items-end gap-1">
+        <span className="text-2xl font-bold text-slate-900">
+          {value}
+        </span>
+
+        {suffix && (
+          <span className="pb-0.5 text-sm text-slate-400">
+            {suffix}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* =========================
+   单个专题行
+========================= */
+
+function TopicRow({
+  item,
+}: {
+  item: TopicStat;
+}) {
+  return (
+    <div className="px-5 py-4 sm:px-6">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+        <div>
+          <p className="text-sm font-medium text-slate-900">
+            {item.topic}
+          </p>
+
+          <p className="mt-1 text-xs text-slate-400">
+            {item.total === 0
+              ? "暂未练习"
+              : `练习 ${item.total} 题次 · 答对 ${item.correct} 题次 · 答错 ${item.wrong} 题次`}
+          </p>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <div className="h-2 w-28 overflow-hidden rounded-full bg-slate-100">
+            <div
+              className="h-full rounded-full bg-blue-600"
+              style={{
+                width: `${item.accuracy}%`,
+              }}
+            />
+          </div>
+
+          <span className="w-12 text-right text-sm font-semibold text-slate-700">
+            {item.total === 0
+              ? "—"
+              : `${item.accuracy}%`}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================
+   页面底部功能卡片
+========================= */
+
+function ActionCard({
+  href,
+  title,
+  description,
+}: {
+  href: string;
+  title: string;
+  description: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="group block rounded-xl border border-slate-200 bg-white p-5 transition hover:border-slate-300 hover:shadow-sm"
+    >
+      <h3 className="font-semibold text-slate-900">
+        {title}
+      </h3>
+
+      <p className="mt-2 text-sm leading-6 text-slate-500">
+        {description}
+      </p>
+
+      <p className="mt-4 text-sm font-medium text-slate-700 group-hover:text-blue-600">
+        进入 →
+      </p>
+    </Link>
+  );
+}
+
+/* =========================
+   时间格式
+========================= */
+
+function formatDate(value: string) {
+  const date = new Date(value);
+
+  return date.toLocaleString("zh-CN", {
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
