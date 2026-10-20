@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { BlockMath } from "react-katex";
+import { vectorText } from "@/components/VectorText";
 import "katex/dist/katex.min.css";
 
 import SiteHeader from "@/components/SiteHeader";
@@ -12,6 +13,7 @@ import {
   practiceTopics,
   questions,
 } from "@/data/questions";
+import { grade2PracticeTopics, grade2PracticeChapters } from "@/data/questions";
 
 /* =========================
    类型定义
@@ -20,11 +22,29 @@ import {
 type Topic = (typeof practiceTopics)[number];
 
 /* =========================
-   高中数学章节名称
-   每章对应 5 个专题
+   年级、题库与章节配置
+   高一每章 5 个专题，高二按章节配置分组
 ========================= */
 
-const chapterNames = [
+type Grade = "高一" | "高二";
+
+const grade2TopicSet = new Set<string>(
+  grade2PracticeTopics
+);
+
+const grade1PracticeTopics = practiceTopics.filter(
+  (topic) => !grade2TopicSet.has(topic)
+);
+
+const grade1Questions = questions.filter(
+  (question) => !grade2TopicSet.has(question.topic)
+);
+
+const grade2Questions = questions.filter(
+  (question) => grade2TopicSet.has(question.topic)
+);
+
+const grade1ChapterNames = [
   "集合与常用逻辑用语",
   "一元二次函数、方程和不等式",
   "函数的概念与性质",
@@ -35,18 +55,9 @@ const chapterNames = [
   "立体几何初步",
   "统计",
   "概率",
-];
+] as const;
 
-const chapters = chapterNames
-  .map((name, index) => ({
-    number: index + 1,
-    name,
-    topics: practiceTopics.slice(
-      index * 5,
-      index * 5 + 5
-    ),
-  }))
-  .filter((chapter) => chapter.topics.length > 0);
+const grade2ChapterNames = grade2PracticeChapters.map((chapter) => chapter.title);
 
 /* =========================
    页面主体
@@ -59,6 +70,9 @@ export default function PracticePage() {
   );
 
   /* 当前选择 */
+  const [selectedGrade, setSelectedGrade] =
+    useState<Grade>("高一");
+
   const [selectedTopic, setSelectedTopic] =
     useState<Topic>(practiceTopics[0]);
 
@@ -99,6 +113,31 @@ export default function PracticePage() {
 
   const [saveMessage, setSaveMessage] =
     useState("");
+
+  const currentPracticeTopics =
+    selectedGrade === "高一"
+      ? grade1PracticeTopics
+      : grade2PracticeTopics;
+
+  const currentQuestions =
+    selectedGrade === "高一"
+      ? grade1Questions
+      : grade2Questions;
+
+  const chapterNames =
+    selectedGrade === "高一"
+      ? grade1ChapterNames
+      : grade2ChapterNames;
+
+  const chapters = chapterNames
+    .map((name, index) => ({
+      number: index + 1,
+      name,
+      topics: selectedGrade === "高二"
+        ? [...grade2PracticeChapters[index].topics]
+        : currentPracticeTopics.slice(index * 5, index * 5 + 5),
+    }))
+    .filter((chapter) => chapter.topics.length > 0);
 
   /* =========================
      登录状态
@@ -151,16 +190,30 @@ export default function PracticePage() {
 
     const requestedTopic = params.get("topic");
 
+    if (!requestedTopic) return;
+
     if (
-      !requestedTopic ||
-      !practiceTopics.some(
+      grade2PracticeTopics.some(
         (topic) => topic === requestedTopic
       )
     ) {
+      setSelectedGrade("高二");
+      setSelectedTopic(requestedTopic as Topic);
+    } else if (
+      grade1PracticeTopics.some(
+        (topic) => topic === requestedTopic
+      )
+    ) {
+      setSelectedGrade("高一");
+      setSelectedTopic(requestedTopic as Topic);
+    } else {
       return;
     }
 
-    setSelectedTopic(requestedTopic as Topic);
+    const requestedChapters = grade2TopicSet.has(requestedTopic)
+      ? grade2PracticeChapters.map((chapter) => [...chapter.topics] as readonly string[])
+      : grade1ChapterNames.map((_, index) => grade1PracticeTopics.slice(index * 5, index * 5 + 5));
+    setExpandedChapter(requestedChapters.findIndex((topics) => topics.includes(requestedTopic)));
     setQuestionIndex(0);
     setSelectedAnswer(null);
     setSubmitted(false);
@@ -173,7 +226,7 @@ export default function PracticePage() {
   const topicQuestionCounts = useMemo(() => {
     const counts = new Map<string, number>();
 
-    for (const question of questions) {
+    for (const question of currentQuestions) {
       counts.set(
         question.topic,
         (counts.get(question.topic) ?? 0) + 1
@@ -181,13 +234,13 @@ export default function PracticePage() {
     }
 
     return counts;
-  }, []);
+  }, [currentQuestions]);
 
   /* =========================
      当前专题的题目
   ========================= */
 
-  const topicQuestions = questions.filter(
+  const topicQuestions = currentQuestions.filter(
     (question) => question.topic === selectedTopic
   );
 
@@ -243,6 +296,27 @@ export default function PracticePage() {
     setExpandedChapter((current) =>
       current === index ? null : index
     );
+  }
+
+  /* =========================
+     切换年级
+  ========================= */
+
+  function changeGrade(grade: Grade) {
+    if (submitting || grade === selectedGrade) return;
+
+    const nextTopics =
+      grade === "高一"
+        ? grade1PracticeTopics
+        : grade2PracticeTopics;
+
+    setSelectedGrade(grade);
+    setSelectedTopic(nextTopics[0] as Topic);
+    setExpandedChapter(0);
+    setQuestionIndex(0);
+    setSelectedAnswer(null);
+    setSubmitted(false);
+    setSaveMessage("");
   }
 
   /* =========================
@@ -478,17 +552,17 @@ export default function PracticePage() {
               </p>
 
               <p className="mt-3 text-sm text-slate-400">
-                当前开放高一数学
+                当前开放{selectedGrade}数学
                 {" "}
                 {chapters.length}
                 {" "}
                 个章节、
                 {" "}
-                {practiceTopics.length}
+                {currentPracticeTopics.length}
                 {" "}
                 个专题、
                 {" "}
-                {questions.length}
+                {currentQuestions.length}
                 {" "}
                 道题。
               </p>
@@ -533,40 +607,68 @@ export default function PracticePage() {
                 </div>
 
                 <div className="mt-4 grid grid-cols-3 gap-2">
-                  <div
-                    className="rounded-lg border border-blue-200 bg-blue-50 px-2 py-3 text-center"
-                    aria-current="true"
+                  <button
+                    type="button"
+                    onClick={() => changeGrade("高一")}
+                    disabled={submitting}
+                    aria-pressed={selectedGrade === "高一"}
+                    className={`rounded-lg border px-2 py-3 text-center transition disabled:opacity-50 ${
+                      selectedGrade === "高一"
+                        ? "border-blue-200 bg-blue-50"
+                        : "border-slate-200 bg-white hover:bg-slate-50"
+                    }`}
                   >
-                    <p className="text-sm font-semibold text-blue-700">
+                    <p className={`text-sm font-semibold ${
+                      selectedGrade === "高一"
+                        ? "text-blue-700"
+                        : "text-slate-600"
+                    }`}>
                       高一
                     </p>
-
-                    <p className="mt-1 text-[10px] text-blue-500">
+                    <p className={`mt-1 text-[10px] ${
+                      selectedGrade === "高一"
+                        ? "text-blue-500"
+                        : "text-slate-400"
+                    }`}>
                       已开放
                     </p>
-                  </div>
+                  </button>
 
-                  <div
-                    className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-3 text-center"
-                    title="高二数学专题建设中"
+                  <button
+                    type="button"
+                    onClick={() => changeGrade("高二")}
+                    disabled={submitting}
+                    aria-pressed={selectedGrade === "高二"}
+                    className={`rounded-lg border px-2 py-3 text-center transition disabled:opacity-50 ${
+                      selectedGrade === "高二"
+                        ? "border-blue-200 bg-blue-50"
+                        : "border-slate-200 bg-white hover:bg-slate-50"
+                    }`}
                   >
-                    <p className="text-sm font-medium text-slate-400">
+                    <p className={`text-sm font-semibold ${
+                      selectedGrade === "高二"
+                        ? "text-blue-700"
+                        : "text-slate-600"
+                    }`}>
                       高二
                     </p>
-
-                    <p className="mt-1 text-[10px] text-slate-400">
-                      建设中
+                    <p className={`mt-1 text-[10px] ${
+                      selectedGrade === "高二"
+                        ? "text-blue-500"
+                        : "text-slate-400"
+                    }`}>
+                      已开放
                     </p>
-                  </div>
+                  </button>
 
                   <div
-                    className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-3 text-center"
+                    className="cursor-not-allowed rounded-lg border border-slate-200 bg-slate-50 px-2 py-3 text-center"
                     title="高三数学专题建设中"
+                    aria-disabled="true"
                   >
                     <p className="text-sm font-medium text-slate-400">
                       高三
                     </p>
-
                     <p className="mt-1 text-[10px] text-slate-400">
                       建设中
                     </p>
@@ -582,7 +684,7 @@ export default function PracticePage() {
                   </h2>
 
                   <span className="text-xs text-slate-400">
-                    {practiceTopics.length} 个专题
+                    {currentPracticeTopics.length} 个专题
                   </span>
                 </div>
 
@@ -813,7 +915,7 @@ export default function PracticePage() {
             {/* 当前章节与专题 */}
             <div className="mb-5">
               <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400">
-                <span>高一数学</span>
+                <span>{selectedGrade}数学</span>
                 <span>/</span>
 
                 <span>
@@ -899,7 +1001,7 @@ export default function PracticePage() {
 
                   {/* 题干 */}
                   <h3 className="mt-5 text-lg font-semibold leading-8 text-slate-900">
-                    {currentQuestion.question}
+                    {currentQuestion.topic.includes("向量") ? vectorText(currentQuestion.question) : currentQuestion.question}
                   </h3>
 
                   {/* 数学公式 */}
@@ -964,7 +1066,7 @@ export default function PracticePage() {
                             </span>
 
                             <span className="pt-0.5 leading-6">
-                              {option.text}
+                              {currentQuestion.topic.includes("向量") ? vectorText(option.text) : option.text}
                             </span>
                           </button>
                         );
@@ -1022,7 +1124,7 @@ export default function PracticePage() {
                             你的答案：
                             {selectedOption.key}
                             .{" "}
-                            {selectedOption.text}
+                            {currentQuestion.topic.includes("向量") ? vectorText(selectedOption.text) : selectedOption.text}
                           </p>
                         )}
 
@@ -1031,7 +1133,7 @@ export default function PracticePage() {
                             正确选项：
                             {correctOption.key}
                             .{" "}
-                            {correctOption.text}
+                            {currentQuestion.topic.includes("向量") ? vectorText(correctOption.text) : correctOption.text}
                           </p>
                         )}
 
@@ -1042,7 +1144,7 @@ export default function PracticePage() {
                           </p>
 
                           <p className="mt-2 text-sm leading-7 text-slate-600">
-                            {currentQuestion.explanation}
+                            {currentQuestion.topic.includes("向量") ? vectorText(currentQuestion.explanation) : currentQuestion.explanation}
                           </p>
                         </div>
                       </div>

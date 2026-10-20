@@ -1,6 +1,6 @@
-
 "use client";
 
+import { vectorText, vectorSvgLabel } from "@/components/VectorText";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { BlockMath } from "react-katex";
@@ -143,29 +143,25 @@ export default function VectorApplicationsPage() {
         {/* 面包屑 */}
         <div className="mb-10 flex flex-wrap items-center gap-2 text-sm text-slate-400">
           <Link href="/" className="hover:text-slate-700">
-            首页
-          </Link>
+            {vectorText("首页")}</Link>
 
-          <span>/</span>
+          <span>{vectorText("/")}</span>
 
           <Link href="/grade1" className="hover:text-slate-700">
-            高一数学
-          </Link>
+            {vectorText("高一数学")}</Link>
 
-          <span>/</span>
+          <span>{vectorText("/")}</span>
 
           <Link
             href="/grade1/vectors"
             className="hover:text-slate-700"
           >
-            平面向量
-          </Link>
+            {vectorText("平面向量")}</Link>
 
-          <span>/</span>
+          <span>{vectorText("/")}</span>
 
           <span className="text-slate-600">
-            平面向量的综合应用
-          </span>
+            {vectorText("平面向量的综合应用")}</span>
         </div>
 
         {/* 标题 */}
@@ -173,40 +169,30 @@ export default function VectorApplicationsPage() {
           <div className="max-w-3xl">
             <div className="flex flex-wrap items-center gap-3">
               <span className="text-sm font-medium text-blue-600">
-                第 06 章 · 第 05 节
-              </span>
+                {vectorText("第 06 章 · 第 05 节")}</span>
 
               <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600">
-                综合应用
-              </span>
+                {vectorText("综合应用")}</span>
             </div>
 
             <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-              平面向量的综合应用
-            </h1>
+              {vectorText("平面向量的综合应用")}</h1>
 
             <p className="mt-4 max-w-2xl text-base leading-8 text-slate-500">
-              在前四节中，我们已经学习了向量的概念、
-              线性运算、坐标表示和数量积。
-              本节将这些知识结合起来，
-              通过向量方法研究三角形、线段中点、
-              重心、长度、夹角以及实际位移问题。
-            </p>
+              {vectorText("在前四节中，我们已经学习了向量的概念、 线性运算、坐标表示和数量积。 本节将这些知识结合起来， 通过向量方法研究三角形、线段中点、 重心、长度、夹角以及实际位移问题。")}</p>
 
             <div className="mt-7 flex flex-wrap gap-3">
               <a
                 href="#methods"
                 className="rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-700"
               >
-                开始学习
-              </a>
+                {vectorText("开始学习")}</a>
 
               <a
                 href="#quiz"
                 className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
               >
-                即时检测
-              </a>
+                {vectorText("即时检测")}</a>
             </div>
           </div>
         </section>
@@ -222,10 +208,7 @@ export default function VectorApplicationsPage() {
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                平面向量的一个重要作用，
-                是将几何图形中的长度、方向和位置关系，
-                转化成可以计算的代数表达式。
-              </p>
+                {vectorText("平面向量的一个重要作用， 是将几何图形中的长度、方向和位置关系， 转化成可以计算的代数表达式。")}</p>
 
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
                 <InfoCard
@@ -274,10 +257,7 @@ export default function VectorApplicationsPage() {
               </div>
 
               <Note>
-                向量解题的关键并不是套公式，
-                而是先找到图形中的向量关系。
-                需要计算时，再选择几何方法或坐标方法。
-              </Note>
+                {vectorText("向量解题的关键并不是套公式， 而是先找到图形中的向量关系。 需要计算时，再选择几何方法或坐标方法。")}</Note>
             </section>
 
             {/* 02 三角形 */}
@@ -292,20 +272,14 @@ export default function VectorApplicationsPage() {
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                对于三角形 ABC，
-                三条边可以看作有向线段，
-                从而建立向量之间的关系。
-              </p>
+                {vectorText("对于三角形 ABC， 三条边可以看作有向线段， 从而建立向量之间的关系。")}</p>
 
               <FormulaBox
                 math={String.raw`\overrightarrow{AB}+\overrightarrow{BC}=\overrightarrow{AC}`}
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                如果沿三角形的三条边首尾相接走一周，
-                最终回到起点，
-                那么三个向量的和为零向量。
-              </p>
+                {vectorText("如果沿三角形的三条边首尾相接走一周， 最终回到起点， 那么三个向量的和为零向量。")}</p>
 
               <FormulaBox
                 math={String.raw`\overrightarrow{AB}+\overrightarrow{BC}+\overrightarrow{CA}=\overrightarrow{0}`}
@@ -315,41 +289,31 @@ export default function VectorApplicationsPage() {
                 <TriangleDiagram />
 
                 <p className="mt-3 text-center text-xs text-slate-400">
-                  三角形的边向量与首尾相接关系
-                </p>
+                  {vectorText("三角形的边向量与首尾相接关系")}</p>
               </div>
 
               <h3 className="mt-8 text-base font-semibold text-slate-900">
-                利用向量表示三角形的边长
-              </h3>
+                {vectorText("利用向量表示三角形的边长")}</h3>
 
               <p className="mt-3 text-sm leading-8 text-slate-600">
-                三角形的边长，
-                就等于对应有向线段所表示向量的模。
-              </p>
+                {vectorText("三角形的边长， 就等于对应有向线段所表示向量的模。")}</p>
 
               <FormulaBox
                 math={String.raw`AB=|\overrightarrow{AB}|`}
               />
 
               <h3 className="mt-8 text-base font-semibold text-slate-900">
-                利用数量积求角
-              </h3>
+                {vectorText("利用数量积求角")}</h3>
 
               <p className="mt-3 text-sm leading-8 text-slate-600">
-                如果需要计算角 BAC，
-                可以研究从 A 出发的两个非零向量 AB 和 AC。
-              </p>
+                {vectorText("如果需要计算角 BAC， 可以研究从 A 出发的两个非零向量 AB 和 AC。")}</p>
 
               <FormulaBox
                 math={String.raw`\cos\angle BAC=\frac{\overrightarrow{AB}\cdot\overrightarrow{AC}}{|\overrightarrow{AB}||\overrightarrow{AC}|}`}
               />
 
               <Note>
-                求三角形的内角时，
-                应选择以对应顶点为共同起点的两个向量。
-                例如求角 BAC，就使用向量 AB 与 AC。
-              </Note>
+                {vectorText("求三角形的内角时， 应选择以对应顶点为共同起点的两个向量。 例如求角 BAC，就使用向量 AB 与 AC。")}</Note>
             </section>
 
             {/* 03 中点重心 */}
@@ -364,75 +328,58 @@ export default function VectorApplicationsPage() {
               />
 
               <h3 className="mt-6 text-base font-semibold text-slate-900">
-                线段的中点
-              </h3>
+                {vectorText("线段的中点")}</h3>
 
               <p className="mt-3 text-sm leading-8 text-slate-600">
-                设 M 是线段 AB 的中点，
-                则从 A 指向 M 的向量是从 A 指向 B 的向量的一半。
-              </p>
+                {vectorText("设 M 是线段 AB 的中点， 则从 A 指向 M 的向量是从 A 指向 B 的向量的一半。")}</p>
 
               <FormulaBox
                 math={String.raw`\overrightarrow{AM}=\frac12\overrightarrow{AB}`}
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                如果已知 A、B 两点的坐标：
-              </p>
+                {vectorText("如果已知 A、B 两点的坐标：")}</p>
 
               <FormulaBox
                 math={String.raw`A(x_1,y_1),\quad B(x_2,y_2)`}
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                中点 M 的坐标为：
-              </p>
+                {vectorText("中点 M 的坐标为：")}</p>
 
               <FormulaBox
                 math={String.raw`M\left(\frac{x_1+x_2}{2},\frac{y_1+y_2}{2}\right)`}
               />
 
               <h3 className="mt-9 text-base font-semibold text-slate-900">
-                三角形的重心
-              </h3>
+                {vectorText("三角形的重心")}</h3>
 
               <p className="mt-3 text-sm leading-8 text-slate-600">
-                三角形三条中线交于一点，
-                这个点叫作三角形的重心，记作 G。
-                重心把每条中线分成 2:1 的两部分，
-                靠近顶点的部分是较长的一段。
-              </p>
+                {vectorText("三角形三条中线交于一点， 这个点叫作三角形的重心，记作 G。 重心把每条中线分成 2:1 的两部分， 靠近顶点的部分是较长的一段。")}</p>
 
               <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5">
                 <CentroidDiagram />
 
                 <p className="mt-3 text-center text-xs text-slate-400">
-                  三角形的重心 G 位于中线上，AG:GM=2:1
-                </p>
+                  {vectorText("三角形的重心 G 位于中线上，AG:GM=2:1")}</p>
               </div>
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                设 M 是 BC 的中点，则：
-              </p>
+                {vectorText("设 M 是 BC 的中点，则：")}</p>
 
               <FormulaBox
                 math={String.raw`\overrightarrow{AG}=\frac23\overrightarrow{AM}`}
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                如果三个顶点坐标分别为 A、B、C，
-                重心坐标等于三个顶点对应坐标的平均值。
-              </p>
+                {vectorText("如果三个顶点坐标分别为 A、B、C， 重心坐标等于三个顶点对应坐标的平均值。")}</p>
 
               <FormulaBox
                 math={String.raw`G\left(\frac{x_A+x_B+x_C}{3},\frac{y_A+y_B+y_C}{3}\right)`}
               />
 
               <Note>
-                中点是两个端点坐标的平均值，
-                重心是三个顶点坐标的平均值。
-                这两个公式很相似，但不能混淆。
-              </Note>
+                {vectorText("中点是两个端点坐标的平均值， 重心是三个顶点坐标的平均值。 这两个公式很相似，但不能混淆。")}</Note>
             </section>
 
             {/* 04 长度夹角 */}
@@ -447,66 +394,48 @@ export default function VectorApplicationsPage() {
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                向量数量积将两个向量的模与夹角联系起来。
-                当已知部分边长和角度时，
-                可以利用数量积求未知边长。
-              </p>
+                {vectorText("向量数量积将两个向量的模与夹角联系起来。 当已知部分边长和角度时， 可以利用数量积求未知边长。")}</p>
 
               <FormulaBox
                 math={String.raw`\overrightarrow{a}\cdot\overrightarrow{b}=|\overrightarrow{a}||\overrightarrow{b}|\cos\theta`}
               />
 
               <h3 className="mt-8 text-base font-semibold text-slate-900">
-                向量差的模长
-              </h3>
+                {vectorText("向量差的模长")}</h3>
 
               <p className="mt-3 text-sm leading-8 text-slate-600">
-                利用数量积的运算规律：
-              </p>
+                {vectorText("利用数量积的运算规律：")}</p>
 
               <FormulaBox
                 math={String.raw`|\overrightarrow{a}-\overrightarrow{b}|^2=|\overrightarrow{a}|^2+|\overrightarrow{b}|^2-2\overrightarrow{a}\cdot\overrightarrow{b}`}
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                在三角形 ABC 中，
-                因为向量 BC 等于向量 AC 减去向量 AB，
-                因此：
-              </p>
+                {vectorText("在三角形 ABC 中， 因为向量 BC 等于向量 AC 减去向量 AB， 因此：")}</p>
 
               <FormulaBox
                 math={String.raw`\overrightarrow{BC}=\overrightarrow{AC}-\overrightarrow{AB}`}
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                再利用数量积定义，
-                就可以得到三角形中的余弦定理：
-              </p>
+                {vectorText("再利用数量积定义， 就可以得到三角形中的余弦定理：")}</p>
 
               <FormulaBox
                 math={String.raw`BC^2=AB^2+AC^2-2AB\cdot AC\cos\angle BAC`}
               />
 
               <h3 className="mt-8 text-base font-semibold text-slate-900">
-                两条线段是否垂直
-              </h3>
+                {vectorText("两条线段是否垂直")}</h3>
 
               <p className="mt-3 text-sm leading-8 text-slate-600">
-                若两条线段对应的方向向量均非零，
-                那么它们互相垂直，
-                当且仅当对应向量的数量积为零。
-              </p>
+                {vectorText("若两条线段对应的方向向量均非零， 那么它们互相垂直， 当且仅当对应向量的数量积为零。")}</p>
 
               <FormulaBox
                 math={String.raw`\overrightarrow{AB}\perp\overrightarrow{CD}\iff\overrightarrow{AB}\cdot\overrightarrow{CD}=0`}
               />
 
               <Note>
-                处理三角形长度问题时，
-                先画出图形并找准夹角，
-                再决定使用勾股定理、
-                数量积还是余弦定理。
-              </Note>
+                {vectorText("处理三角形长度问题时， 先画出图形并找准夹角， 再决定使用勾股定理、 数量积还是余弦定理。")}</Note>
             </section>
 
             {/* 05 实际问题 */}
@@ -521,60 +450,44 @@ export default function VectorApplicationsPage() {
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                位移既具有大小，又具有方向，
-                因此可以使用向量表示。
-                当物体连续发生多个位移时，
-                可以通过向量加法计算合位移。
-              </p>
+                {vectorText("位移既具有大小，又具有方向， 因此可以使用向量表示。 当物体连续发生多个位移时， 可以通过向量加法计算合位移。")}</p>
 
               <h3 className="mt-7 text-base font-semibold text-slate-900">
-                示例：向东与向北的位移
-              </h3>
+                {vectorText("示例：向东与向北的位移")}</h3>
 
               <p className="mt-3 text-sm leading-8 text-slate-600">
-                某人先向东移动 3 km，
-                再向北移动 4 km。
-                求他从出发点到终点的位移大小。
-              </p>
+                {vectorText("某人先向东移动 3 km， 再向北移动 4 km。 求他从出发点到终点的位移大小。")}</p>
 
               <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5">
                 <DisplacementDiagram />
 
                 <p className="mt-3 text-center text-xs text-slate-400">
-                  两次相互垂直的位移与合位移
-                </p>
+                  {vectorText("两次相互垂直的位移与合位移")}</p>
               </div>
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                建立坐标系，取正东方向为 x 轴正方向，
-                正北方向为 y 轴正方向。
-              </p>
+                {vectorText("建立坐标系，取正东方向为 x 轴正方向， 正北方向为 y 轴正方向。")}</p>
 
               <FormulaBox
                 math={String.raw`\overrightarrow{a}=(3,0),\qquad\overrightarrow{b}=(0,4)`}
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                合位移向量：
-              </p>
+                {vectorText("合位移向量：")}</p>
 
               <FormulaBox
                 math={String.raw`\overrightarrow{s}=\overrightarrow{a}+\overrightarrow{b}=(3,4)`}
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                合位移的大小：
-              </p>
+                {vectorText("合位移的大小：")}</p>
 
               <FormulaBox
                 math={String.raw`|\overrightarrow{s}|=\sqrt{3^2+4^2}=5\ \mathrm{km}`}
               />
 
               <Note>
-                路程和位移并不相同。
-                本例的路程是 3+4=7 km，
-                而从起点到终点的位移大小是 5 km。
-              </Note>
+                {vectorText("路程和位移并不相同。 本例的路程是 3+4=7 km， 而从起点到终点的位移大小是 5 km。")}</Note>
             </section>
 
             {/* 06 例题 */}
@@ -687,7 +600,7 @@ export default function VectorApplicationsPage() {
               />
 
               <div className="mt-6 space-y-5">
-                {questions.map((question) => {
+                {vectorText(questions.map((question) => {
                   const selected = answers[question.id];
                   const isSubmitted = Boolean(
                     submitted[question.id]
@@ -701,21 +614,20 @@ export default function VectorApplicationsPage() {
                       className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6"
                     >
                       <p className="text-xs font-medium text-blue-600">
-                        第 {question.id} 题 / 共 3 题
-                      </p>
+                        {vectorText("第 ")}{vectorText(question.id)} {vectorText("题 / 共 3 题")}</p>
 
                       <h3 className="mt-4 text-base font-semibold leading-8 text-slate-900">
-                        {question.question}
+                        {vectorText(question.question)}
                       </h3>
 
-                      {question.formula && (
+                      {vectorText(question.formula && (
                         <div className="mt-4 overflow-x-auto rounded-xl bg-slate-50 p-4">
                           <BlockMath math={question.formula} />
                         </div>
-                      )}
+                      ))}
 
                       <div className="mt-5 grid gap-3">
-                        {question.options.map((option) => {
+                        {vectorText(question.options.map((option) => {
                           const chosen = selected === option.key;
 
                           const showCorrect =
@@ -749,18 +661,18 @@ export default function VectorApplicationsPage() {
                               }`}
                             >
                               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-current text-xs font-semibold">
-                                {option.key}
+                                {vectorText(option.key)}
                               </span>
 
                               <span className="pt-0.5">
-                                {option.text}
+                                {vectorText(option.text)}
                               </span>
                             </button>
                           );
-                        })}
+                        }))}
                       </div>
 
-                      {!isSubmitted ? (
+                      {vectorText(!isSubmitted ? (
                         <button
                           type="button"
                           disabled={!selected}
@@ -769,8 +681,7 @@ export default function VectorApplicationsPage() {
                           }
                           className="mt-5 rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-30"
                         >
-                          提交答案
-                        </button>
+                          {vectorText("提交答案")}</button>
                       ) : (
                         <div
                           className={`mt-5 rounded-xl p-4 ${
@@ -786,13 +697,13 @@ export default function VectorApplicationsPage() {
                                 : "text-red-600"
                             }`}
                           >
-                            {correct
+                            {vectorText(correct
                               ? "回答正确"
-                              : `回答错误，正确答案：${question.answer}`}
+                              : `回答错误，正确答案：${question.answer}`)}
                           </p>
 
                           <p className="mt-2 text-sm leading-7 text-slate-600">
-                            {question.explanation}
+                            {vectorText(question.explanation)}
                           </p>
 
                           <button
@@ -802,32 +713,29 @@ export default function VectorApplicationsPage() {
                             }
                             className="mt-3 text-sm font-medium text-slate-600 hover:text-slate-900"
                           >
-                            重新作答 →
-                          </button>
+                            {vectorText("重新作答 →")}</button>
                         </div>
-                      )}
+                      ))}
                     </div>
                   );
-                })}
+                }))}
               </div>
 
-              {completedCount === questions.length && (
+              {vectorText(completedCount === questions.length && (
                 <div className="mt-6 rounded-xl border border-slate-200 bg-white p-6">
                   <p className="text-sm text-slate-500">
-                    本节检测已完成
-                  </p>
+                    {vectorText("本节检测已完成")}</p>
 
                   <h3 className="mt-2 text-2xl font-bold text-slate-900">
-                    {correctCount} / {questions.length} 题正确
-                  </h3>
+                    {vectorText(correctCount)} {vectorText("/ ")}{vectorText(questions.length)} {vectorText("题正确")}</h3>
 
                   <p className="mt-3 text-sm leading-7 text-slate-500">
-                    {correctCount === questions.length
+                    {vectorText(correctCount === questions.length
                       ? "三道综合题全部答对，说明你已经掌握了本节的主要方法。"
-                      : "建议复习中点坐标、数量积和余弦定理，再重新作答。"}
+                      : "建议复习中点坐标、数量积和余弦定理，再重新作答。")}
                   </p>
                 </div>
-              )}
+              ))}
             </section>
 
             {/* 底部导航 */}
@@ -836,15 +744,13 @@ export default function VectorApplicationsPage() {
                 href="/grade1/vectors/dot-product"
                 className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
               >
-                ← 上一节：平面向量的数量积
-              </Link>
+                {vectorText("← 上一节：平面向量的数量积")}</Link>
 
               <Link
                 href="/grade1/vectors"
                 className="rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-700"
               >
-                返回平面向量章节 →
-              </Link>
+                {vectorText("返回平面向量章节 →")}</Link>
             </div>
           </div>
 
@@ -852,28 +758,26 @@ export default function VectorApplicationsPage() {
           <aside className="hidden lg:block">
             <div className="sticky top-24 rounded-2xl border border-slate-200 bg-white p-5">
               <p className="text-xs font-semibold text-slate-400">
-                本节学习目录
-              </p>
+                {vectorText("本节学习目录")}</p>
 
               <nav className="mt-5 space-y-3 text-sm">
-                {sections.map(([id, label]) => (
+                {vectorText(sections.map(([id, label]) => (
                   <a
                     key={id}
                     href={`#${id}`}
                     className="block text-slate-500 transition hover:text-blue-600"
                   >
-                    {label}
+                    {vectorText(label)}
                   </a>
-                ))}
+                )))}
               </nav>
 
               <div className="mt-6 border-t border-slate-100 pt-5">
                 <p className="text-xs text-slate-400">
-                  本节核心知识
-                </p>
+                  {vectorText("本节核心知识")}</p>
 
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {[
+                  {vectorText([
                     "向量化简",
                     "三角形",
                     "中点",
@@ -885,9 +789,9 @@ export default function VectorApplicationsPage() {
                       key={item}
                       className="rounded-md bg-slate-50 px-2 py-1 text-xs text-slate-500"
                     >
-                      {item}
+                      {vectorText(item)}
                     </span>
-                  ))}
+                  )))}
                 </div>
               </div>
             </div>
@@ -915,16 +819,16 @@ function SectionTitle({
     <div>
       <div className="flex items-center gap-3">
         <span className="text-xs font-semibold text-blue-600">
-          {number}
+          {vectorText(number)}
         </span>
 
         <h2 className="text-xl font-bold text-slate-900">
-          {title}
+          {vectorText(title)}
         </h2>
       </div>
 
       <p className="mt-2 pl-7 text-sm text-slate-400">
-        {subtitle}
+        {vectorText(subtitle)}
       </p>
     </div>
   );
@@ -942,11 +846,10 @@ function Note({ children }: { children: ReactNode }) {
   return (
     <div className="mt-5 rounded-xl border border-blue-100 bg-blue-50/40 px-5 py-4">
       <p className="text-xs font-semibold text-blue-600">
-        理解提示
-      </p>
+        {vectorText("理解提示")}</p>
 
       <div className="mt-2 text-sm leading-7 text-slate-600">
-        {children}
+        {vectorText(children)}
       </div>
     </div>
   );
@@ -964,15 +867,15 @@ function InfoCard({
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5">
       <p className="text-xs font-semibold text-blue-600">
-        {number}
+        {vectorText(number)}
       </p>
 
       <h3 className="mt-3 text-sm font-semibold text-slate-900">
-        {title}
+        {vectorText(title)}
       </h3>
 
       <p className="mt-2 text-sm leading-7 text-slate-500">
-        {description}
+        {vectorText(description)}
       </p>
     </div>
   );
@@ -990,7 +893,7 @@ function RuleCard({
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5">
       <h3 className="text-sm font-semibold text-slate-900">
-        {title}
+        {vectorText(title)}
       </h3>
 
       <div className="mt-4 overflow-x-auto rounded-lg bg-slate-50 px-3 py-3">
@@ -998,7 +901,7 @@ function RuleCard({
       </div>
 
       <p className="mt-3 text-sm leading-7 text-slate-500">
-        {explanation}
+        {vectorText(explanation)}
       </p>
     </div>
   );
@@ -1020,11 +923,11 @@ function ExampleCard({
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5">
       <p className="text-xs font-medium text-blue-600">
-        {number}
+        {vectorText(number)}
       </p>
 
       <h3 className="mt-3 font-semibold text-slate-900">
-        {title}
+        {vectorText(title)}
       </h3>
 
       <div className="mt-4 overflow-x-auto rounded-xl bg-slate-50 p-4">
@@ -1032,11 +935,10 @@ function ExampleCard({
       </div>
 
       <p className="mt-4 text-sm font-semibold text-slate-700">
-        分析与解答
-      </p>
+        {vectorText("分析与解答")}</p>
 
       <p className="mt-2 text-sm leading-7 text-slate-600">
-        {explanation}
+        {vectorText(explanation)}
       </p>
 
       <div className="mt-4 overflow-x-auto rounded-xl border border-emerald-100 bg-emerald-50/40 p-3">
@@ -1056,11 +958,11 @@ function MistakeTip({
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5">
       <h3 className="text-sm font-semibold text-slate-900">
-        {title}
+        {vectorText(title)}
       </h3>
 
       <p className="mt-2 text-sm leading-7 text-slate-500">
-        {description}
+        {vectorText(description)}
       </p>
     </div>
   );
@@ -1148,24 +1050,18 @@ function TriangleDiagram() {
       <circle cx="280" cy="55" r="4" fill="#334155" />
 
       <text x="70" y="242" fontSize="17" fill="#334155">
-        A
-      </text>
+        {vectorSvgLabel("A")}</text>
       <text x="412" y="240" fontSize="17" fill="#334155">
-        B
-      </text>
+        {vectorSvgLabel("B")}</text>
       <text x="277" y="39" fontSize="17" fill="#334155">
-        C
-      </text>
+        {vectorSvgLabel("C")}</text>
 
       <text x="240" y="246" fontSize="16" fill="#2563eb">
-        AB
-      </text>
+        {vectorSvgLabel("AB")}</text>
       <text x="366" y="135" fontSize="16" fill="#059669">
-        BC
-      </text>
+        {vectorSvgLabel("BC")}</text>
       <text x="153" y="121" fontSize="16" fill="#7c3aed">
-        AC
-      </text>
+        {vectorSvgLabel("AC")}</text>
     </svg>
   );
 }
@@ -1213,31 +1109,23 @@ function CentroidDiagram() {
       <circle cx="365" cy="152.5" r="4" fill="#059669" />
 
       <text x="56" y="268" fontSize="17" fill="#334155">
-        A
-      </text>
+        {vectorSvgLabel("A")}</text>
       <text x="440" y="268" fontSize="17" fill="#334155">
-        B
-      </text>
+        {vectorSvgLabel("B")}</text>
       <text x="288" y="39" fontSize="17" fill="#334155">
-        C
-      </text>
+        {vectorSvgLabel("C")}</text>
       <text x="376" y="151" fontSize="17" fill="#059669">
-        M
-      </text>
+        {vectorSvgLabel("M")}</text>
       <text x="258" y="171" fontSize="17" fill="#2563eb">
-        G
-      </text>
+        {vectorSvgLabel("G")}</text>
 
       <text x="145" y="197" fontSize="14" fill="#64748b">
-        AG
-      </text>
+        {vectorSvgLabel("AG")}</text>
       <text x="324" y="203" fontSize="14" fill="#64748b">
-        GM
-      </text>
+        {vectorSvgLabel("GM")}</text>
 
       <text x="170" y="289" fontSize="14" fill="#64748b">
-        AG : GM = 2 : 1
-      </text>
+        {vectorSvgLabel("AG : GM = 2 : 1")}</text>
     </svg>
   );
 }
@@ -1327,32 +1215,25 @@ function DisplacementDiagram() {
       <circle cx="300" cy="30" r="4" fill="#334155" />
 
       <text x="85" y="289" fontSize="16" fill="#334155">
-        出发点
-      </text>
+        {vectorSvgLabel("出发点")}</text>
 
       <text x="308" y="31" fontSize="16" fill="#334155">
-        终点
-      </text>
+        {vectorSvgLabel("终点")}</text>
 
       <text x="194" y="292" fontSize="16" fill="#2563eb">
-        3 km
-      </text>
+        {vectorSvgLabel("3 km")}</text>
 
       <text x="314" y="158" fontSize="16" fill="#059669">
-        4 km
-      </text>
+        {vectorSvgLabel("4 km")}</text>
 
       <text x="167" y="133" fontSize="17" fill="#7c3aed">
-        5 km
-      </text>
+        {vectorSvgLabel("5 km")}</text>
 
       <text x="367" y="102" fontSize="14" fill="#64748b">
-        北
-      </text>
+        {vectorSvgLabel("北")}</text>
 
       <text x="371" y="271" fontSize="14" fill="#64748b">
-        东
-      </text>
+        {vectorSvgLabel("东")}</text>
     </svg>
   );
 }

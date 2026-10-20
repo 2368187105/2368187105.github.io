@@ -1,902 +1,1198 @@
 
+"use client";
+
 import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
-import { questions, practiceTopics } from "@/data/questions";
+import { grade2PracticeChapters, grade2PracticeTopics } from "@/data/questions";
+import { createClient } from "@/lib/supabase/client";
 
-/* ========================================
-   高一数学章节配置
-======================================== */
+/* =========================
+   已开放的高一数学模块
+========================= */
 
-type Chapter = {
-  number: string;
-  title: string;
-  description: string;
-  topics: string[];
-  href?: string;
-  status: "open" | "coming";
-  lessons: number;
-};
-
-const chapters: Chapter[] = [
+const modules = [
   {
     number: "01",
     title: "集合与常用逻辑用语",
     description:
-      "学习集合的基本概念、集合间的关系与运算，以及充分必要条件和常用逻辑用语。",
-    topics: [
-      "集合概念",
-      "集合关系",
-      "集合运算",
-      "充分必要条件",
-      "逻辑量词",
-    ],
+      "集合概念、集合关系与运算、充分必要条件及逻辑量词。",
     href: "/grade1/sets",
-    status: "open",
-    lessons: 5,
   },
   {
     number: "02",
     title: "一元二次函数、方程和不等式",
     description:
-      "掌握不等式性质、基本不等式、二次函数、一元二次方程与一元二次不等式。",
-    topics: [
-      "不等式性质",
-      "基本不等式",
-      "二次函数",
-      "一元二次方程",
-      "一元二次不等式",
-    ],
+      "不等式性质、基本不等式、二次函数与方程及综合应用。",
     href: "/grade1/quadratic",
-    status: "open",
-    lessons: 5,
   },
   {
     number: "03",
     title: "函数的概念与性质",
     description:
-      "系统学习函数概念、定义域和值域、单调性、奇偶性以及函数的最值。",
-    topics: [
-      "函数概念",
-      "定义域与值域",
-      "单调性",
-      "奇偶性",
-      "函数最值",
-    ],
+      "函数概念、定义域与值域、单调性、奇偶性及最值。",
     href: "/grade1/functions",
-    status: "open",
-    lessons: 5,
   },
   {
     number: "04",
     title: "指数函数与对数函数",
     description:
-      "理解指数和对数的运算，掌握指数函数、对数函数的图像与性质及实际应用。",
-    topics: [
-      "指数运算",
-      "指数函数",
-      "对数运算",
-      "对数函数",
-      "综合应用",
-    ],
+      "指数幂、指数函数、对数运算、对数函数及综合应用。",
     href: "/grade1/exponential-log",
-    status: "open",
-    lessons: 5,
   },
   {
     number: "05",
     title: "三角函数",
     description:
-      "学习任意角与弧度制、三角函数的定义、诱导公式、图像和性质。",
-    topics: [
-      "任意角",
-      "弧度制",
-      "三角函数",
-      "诱导公式",
-      "图像与性质",
-    ],
+      "任意角与弧度制、三角函数定义、诱导公式、图象性质和恒等变换。",
     href: "/grade1/trigonometric",
-    status: "open",
-    lessons: 5,
   },
   {
     number: "06",
     title: "平面向量",
     description:
-      "掌握平面向量的概念与表示、线性运算、坐标表示、数量积及综合应用。",
-    topics: [
-      "向量概念",
-      "线性运算",
-      "坐标表示",
-      "数量积",
-      "综合应用",
-    ],
+      "向量概念、线性运算、坐标表示、数量积及综合应用。",
     href: "/grade1/vectors",
-    status: "open",
-    lessons: 5,
   },
   {
     number: "07",
     title: "复数",
     description:
-      "从虚数单位与复数的代数表示出发，学习复数的几何意义、四则运算和综合应用。",
-    topics: [
-      "复数概念",
-      "复平面",
-      "加减运算",
-      "乘除运算",
-      "综合应用",
-    ],
+      "复数的概念与代数表示、复平面、复数的四则运算及综合应用。",
     href: "/grade1/complex",
-    status: "open",
-    lessons: 5,
   },
   {
     number: "08",
     title: "立体几何初步",
     description:
-      "认识基本空间几何体，理解空间中直线、平面之间的位置关系。",
-    topics: [
-      "空间几何体",
-      "空间位置关系",
-      "平行",
-      "垂直",
-      "综合应用",
-    ],
+      "空间几何体、空间点线面关系、平行与垂直的判定及应用。",
     href: "/grade1/solid-geometry",
-    status: "open",
-    lessons: 5,
   },
+
   {
     number: "09",
     title: "统计",
     description:
-      "学习随机抽样、数据的收集与整理、统计图表、数据的数字特征及统计综合应用。",
-    topics: [
-      "随机抽样",
-      "数据的收集与整理",
-      "统计图表",
-      "数据的数字特征",
-      "统计综合应用",
-    ],
+      "随机抽样、数据的收集与整理、统计图表、数据的数字特征及统计综合应用。",
     href: "/grade1/statistics",
-    status: "open",
-    lessons: 5,
   },
   {
     number: "10",
     title: "概率",
     description:
-      "认识随机事件与样本空间，学习事件关系、古典概型、概率的基本性质及综合应用。",
-    topics: [
-      "随机事件",
-      "样本空间",
-      "古典概型",
-      "概率性质",
-      "综合应用",
-    ],
+      "随机事件与样本空间、事件关系与运算、古典概型、概率基本性质及综合应用。",
     href: "/grade1/probability",
-    status: "open",
-    lessons: 5,
   },
 ];
 
-const openedChapters = chapters.filter(
-  (chapter) => chapter.status === "open"
+// 高一：10 个模块、每个模块 5 节课程，均已开放
+const totalModules = 10;
+const openModules = modules.length;
+const openLessons = openModules * 5;
+const openPercent = Math.round(
+  (openModules / totalModules) * 100
 );
 
-const comingChapters = chapters.filter(
-  (chapter) => chapter.status === "coming"
+// 高二：直线与方程、圆与方程、圆锥曲线与方程、数列、导数及其应用、空间向量与立体几何、计数原理、概率、统计九章已全部开放
+const grade2OpenChapters = grade2PracticeChapters.length;
+const grade2TotalChapters = 9;
+const grade2OpenLessons = grade2PracticeTopics.length;
+const grade2TotalLessons = 30;
+const grade2Percent = Math.round(
+  (grade2OpenLessons / grade2TotalLessons) * 100
 );
 
-const openedLessonCount = openedChapters.reduce(
-  (sum, chapter) => sum + chapter.lessons,
-  0
-);
+// 首页展示的全站已开放内容：高一 10 个模块 + 高二已开放章节
+const totalOpenModules = openModules + grade2OpenChapters;
+const totalOpenLessons = openLessons + grade2OpenLessons;
 
-const plannedLessonCount = chapters.reduce(
-  (sum, chapter) => sum + chapter.lessons,
-  0
-);
+/* =========================
+   首页
+========================= */
 
-const openedPercent =
-  (openedChapters.length / chapters.length) * 100;
+export default function Home() {
+  const supabase = useMemo(() => createClient(), []);
 
-/* ========================================
-   高一数学总目录
-======================================== */
+  const [email, setEmail] =
+    useState<string | null>(null);
 
-export default function Grade1Page() {
+  const [checkingUser, setCheckingUser] =
+    useState(true);
+
+  const [statsLoading, setStatsLoading] =
+    useState(false);
+
+  const [totalAttempts, setTotalAttempts] =
+    useState(0);
+
+  const [correctAttempts, setCorrectAttempts] =
+    useState(0);
+
+  const [wrongAttempts, setWrongAttempts] =
+    useState(0);
+
+  const [accuracy, setAccuracy] =
+    useState(0);
+
+  const [latestTopic, setLatestTopic] =
+    useState<string | null>(null);
+
+  /* =========================
+     登录与学习数据
+  ========================= */
+
+  useEffect(() => {
+    let active = true;
+    let requestNumber = 0;
+    let currentUserId: string | null = null;
+
+    function resetStats() {
+      setTotalAttempts(0);
+      setCorrectAttempts(0);
+      setWrongAttempts(0);
+      setAccuracy(0);
+      setLatestTopic(null);
+      setStatsLoading(false);
+    }
+
+    async function loadLearningStats(userId: string) {
+      const requestId = ++requestNumber;
+
+      setStatsLoading(true);
+
+      const { data, error } = await supabase
+        .from("practice_attempts")
+        .select("is_correct, topic, created_at")
+        .eq("user_id", userId)
+        .order("created_at", {
+          ascending: false,
+        });
+
+      if (!active || requestId !== requestNumber) {
+        return;
+      }
+
+      if (error) {
+        console.error("读取学习数据失败：", error);
+        setStatsLoading(false);
+        return;
+      }
+
+      const attempts = data ?? [];
+      const total = attempts.length;
+
+      const correct = attempts.filter(
+        (item) => item.is_correct === true
+      ).length;
+
+      const wrong = total - correct;
+
+      const rate =
+        total === 0
+          ? 0
+          : Math.round((correct / total) * 100);
+
+      setTotalAttempts(total);
+      setCorrectAttempts(correct);
+      setWrongAttempts(wrong);
+      setAccuracy(rate);
+
+      setLatestTopic(attempts[0]?.topic ?? null);
+
+      setStatsLoading(false);
+    }
+
+    function applyUser(
+      user: {
+        id: string;
+        email?: string | null;
+      } | null
+    ) {
+      if (!active) return;
+
+      const userId = user?.id ?? null;
+
+      setEmail(user?.email ?? null);
+      setCheckingUser(false);
+
+      if (userId === currentUserId) {
+        return;
+      }
+
+      currentUserId = userId;
+
+      if (userId) {
+        void loadLearningStats(userId);
+      } else {
+        requestNumber += 1;
+        resetStats();
+      }
+    }
+
+    void supabase.auth.getUser().then(
+      ({ data: { user } }) => {
+        applyUser(user);
+      },
+      () => {
+        if (active) {
+          setCheckingUser(false);
+        }
+      }
+    );
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        applyUser(session?.user ?? null);
+      }
+    );
+
+    return () => {
+      active = false;
+      requestNumber += 1;
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
+
   return (
     <main className="min-h-screen bg-[#fafafa]">
       <SiteHeader />
 
-      <div className="mx-auto max-w-6xl px-4 pb-20 pt-10 sm:px-6 lg:px-8">
-        {/* 面包屑 */}
-        <nav className="flex items-center gap-2 text-sm text-slate-400">
-          <Link
-            href="/"
-            className="transition hover:text-blue-600"
-          >
-            首页
-          </Link>
+      {/* =========================
+          首屏
+      ========================= */}
 
-          <span>/</span>
-
-          <span className="font-medium text-slate-700">
-            高一数学
-          </span>
-        </nav>
-
-        {/* ========================================
-            顶部介绍
-        ======================================== */}
-
-        <section className="mt-9 overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-slate-50 p-7 sm:p-10">
-          <div className="grid gap-9 lg:grid-cols-[minmax(0,1fr)_290px] lg:items-center">
+      <section className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
+          <div className="grid gap-10 lg:grid-cols-[1.35fr_0.65fr] lg:items-end">
+            {/* 左侧介绍 */}
             <div>
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white">
-                  GRADE 01
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-semibold text-blue-600">
+                  彻凌数学
                 </span>
 
-                <span className="rounded-lg border border-blue-200 bg-white px-3 py-1.5 text-xs font-medium text-blue-700">
-                  高中数学 · 系统课程
+                <span className="h-1 w-1 rounded-full bg-slate-300" />
+
+                <span className="text-sm text-slate-400">
+                  高中数学学习平台
                 </span>
               </div>
 
-              <h1 className="mt-6 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-                高一数学知识体系
+              <p className="mt-4 text-sm font-medium tracking-wide text-slate-500">
+                山海连云，巍巍交大。
+              </p>
+
+              <h1 className="mt-5 max-w-3xl text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl sm:leading-[1.15]">
+                把零散的知识点，
+                <br className="hidden sm:block" />
+                变成完整的数学体系。
               </h1>
 
-              <p className="mt-5 max-w-2xl text-sm leading-8 text-slate-600 sm:text-base">
-                从集合、不等式和函数出发，
-                逐步学习指数与对数、三角函数、
-                平面向量、复数、立体几何初步、统计和概率，
-                建立完整、清晰的高中数学基础知识体系。
+              <p className="mt-6 max-w-2xl text-base leading-8 text-slate-500">
+                面向高中三个年级，
+                系统整理数学知识点，
+                通过知识讲解、典型例题、专题训练、
+                错题复习和学习数据分析，
+                帮助学生逐步建立完整的数学知识体系。
               </p>
 
-              <p className="mt-3 text-sm leading-7 text-slate-500">
-                当前已经开放前十章，共50节教学课程。
-                每节课程包含知识讲解、典型例题和互动练习。
-              </p>
-
-              <div className="mt-7 flex flex-wrap gap-3">
+              <div className="mt-8 flex flex-wrap gap-3">
                 <Link
-                  href="/grade1/probability"
-                  className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+                  href="#course-modules"
+                  className="rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-slate-700"
                 >
-                  学习第10章 · 概率 →
+                  开始学习
+                </Link>
+
+                <Link
+                  href="/grade2"
+                  className="rounded-lg border border-blue-200 bg-blue-50 px-5 py-2.5 text-sm font-medium text-blue-700 transition hover:bg-blue-100"
+                >
+                  高二数学
                 </Link>
 
                 <Link
                   href="/practice"
-                  className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-6 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                  className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
                 >
                   专题训练
                 </Link>
 
                 <Link
                   href="/mistakes"
-                  className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-6 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                  className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
                 >
-                  我的错题
+                  查看错题
                 </Link>
               </div>
-            </div>
 
-            {/* 右侧建设进度 */}
-            <div className="rounded-2xl border border-white bg-white/90 p-6 shadow-sm">
-              <p className="text-xs font-semibold tracking-wide text-slate-400">
-                课程建设进度
-              </p>
-
-              <div className="mt-5 flex items-end gap-2">
-                <span className="text-5xl font-bold tracking-tight text-blue-600">
-                  {openedChapters.length}
-                </span>
-
-                <span className="pb-1.5 text-sm text-slate-400">
-                  / {chapters.length} 章
-                </span>
-              </div>
-
-              <div className="mt-5 h-2 overflow-hidden rounded-full bg-blue-100">
-                <div
-                  className="h-full rounded-full bg-blue-600"
-                  style={{
-                    width: `${openedPercent}%`,
-                  }}
-                />
-              </div>
-
-              <div className="mt-6 grid grid-cols-2 gap-3">
-                <div className="rounded-xl bg-slate-50 p-4">
+              {/* 当前课程开放数据 */}
+              <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4 border-t border-slate-100 pt-6">
+                <div>
                   <p className="text-2xl font-bold text-slate-900">
-                    {openedLessonCount}
+                    {totalOpenModules}
                   </p>
 
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-1 text-xs text-slate-400">
+                    已开放模块 / 章节
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-2xl font-bold text-slate-900">
+                    {totalOpenLessons}
+                  </p>
+
+                  <p className="mt-1 text-xs text-slate-400">
                     已开放课程
                   </p>
                 </div>
 
-                <div className="rounded-xl bg-slate-50 p-4">
+                <div>
                   <p className="text-2xl font-bold text-slate-900">
-                    {comingChapters.length}
+                    {grade2OpenChapters}
                   </p>
 
-                  <p className="mt-1 text-xs text-slate-500">
-                    待开发章节
+                  <p className="mt-1 text-xs text-slate-400">
+                    高二已开放章节
                   </p>
                 </div>
               </div>
-
-              <p className="mt-5 text-xs leading-6 text-slate-400">
-                这里显示的是网站课程建设进度，
-                不是个人学习完成情况。
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* ========================================
-            数据概览
-        ======================================== */}
-
-        <section className="grid gap-4 py-10 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard
-            label="已开放章节"
-            value={String(openedChapters.length)}
-            suffix={`/ ${chapters.length}`}
-            description="十章课程均已开放"
-          />
-
-          <StatCard
-            label="已开放课程"
-            value={String(openedLessonCount)}
-            suffix={`/ ${plannedLessonCount}`}
-            description="每章规划五节课程"
-          />
-
-          <StatCard
-            label="专题训练"
-            value={String(practiceTopics.length)}
-            suffix="个专题"
-            description="与当前题库实时对应"
-          />
-
-          <StatCard
-            label="题库练习"
-            value={String(questions.length)}
-            suffix="道题"
-            description="支持自动判题与错题记录"
-          />
-        </section>
-
-        {/* ========================================
-            已开放章节
-        ======================================== */}
-
-        <section className="border-t border-slate-200 py-10">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="text-xs font-semibold tracking-wide text-blue-600">
-                OPEN COURSES
-              </p>
-
-              <h2 className="mt-3 text-2xl font-bold text-slate-900">
-                已开放课程
-              </h2>
-
-              <p className="mt-3 text-sm leading-7 text-slate-500">
-                已开放10个章节的教学内容，
-                点击章节卡片即可查看对应的五节课程。
-              </p>
             </div>
 
-            <span className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs text-slate-500">
-              {openedChapters.length} 章 · {openedLessonCount} 节
-            </span>
+    <div className="rounded-2xl border border-blue-100 bg-blue-50/40 p-6">
+      <div className="flex items-center justify-between gap-3"><p className="text-xs font-medium text-slate-400">最新开放章节</p><span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-600">第九章已开放</span></div>
+      <p className="mt-5 text-xs font-medium text-blue-600">GRADE 11 · CHAPTER 09</p><h2 className="mt-2 text-xl font-bold text-slate-900">统计</h2><p className="mt-3 text-sm leading-7 text-slate-500">学习线性回归分析与独立性检验，通过散点、残差和列联表理解统计关联及其解释边界。</p>
+      <div className="mt-5 flex flex-wrap gap-2">{["线性回归分析", "独立性检验"].map((title) => <span key={title} className="rounded-md bg-white px-2 py-1 text-xs text-slate-500">{title}</span>)}</div>
+      <div className="mt-6 border-t border-blue-100 pt-5"><div className="flex justify-between text-xs"><span className="text-slate-400">本章课程开放情况</span><span className="font-medium text-emerald-600">2 / 2</span></div><div className="mt-3 h-2 rounded-full bg-blue-600" /></div>
+      <Link href="/grade2/statistics" className="mt-6 inline-flex text-sm font-medium text-slate-900 hover:text-blue-600">进入高二第九章 →</Link>
+    </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="course-modules" className="mx-auto max-w-6xl scroll-mt-24 px-4 pt-12 sm:px-6 lg:px-8">
+        <h2 className="text-2xl font-bold text-slate-900">高一数学课程目录</h2>
+        <p className="mt-3 text-sm leading-7 text-slate-500">十个模块、五十节课程均已开放，选择模块进入课程学习。</p>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {modules.map((module) => (
+            <Link key={module.href} href={module.href} className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-6 hover:border-blue-300">
+              <div className="flex items-center justify-between"><span className="text-sm font-bold text-blue-600">{module.number}</span><span className="text-xs text-emerald-600">5 节已开放</span></div>
+              <h3 className="mt-4 font-bold text-slate-900">{module.title}</h3>
+              <p className="mt-3 flex-1 text-sm leading-7 text-slate-500">{module.description}</p>
+              <span className="mt-5 text-sm font-medium text-blue-600">进入模块 →</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* =========================
+          高一、高二、高三入口
+      ========================= */}
+
+      <section className="mx-auto max-w-6xl px-4 pt-12 sm:px-6 lg:px-8">
+        <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-medium tracking-wide text-blue-600">
+              MATHEMATICS CURRICULUM
+            </p>
+
+            <h2 className="mt-3 text-2xl font-bold text-slate-900">
+              高中数学课程
+            </h2>
+
+            <p className="mt-2 text-sm leading-7 text-slate-500">
+              覆盖高一、高二、高三三个学习阶段，
+              按照知识体系逐步开放课程。
+            </p>
           </div>
 
-          <div className="mt-7 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {openedChapters.map((chapter) => (
-              <ChapterCard
-                key={chapter.number}
-                chapter={chapter}
-              />
-            ))}
-          </div>
-        </section>
+          <span className="text-xs text-slate-400">
+            高一课程已全部开放 · 高二课程已全部开放
+          </span>
+        </div>
 
-        {/* ========================================
-            最新开放章节
-        ======================================== */}
+        <div className="grid gap-4 md:grid-cols-3">
+          {/* 高一数学 */}
+          <Link
+            href="#course-modules"
+            className="group flex flex-col rounded-2xl border border-blue-200 bg-white p-6 transition hover:border-blue-300 hover:shadow-sm"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-xs font-semibold text-blue-600">
+                GRADE 10
+              </span>
 
-        <section className="border-t border-slate-200 py-10">
-          <div className="rounded-2xl border border-blue-100 bg-white p-6 sm:p-8">
-            <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-center">
+              <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-600">
+                已开放
+              </span>
+            </div>
+
+            <h3 className="mt-5 text-xl font-bold text-slate-900">
+              高一数学
+            </h3>
+
+            <p className="mt-3 flex-1 text-sm leading-7 text-slate-500">
+              集合与逻辑、函数、不等式、指数与对数、三角函数、
+              平面向量、复数、立体几何初步、统计与概率，
+              逐步构建高中数学基础。
+            </p>
+
+            <div className="mt-6 grid grid-cols-2 gap-3 rounded-xl bg-slate-50 p-4">
               <div>
-                <span className="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700">
-                  CHAPTER 10
-                </span>
+                <p className="text-xl font-bold text-slate-900">
+                  {openModules}
+                </p>
 
-                <h2 className="mt-4 text-2xl font-bold text-slate-900">
-                  第十章 · 概率
+                <p className="mt-1 text-xs text-slate-400">
+                  已开放模块
+                </p>
+              </div>
+
+              <div>
+                <p className="text-xl font-bold text-slate-900">
+                  {openLessons}
+                </p>
+
+                <p className="mt-1 text-xs text-slate-400">
+                  已开放课程
+                </p>
+              </div>
+            </div>
+
+            <p className="mt-6 border-t border-slate-100 pt-4 text-sm font-medium text-slate-900 transition group-hover:text-blue-600">
+              进入高一数学 →
+            </p>
+          </Link>
+
+          {/* 高二数学：九章全部开放 */}
+          <Link
+            href="/grade2"
+            className="group flex flex-col rounded-2xl border border-blue-200 bg-white p-6 transition hover:border-blue-300 hover:shadow-sm"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-xs font-semibold text-blue-600">
+                GRADE 11
+              </span>
+
+              <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-600">
+                九章全部开放
+              </span>
+            </div>
+
+            <h3 className="mt-5 text-xl font-bold text-slate-900">
+              高二数学
+            </h3>
+
+            <p className="mt-3 flex-1 text-sm leading-7 text-slate-500">
+              直线与方程、圆与方程、圆锥曲线与方程、数列、导数及其应用、空间向量与立体几何、计数原理、概率、统计九章已全部开放，
+              共三十节课程，覆盖解析几何、数列、导数、空间向量、计数、概率与统计。
+              可按教材顺序学习，也可进入专题训练巩固。
+            </p>
+
+            <div className="mt-6 grid grid-cols-2 gap-3 rounded-xl bg-slate-50 p-4">
+              <div>
+                <p className="text-xl font-bold text-slate-900">
+                  {grade2OpenChapters}
+                </p>
+
+                <p className="mt-1 text-xs text-slate-400">
+                  已开放模块
+                </p>
+              </div>
+
+              <div>
+                <p className="text-xl font-bold text-slate-900">
+                  {grade2OpenLessons}
+                </p>
+
+                <p className="mt-1 text-xs text-slate-400">
+                  已开放课程
+                </p>
+              </div>
+            </div>
+
+            <p className="mt-6 border-t border-slate-100 pt-4 text-sm font-medium text-slate-700 transition group-hover:text-blue-600">
+              进入高二数学 →
+            </p>
+          </Link>
+
+          {/* 高三数学 */}
+          <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6">
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-xs font-semibold text-slate-400">
+                GRADE 12
+              </span>
+
+              <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-500">
+                建设中
+              </span>
+            </div>
+
+            <h3 className="mt-5 text-xl font-bold text-slate-900">
+              高三数学
+            </h3>
+
+            <p className="mt-3 flex-1 text-sm leading-7 text-slate-500">
+              计划提供高考一轮复习、
+              专题突破、真题训练和综合提升内容，
+              帮助学生建立系统的复习框架。
+            </p>
+
+            <div className="mt-6 rounded-xl bg-slate-50 p-4">
+              <p className="text-xs font-medium text-slate-500">
+                规划内容
+              </p>
+
+              <div className="mt-3 flex flex-wrap gap-2">
+                {[
+                  "一轮复习",
+                  "专题突破",
+                  "真题训练",
+                  "综合提升",
+                ].map((item) => (
+                  <span
+                    key={item}
+                    className="rounded-md bg-white px-2 py-1 text-xs text-slate-500"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <p className="mt-6 border-t border-slate-100 pt-4 text-sm text-slate-400">
+              课程准备中 · 敬请期待
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div className="mx-auto max-w-6xl px-4 pb-20 sm:px-6 lg:px-8">
+        {/* =========================
+            登录后的学习概览
+        ========================= */}
+
+        {email && (
+          <section className="py-12">
+            <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">
+                  我的学习概览
                 </h2>
 
-                <p className="mt-3 max-w-2xl text-sm leading-8 text-slate-500">
-                  本章包含随机事件与样本空间、事件的关系与运算、古典概型、
-                  概率的基本性质及概率综合应用五节课程，帮助你逐步掌握概率分析与计算方法。
-                </p>
-
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {[
-                    "随机事件与样本空间",
-                    "事件的关系与运算",
-                    "古典概型",
-                    "概率的基本性质",
-                    "概率综合应用",
-                  ].map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-lg bg-slate-50 px-3 py-1.5 text-xs text-slate-500"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
-                <Link
-                  href="/grade1/probability"
-                  className="mt-6 inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
-                >
-                  进入概率课程 →
-                </Link>
-              </div>
-
-              <div className="rounded-xl bg-blue-50/60 p-6">
-                <p className="text-xs font-semibold text-blue-700">
-                  章节教学进度
-                </p>
-
-                <p className="mt-4 text-3xl font-bold text-slate-900">
-                  5 / 5
-                </p>
-
-                <div className="mt-4 h-2 overflow-hidden rounded-full bg-blue-100">
-                  <div className="h-full w-full rounded-full bg-blue-600" />
-                </div>
-
-                <p className="mt-4 text-sm text-slate-600">
-                  五节教学课程全部开放
-                </p>
-
-                <p className="mt-2 text-xs leading-6 text-slate-400">
-                  本章五节课程均已开放，可从课程目录逐节进入学习。
+                <p className="mt-1 text-sm text-slate-500">
+                  根据你的云端练习记录自动统计。
                 </p>
               </div>
-            </div>
-          </div>
-        </section>
 
-        {/* ========================================
-            待开发章节：全部章节开放后自动隐藏
-        ======================================== */}
-
-        {comingChapters.length > 0 && (
-        <section className="border-t border-slate-200 py-10">
-          <div>
-            <p className="text-xs font-semibold tracking-wide text-slate-400">
-              COMING NEXT
-            </p>
-
-            <h2 className="mt-3 text-2xl font-bold text-slate-900">
-              后续课程
-            </h2>
-
-            <p className="mt-3 text-sm leading-7 text-slate-500">
-              高一数学剩余1个章节将逐步开发，
-              目前尚未开放学习入口。
-            </p>
-          </div>
-
-          <div className="mt-7 grid gap-4 md:grid-cols-2">
-            {comingChapters.map((chapter) => (
-              <div
-                key={chapter.number}
-                className="rounded-2xl border border-slate-200 bg-white p-6"
+              <Link
+                href="/report"
+                className="text-sm font-medium text-slate-500 transition hover:text-blue-600"
               >
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-sm font-semibold text-slate-400">
-                    {chapter.number}
-                  </span>
+                查看完整学习报告 →
+              </Link>
+            </div>
 
-                  <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-400">
-                    待开放
-                  </span>
-                </div>
-
-                <h3 className="mt-5 text-lg font-bold text-slate-800">
-                  {chapter.title}
-                </h3>
-
-                <p className="mt-3 min-h-20 text-sm leading-7 text-slate-500">
-                  {chapter.description}
-                </p>
-
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {chapter.topics.slice(0, 3).map((topic) => (
-                    <span
-                      key={topic}
-                      className="rounded-lg bg-slate-50 px-2.5 py-1.5 text-xs text-slate-400"
-                    >
-                      {topic}
-                    </span>
-                  ))}
-                </div>
-
-                <div className="mt-5 border-t border-slate-100 pt-4 text-xs text-slate-400">
-                  课程准备中
-                </div>
+            {statsLoading ? (
+              <div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-400">
+                正在读取学习数据...
               </div>
-            ))}
-          </div>
-        </section>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 border-y border-slate-200 bg-white sm:grid-cols-4">
+                  <StatItem
+                    label="累计答题"
+                    value={String(totalAttempts)}
+                    suffix="题次"
+                  />
+
+                  <StatItem
+                    label="答对"
+                    value={String(correctAttempts)}
+                    suffix="题次"
+                  />
+
+                  <StatItem
+                    label="答错"
+                    value={String(wrongAttempts)}
+                    suffix="题次"
+                  />
+
+                  <StatItem
+                    label="正确率"
+                    value={`${accuracy}%`}
+                  />
+                </div>
+
+                <div className="mt-4 grid gap-4 md:grid-cols-2">
+                  {/* 最近学习 */}
+                  <div className="rounded-xl border border-slate-200 bg-white p-5">
+                    <p className="text-xs text-slate-400">
+                      最近学习
+                    </p>
+
+                    <p className="mt-2 font-semibold text-slate-800">
+                      {latestTopic ?? "还没有练习记录"}
+                    </p>
+
+                    <p className="mt-2 text-sm leading-6 text-slate-500">
+                      {totalAttempts > 0
+                        ? "可以继续完成相关专题练习，巩固刚刚学习过的内容。"
+                        : "完成第一道练习后，这里会显示最近练习的专题。"}
+                    </p>
+                  </div>
+
+                  {/* 正确率 */}
+                  <div className="rounded-xl border border-slate-200 bg-white p-5">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-slate-400">
+                        当前正确率
+                      </p>
+
+                      <span className="text-sm font-semibold text-slate-800">
+                        {accuracy}%
+                      </span>
+                    </div>
+
+                    <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100">
+                      <div
+                        className="h-full rounded-full bg-blue-600 transition-all"
+                        style={{
+                          width: `${accuracy}%`,
+                        }}
+                      />
+                    </div>
+
+                    <p className="mt-3 text-sm leading-6 text-slate-500">
+                      {getAccuracyMessage(
+                        accuracy,
+                        totalAttempts
+                      )}
+                    </p>
+                  </div>
+                </div>
+
+                {totalAttempts === 0 && (
+                  <div className="mt-4 rounded-xl border border-dashed border-slate-300 bg-white px-5 py-4">
+                    <p className="text-sm text-slate-500">
+                      你还没有答题记录。
+                      <Link
+                        href="/practice"
+                        className="ml-1 font-medium text-blue-600"
+                      >
+                        去完成第一道练习 →
+                      </Link>
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
+          </section>
         )}
 
-        {/* ========================================
-            完整课程目录
-        ======================================== */}
+        {/* 未登录提示 */}
+        {!checkingUser && !email && (
+          <section className="py-12">
+            <div className="flex flex-col justify-between gap-5 rounded-2xl border border-slate-200 bg-white p-6 sm:flex-row sm:items-center">
+              <div>
+                <h2 className="font-bold text-slate-900">
+                  登录彻凌数学，保存学习记录
+                </h2>
 
-        <section className="border-t border-slate-200 py-10">
-          <div className="mb-7">
-            <p className="text-xs font-semibold tracking-wide text-blue-600">
-              CURRICULUM
-            </p>
+                <p className="mt-2 text-sm leading-6 text-slate-500">
+                  登录账号后，
+                  练习记录、错题和学习数据将保存到云端，
+                  方便在不同设备之间同步。
+                </p>
+              </div>
 
-            <h2 className="mt-3 text-2xl font-bold text-slate-900">
-              高一数学完整目录
-            </h2>
+              <Link
+                href="/login"
+                className="shrink-0 rounded-lg bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white transition hover:bg-slate-700"
+              >
+                登录 / 注册
+              </Link>
+            </div>
+          </section>
+        )}
 
-            <p className="mt-3 text-sm leading-7 text-slate-500">
-              全部规划10个章节，
-              已开放的章节可以直接进入学习。
-            </p>
-          </div>
-
-          <div className="divide-y divide-slate-200 border-y border-slate-200">
-            {chapters.map((chapter) => (
-              <ChapterRow
-                key={chapter.number}
-                chapter={chapter}
-              />
-            ))}
-          </div>
-        </section>
-
-        {/* ========================================
+        {/* =========================
             学习工具
-        ======================================== */}
+        ========================= */}
 
-        <section className="border-t border-slate-200 py-10">
-          <div className="mb-7">
-            <p className="text-xs font-semibold tracking-wide text-blue-600">
-              STUDY TOOLS
-            </p>
-
-            <h2 className="mt-3 text-2xl font-bold text-slate-900">
-              配套学习工具
+        <section className="border-t border-slate-200 py-12">
+          <div className="mb-6">
+            <h2 className="text-xl font-bold text-slate-900">
+              学习工具
             </h2>
 
-            <p className="mt-3 text-sm leading-7 text-slate-500">
-              结合知识学习、专题训练、错题复习和学习报告，
-              提高知识掌握程度。
+            <p className="mt-2 text-sm text-slate-500">
+              从知识学习到专题训练，
+              再通过错题复习和学习报告检查掌握情况。
             </p>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
-            <ToolCard
-              href="/practice"
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <EntryCard
               number="01"
+              title="知识学习"
+              description="按照完整课程目录，系统学习高中数学知识点。"
+              href="#course-modules"
+              action="进入课程"
+            />
+
+            <EntryCard
+              number="02"
               title="专题训练"
-              description={`当前题库包含 ${practiceTopics.length} 个专题、${questions.length} 道练习题。支持在线作答及自动判题。`}
+              description="在线选择答案，自动判题并查看详细解析。"
+              href="/practice"
               action="开始做题"
             />
 
-            <ToolCard
-              href="/mistakes"
-              number="02"
+            <EntryCard
+              number="03"
               title="我的错题"
-              description="整理练习中答错的题目，可以按章节和专题查看，针对薄弱知识进行复习。"
+              description="保存答错的题目，针对薄弱内容集中复习。"
+              href="/mistakes"
               action="查看错题"
             />
 
-            <ToolCard
-              href="/report"
-              number="03"
+            <EntryCard
+              number="04"
               title="学习报告"
-              description="根据云端答题记录统计正确率，分析不同章节和专题的掌握情况。"
+              description="查看答题次数、正确率和不同专题的表现。"
+              href="/report"
               action="查看报告"
             />
           </div>
         </section>
 
-        {/* ========================================
-            品牌区域
-        ======================================== */}
 
-        <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-7 sm:p-9">
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm font-semibold text-blue-600">
-                彻凌数学
-              </p>
 
-              <h2 className="mt-3 text-2xl font-bold text-slate-900">
-                山海连云，巍巍交大。
-              </h2>
+        {/* =========================
+            高一、高二课程建设进度
+        ========================= */}
 
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-500">
-                从基础概念开始，
-                通过知识讲解、典型例题、互动练习和错题复习，
-                一步一步建立自己的数学知识体系。
-              </p>
+        <section className="border-t border-slate-200 py-12">
+          <div className="grid gap-4 md:grid-cols-2">
+            {/* 高一课程进度 */}
+            <div className="flex flex-col justify-between gap-6 rounded-2xl border border-slate-200 bg-white p-6 sm:p-7">
+              <div>
+                <p className="text-xs font-semibold text-blue-600">
+                  CURRICULUM PROGRESS · GRADE 10
+                </p>
+
+                <h2 className="mt-3 text-xl font-bold text-slate-900">
+                  高一数学课程建设进度
+                </h2>
+
+                <p className="mt-3 text-sm leading-7 text-slate-500">
+                  高一数学共规划十个模块，目前十个模块均已开放，
+                  共五十节知识课程，涵盖从集合、函数到统计与概率的主要内容。
+                </p>
+
+                <p className="mt-4 text-xs text-slate-400">
+                  这里显示的是课程开放进度，不代表学生个人的学习完成度。
+                </p>
+              </div>
+
+              <div className="rounded-xl bg-slate-50 p-5">
+                <div className="flex items-end justify-between">
+                  <span className="text-3xl font-bold text-slate-900">
+                    {openPercent}%
+                  </span>
+
+                  <span className="pb-1 text-sm text-slate-400">
+                    {openModules} / {totalModules} 模块
+                  </span>
+                </div>
+
+                <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-200">
+                  <div
+                    className="h-full rounded-full bg-blue-600"
+                    style={{
+                      width: `${openPercent}%`,
+                    }}
+                  />
+                </div>
+
+                <p className="mt-4 text-xs text-slate-500">
+                  已开放 {openLessons} 节课程
+                </p>
+
+                <Link
+                  href="#course-modules"
+                  className="mt-4 inline-flex text-sm font-medium text-slate-700 transition hover:text-blue-600"
+                >
+                  查看高一课程 →
+                </Link>
+              </div>
             </div>
 
-            <Link
-              href="/grade1/probability"
-              className="shrink-0 rounded-xl bg-slate-900 px-6 py-3 text-center text-sm font-medium text-white transition hover:bg-slate-700"
-            >
-              继续学习 →
-            </Link>
+            {/* 高二课程进度 */}
+            <div className="flex flex-col justify-between gap-6 rounded-2xl border border-blue-100 bg-white p-6 sm:p-7">
+              <div>
+                <p className="text-xs font-semibold text-blue-600">
+                  CURRICULUM PROGRESS · GRADE 11
+                </p>
+
+                <h2 className="mt-3 text-xl font-bold text-slate-900">
+                  高二数学课程建设进度
+                </h2>
+
+                <p className="mt-3 text-sm leading-7 text-slate-500">
+                  高二数学九章三十节课程已全部开放，覆盖直线与方程、圆与方程、圆锥曲线、数列、导数、空间向量、计数、概率与统计。
+                </p>
+
+                <p className="mt-4 text-xs text-slate-400">
+                  当前进度按已开放课程节数统计。
+                </p>
+              </div>
+
+              <div className="rounded-xl bg-slate-50 p-5">
+                <div className="flex items-end justify-between">
+                  <span className="text-3xl font-bold text-slate-900">
+                    {grade2Percent}%
+                  </span>
+
+                  <span className="pb-1 text-sm text-slate-400">
+                    {grade2OpenLessons} / {grade2TotalLessons} 节
+                  </span>
+                </div>
+
+                <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-200">
+                  <div
+                    className="h-full rounded-full bg-blue-600"
+                    style={{
+                      width: `${grade2Percent}%`,
+                    }}
+                  />
+                </div>
+
+                <p className="mt-4 text-xs text-slate-500">
+                  已开放 {grade2OpenChapters} / {grade2TotalChapters} 章
+                </p>
+
+                <Link
+                  href="/grade2"
+                  className="mt-4 inline-flex text-sm font-medium text-slate-700 transition hover:text-blue-600"
+                >
+                  查看高二课程 →
+                </Link>
+              </div>
+            </div>
           </div>
         </section>
 
-        <div className="mt-8">
-          <Link
-            href="/"
-            className="text-sm font-medium text-slate-500 transition hover:text-blue-600"
-          >
-            ← 返回网站首页
-          </Link>
-        </div>
+                {/* =========================
+            最新开放模块
+        ========================= */}
+
+
+<section className="border-t border-slate-200 py-12">
+  <div className="flex flex-col justify-between gap-6 rounded-2xl border border-blue-100 bg-white p-6 sm:flex-row sm:items-center sm:p-7">
+    <div>
+      <p className="text-xs font-medium text-blue-600">
+        高二数学 · 第九章
+      </p>
+
+      <h2 className="mt-3 text-xl font-bold text-slate-900">
+        统计
+      </h2>
+
+      <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-500">
+        从散点与列联表出发，学习回归拟合、残差与独立性检验，
+        结合交互图形、典型例题与课堂自测解释统计证据和预测范围。
+      </p>
+    </div>
+
+    <Link
+      href="/grade2/statistics"
+      className="shrink-0 rounded-lg bg-blue-600 px-5 py-3 text-center text-sm font-medium text-white transition hover:bg-blue-700"
+    >
+      学习本章课程 →
+    </Link>
+  </div>
+</section>
+
+
+        {/* =========================
+            学习方法
+        ========================= */}
+
+        <section className="border-t border-slate-200 py-12">
+          <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+            <div>
+              <p className="text-xs font-medium text-blue-600">
+                彻凌数学学习方法
+              </p>
+
+              <h2 className="mt-3 text-xl font-bold text-slate-900">
+                一个简单的学习循环
+              </h2>
+
+              <p className="mt-3 max-w-md text-sm leading-7 text-slate-500">
+                不需要一次学习很多内容。
+                把每个知识点按照
+                “理解—练习—纠错—复习”
+                的顺序完成，
+                学习效果会更加稳定。
+              </p>
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-2">
+              <MethodItem
+                number="1"
+                title="先理解知识点"
+                description="明确定义、性质和基本方法。"
+              />
+
+              <MethodItem
+                number="2"
+                title="完成对应练习"
+                description="通过题目检查是否真正掌握知识。"
+              />
+
+              <MethodItem
+                number="3"
+                title="整理错误原因"
+                description="不仅记录答案，还要找到错误原因。"
+              />
+
+              <MethodItem
+                number="4"
+                title="再次复习"
+                description="定期回看错题与薄弱知识点。"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* =========================
+            品牌区域
+        ========================= */}
+
+        <section className="border-t border-slate-200 pt-12">
+          <div className="rounded-2xl border border-slate-200 bg-white px-6 py-8 sm:px-8">
+            <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
+              <div>
+                <p className="text-sm font-semibold text-blue-600">
+                  彻凌数学
+                </p>
+
+                <h2 className="mt-3 text-2xl font-bold tracking-tight text-slate-900">
+                  山海连云，巍巍交大。
+                </h2>
+
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-500">
+                  从一个知识点开始，
+                  通过理解、练习、纠错和复习，
+                  一步一步建立属于自己的数学知识体系。
+                </p>
+              </div>
+
+              <Link
+                href="#course-modules"
+                className="shrink-0 rounded-lg bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white transition hover:bg-slate-700"
+              >
+                开始学习
+              </Link>
+            </div>
+          </div>
+        </section>
       </div>
+
+      {/* =========================
+          页脚
+      ========================= */}
+
+      <footer className="border-t border-slate-200 bg-white">
+        <div className="mx-auto flex max-w-6xl flex-col gap-5 px-4 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+          <div>
+            <p className="text-sm font-semibold text-slate-700">
+              彻凌数学
+            </p>
+
+            <p className="mt-1 text-xs text-slate-400">
+              山海连云，巍巍交大。
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-5 text-sm text-slate-400">
+            <Link
+              href="#course-modules"
+              className="hover:text-slate-700"
+            >
+              高一数学
+            </Link>
+
+            <Link
+              href="/grade2"
+              className="hover:text-slate-700"
+            >
+              高二数学
+            </Link>
+
+            <Link
+              href="/practice"
+              className="hover:text-slate-700"
+            >
+              专题训练
+            </Link>
+
+            <Link
+              href="/mistakes"
+              className="hover:text-slate-700"
+            >
+              我的错题
+            </Link>
+
+            <Link
+              href="/report"
+              className="hover:text-slate-700"
+            >
+              学习报告
+            </Link>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
 
-/* ========================================
-   章节卡片
-======================================== */
+/* =========================
+   统计组件
+========================= */
 
-function ChapterCard({
-  chapter,
-}: {
-  chapter: Chapter;
-}) {
-  if (!chapter.href) {
-    return null;
-  }
-
-  const isLatest = chapter.number === "10";
-
-  return (
-    <Link
-      href={chapter.href}
-      className={`group flex h-full flex-col rounded-2xl border bg-white p-6 transition hover:-translate-y-0.5 hover:shadow-md ${
-        isLatest
-          ? "border-blue-200 hover:border-blue-300"
-          : "border-slate-200 hover:border-blue-200"
-      }`}
-    >
-      <div className="flex items-center justify-between gap-3">
-        <span className="text-sm font-bold text-blue-600">
-          {chapter.number}
-        </span>
-
-        <div className="flex items-center gap-2">
-          {isLatest && (
-            <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600">
-              最新章节
-            </span>
-          )}
-
-          <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
-            5 / 5 已开放
-          </span>
-        </div>
-      </div>
-
-      <h3 className="mt-5 text-lg font-bold leading-7 text-slate-900 transition group-hover:text-blue-700">
-        {chapter.title}
-      </h3>
-
-      <p className="mt-3 flex-1 text-sm leading-7 text-slate-500">
-        {chapter.description}
-      </p>
-
-      <div className="mt-5 flex flex-wrap gap-2">
-        {chapter.topics.slice(0, 3).map((topic) => (
-          <span
-            key={topic}
-            className="rounded-lg bg-slate-50 px-2.5 py-1.5 text-xs text-slate-500"
-          >
-            {topic}
-          </span>
-        ))}
-      </div>
-
-      <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
-        <span className="text-xs text-slate-400">
-          {chapter.lessons} 节课程
-        </span>
-
-        <span className="text-sm font-semibold text-blue-600 transition group-hover:translate-x-1">
-          进入学习 →
-        </span>
-      </div>
-    </Link>
-  );
-}
-
-/* ========================================
-   课程总目录行
-======================================== */
-
-function ChapterRow({
-  chapter,
-}: {
-  chapter: Chapter;
-}) {
-  const open = chapter.status === "open";
-
-  const content = (
-    <div className="grid gap-4 px-3 py-6 sm:grid-cols-[45px_1fr_auto] sm:items-center">
-      <span
-        className={`text-sm font-semibold ${
-          open ? "text-blue-600" : "text-slate-400"
-        }`}
-      >
-        {chapter.number}
-      </span>
-
-      <div>
-        <div className="flex flex-wrap items-center gap-3">
-          <h3 className="font-semibold text-slate-900">
-            {chapter.title}
-          </h3>
-
-          <span
-            className={`rounded-full px-2.5 py-1 text-xs ${
-              open
-                ? "bg-emerald-50 text-emerald-700"
-                : "bg-slate-100 text-slate-400"
-            }`}
-          >
-            {open ? "已开放" : "准备中"}
-          </span>
-        </div>
-
-        <p className="mt-2 text-sm leading-7 text-slate-500">
-          {chapter.description}
-        </p>
-
-        <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
-          {chapter.topics.map((topic) => (
-            <span
-              key={topic}
-              className="text-xs text-slate-400"
-            >
-              {topic}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <span
-          className={`text-sm ${
-            open
-              ? "font-medium text-blue-600"
-              : "text-slate-400"
-          }`}
-        >
-          {open ? "进入学习 →" : "暂未开放"}
-        </span>
-      </div>
-    </div>
-  );
-
-  if (open && chapter.href) {
-    return (
-      <Link
-        href={chapter.href}
-        className="block transition hover:bg-white"
-      >
-        {content}
-      </Link>
-    );
-  }
-
-  return <div>{content}</div>;
-}
-
-/* ========================================
-   数据卡片
-======================================== */
-
-function StatCard({
+function StatItem({
   label,
   value,
   suffix,
-  description,
 }: {
   label: string;
   value: string;
-  suffix: string;
-  description: string;
+  suffix?: string;
 }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5">
+    <div className="border-b border-r border-slate-200 p-5 last:border-r-0 sm:border-b-0 sm:p-6">
       <p className="text-xs text-slate-400">
         {label}
       </p>
 
-      <div className="mt-3 flex items-end gap-2">
+      <div className="mt-3 flex items-end gap-1.5">
         <span className="text-3xl font-bold tracking-tight text-slate-900">
           {value}
         </span>
 
-        <span className="pb-1 text-sm text-slate-400">
-          {suffix}
-        </span>
+        {suffix && (
+          <span className="pb-1 text-xs text-slate-400">
+            {suffix}
+          </span>
+        )}
       </div>
-
-      <p className="mt-3 text-xs leading-6 text-slate-500">
-        {description}
-      </p>
     </div>
   );
 }
 
-/* ========================================
+/* =========================
    学习工具卡片
-======================================== */
+========================= */
 
-function ToolCard({
-  href,
+function EntryCard({
   number,
   title,
   description,
+  href,
   action,
 }: {
-  href: string;
   number: string;
   title: string;
   description: string;
+  href: string;
   action: string;
 }) {
   return (
     <Link
       href={href}
-      className="group flex h-full flex-col rounded-xl border border-slate-200 bg-white p-6 transition hover:border-blue-200 hover:shadow-sm"
+      className="group rounded-xl border border-slate-200 bg-white p-5 transition hover:border-slate-300 hover:shadow-sm"
     >
-      <p className="text-xs font-semibold text-blue-600">
+      <p className="text-xs font-semibold text-slate-300">
         {number}
       </p>
 
-      <h3 className="mt-4 text-lg font-bold text-slate-900">
+      <h3 className="mt-4 font-bold text-slate-900">
         {title}
       </h3>
 
-      <p className="mt-3 flex-1 text-sm leading-7 text-slate-500">
+      <p className="mt-2 min-h-12 text-sm leading-6 text-slate-500">
         {description}
       </p>
 
-      <span className="mt-5 border-t border-slate-100 pt-4 text-sm font-semibold text-blue-600 transition group-hover:translate-x-1">
+      <p className="mt-5 text-sm font-medium text-slate-700 transition group-hover:text-blue-600">
         {action} →
-      </span>
+      </p>
     </Link>
   );
+}
+
+/* =========================
+   学习方法
+========================= */
+
+function MethodItem({
+  number,
+  title,
+  description,
+}: {
+  number: string;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="flex gap-4">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-xs font-semibold text-slate-500">
+        {number}
+      </div>
+
+      <div>
+        <h3 className="text-sm font-semibold text-slate-800">
+          {title}
+        </h3>
+
+        <p className="mt-1 text-sm leading-6 text-slate-500">
+          {description}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* =========================
+   正确率提示
+========================= */
+
+function getAccuracyMessage(
+  accuracy: number,
+  total: number
+) {
+  if (total === 0) {
+    return "完成练习后，这里会自动分析你的正确率。";
+  }
+
+  if (accuracy >= 90) {
+    return "掌握情况很好，可以尝试更综合的题目。";
+  }
+
+  if (accuracy >= 75) {
+    return "基础掌握较稳定，继续巩固易错题型。";
+  }
+
+  if (accuracy >= 60) {
+    return "还有一些知识点需要加强，建议结合错题复习。";
+  }
+
+  return "建议先回到知识点学习，再针对错题进行练习。";
 }

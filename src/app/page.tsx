@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
+import { grade2PracticeChapters, grade2PracticeTopics } from "@/data/questions";
 import { createClient } from "@/lib/supabase/client";
 
 /* =========================
@@ -84,12 +85,26 @@ const modules = [
   },
 ];
 
+// 高一：10 个模块、每个模块 5 节课程，均已开放
 const totalModules = 10;
 const openModules = modules.length;
 const openLessons = openModules * 5;
 const openPercent = Math.round(
   (openModules / totalModules) * 100
 );
+
+// 高二：直线与方程、圆与方程、圆锥曲线与方程、数列、导数及其应用、空间向量与立体几何、计数原理、概率、统计九章已全部开放
+const grade2OpenChapters = grade2PracticeChapters.length;
+const grade2TotalChapters = 9;
+const grade2OpenLessons = grade2PracticeTopics.length;
+const grade2TotalLessons = 30;
+const grade2Percent = Math.round(
+  (grade2OpenLessons / grade2TotalLessons) * 100
+);
+
+// 首页展示的全站已开放内容：高一 10 个模块 + 高二已开放章节
+const totalOpenModules = openModules + grade2OpenChapters;
+const totalOpenLessons = openLessons + grade2OpenLessons;
 
 /* =========================
    首页
@@ -292,6 +307,13 @@ export default function Home() {
                 </Link>
 
                 <Link
+                  href="/grade2"
+                  className="rounded-lg border border-blue-200 bg-blue-50 px-5 py-2.5 text-sm font-medium text-blue-700 transition hover:bg-blue-100"
+                >
+                  高二数学
+                </Link>
+
+                <Link
                   href="/practice"
                   className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
                 >
@@ -306,21 +328,21 @@ export default function Home() {
                 </Link>
               </div>
 
-              {/* 当前建设数据 */}
+              {/* 当前课程开放数据 */}
               <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4 border-t border-slate-100 pt-6">
                 <div>
                   <p className="text-2xl font-bold text-slate-900">
-                    {openModules}
+                    {totalOpenModules}
                   </p>
 
                   <p className="mt-1 text-xs text-slate-400">
-                    已开放模块
+                    已开放模块 / 章节
                   </p>
                 </div>
 
                 <div>
                   <p className="text-2xl font-bold text-slate-900">
-                    {openLessons}
+                    {totalOpenLessons}
                   </p>
 
                   <p className="mt-1 text-xs text-slate-400">
@@ -330,81 +352,23 @@ export default function Home() {
 
                 <div>
                   <p className="text-2xl font-bold text-slate-900">
-                    {openPercent}%
+                    {grade2OpenChapters}
                   </p>
 
                   <p className="mt-1 text-xs text-slate-400">
-                    高一课程开放进度
+                    高二已开放章节
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* 右侧推荐：第十章概率 */}
-            <div className="rounded-2xl border border-blue-100 bg-blue-50/40 p-6">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-medium text-slate-400">
-                  最新推荐
-                </p>
-
-                <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-600">
-                  已开放
-                </span>
-              </div>
-
-              <p className="mt-5 text-xs font-medium text-blue-600">
-                MODULE 10
-              </p>
-
-              <h2 className="mt-2 text-xl font-bold text-slate-900">
-                概率
-              </h2>
-
-              <p className="mt-3 text-sm leading-7 text-slate-500">
-                从随机事件与样本空间开始，
-                依次学习事件关系、古典概型和概率的基本性质，
-                最后通过综合应用巩固概率知识。
-              </p>
-
-              <div className="mt-5 flex flex-wrap gap-2">
-                {[
-                  "随机事件",
-                  "事件运算",
-                  "古典概型",
-                  "综合应用",
-                ].map((item) => (
-                  <span
-                    key={item}
-                    className="rounded-md bg-white px-2 py-1 text-xs text-slate-500"
-                  >
-                    {item}
-                  </span>
-                ))}
-              </div>
-
-              <div className="mt-6 border-t border-blue-100 pt-5">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-400">
-                    课程开放情况
-                  </span>
-
-                  <span className="font-medium text-emerald-600">
-                    5 / 5
-                  </span>
-                </div>
-
-                <div className="mt-3 h-2 overflow-hidden rounded-full bg-blue-100">
-                  <div className="h-full w-full rounded-full bg-blue-600" />
-                </div>
-              </div>
-
-              <Link
-                href="/grade1/probability"
-                className="mt-6 inline-flex text-sm font-medium text-slate-900 transition hover:text-blue-600"
-              >
-                进入概率课程 →
-              </Link>
-            </div>
+    <div className="rounded-2xl border border-blue-100 bg-blue-50/40 p-6">
+      <div className="flex items-center justify-between gap-3"><p className="text-xs font-medium text-slate-400">最新开放章节</p><span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-600">第九章已开放</span></div>
+      <p className="mt-5 text-xs font-medium text-blue-600">GRADE 11 · CHAPTER 09</p><h2 className="mt-2 text-xl font-bold text-slate-900">统计</h2><p className="mt-3 text-sm leading-7 text-slate-500">学习线性回归分析与独立性检验，通过散点、残差和列联表理解统计关联及其解释边界。</p>
+      <div className="mt-5 flex flex-wrap gap-2">{["线性回归分析", "独立性检验"].map((title) => <span key={title} className="rounded-md bg-white px-2 py-1 text-xs text-slate-500">{title}</span>)}</div>
+      <div className="mt-6 border-t border-blue-100 pt-5"><div className="flex justify-between text-xs"><span className="text-slate-400">本章课程开放情况</span><span className="font-medium text-emerald-600">2 / 2</span></div><div className="mt-3 h-2 rounded-full bg-blue-600" /></div>
+      <Link href="/grade2/statistics" className="mt-6 inline-flex text-sm font-medium text-slate-900 hover:text-blue-600">进入高二第九章 →</Link>
+    </div>
           </div>
         </div>
       </section>
@@ -431,7 +395,7 @@ export default function Home() {
           </div>
 
           <span className="text-xs text-slate-400">
-            当前优先建设高一数学
+            高一课程已全部开放 · 高二课程已全部开放
           </span>
         </div>
 
@@ -488,15 +452,18 @@ export default function Home() {
             </p>
           </Link>
 
-          {/* 高二数学 */}
-          <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6">
+          {/* 高二数学：九章全部开放 */}
+          <Link
+            href="/grade2"
+            className="group flex flex-col rounded-2xl border border-blue-200 bg-white p-6 transition hover:border-blue-300 hover:shadow-sm"
+          >
             <div className="flex items-center justify-between gap-3">
-              <span className="text-xs font-semibold text-slate-400">
+              <span className="text-xs font-semibold text-blue-600">
                 GRADE 11
               </span>
 
-              <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-500">
-                建设中
+              <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-600">
+                九章全部开放
               </span>
             </div>
 
@@ -505,23 +472,23 @@ export default function Home() {
             </h3>
 
             <p className="mt-3 flex-1 text-sm leading-7 text-slate-500">
-              计划围绕数列、空间向量、
-              解析几何、导数等知识展开，
-              进一步提升数学分析与解题能力。
+              直线与方程、圆与方程、圆锥曲线与方程、数列、导数及其应用、空间向量与立体几何、计数原理、概率、统计九章已全部开放，
+              共三十节课程，覆盖解析几何、数列、导数、空间向量、计数、概率与统计。
+              可按教材顺序学习，也可进入专题训练巩固。
             </p>
 
             <div className="mt-6 rounded-xl bg-slate-50 p-4">
-              <p className="text-xs font-medium text-slate-500">
-                规划内容
-              </p>
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs font-medium text-slate-500">
+                  当前开放内容
+                </p>
+                <span className="text-xs font-medium text-emerald-600">
+                  {grade2OpenLessons}/{grade2OpenLessons} 节
+                </span>
+              </div>
 
               <div className="mt-3 flex flex-wrap gap-2">
-                {[
-                  "数列",
-                  "空间向量",
-                  "解析几何",
-                  "导数",
-                ].map((item) => (
+                {["直线与方程 · 5 节", "圆与方程 · 3 节", "圆锥曲线 · 3 节", "数列 · 4 节", "导数 · 3 节", "空间向量 · 3 节", "计数原理 · 4 节", "概率 · 3 节", "统计 · 2 节"].map((item) => (
                   <span
                     key={item}
                     className="rounded-md bg-white px-2 py-1 text-xs text-slate-500"
@@ -532,10 +499,10 @@ export default function Home() {
               </div>
             </div>
 
-            <p className="mt-6 border-t border-slate-100 pt-4 text-sm text-slate-400">
-              课程准备中 · 敬请期待
+            <p className="mt-6 border-t border-slate-100 pt-4 text-sm font-medium text-slate-700 transition group-hover:text-blue-600">
+              进入高二数学 →
             </p>
-          </div>
+          </Link>
 
           {/* 高三数学 */}
           <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6">
@@ -788,99 +755,124 @@ export default function Home() {
           </div>
         </section>
 
+
+
         {/* =========================
-            高一已开放模块
+            高一、高二课程建设进度
         ========================= */}
 
         <section className="border-t border-slate-200 py-12">
-          <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <h2 className="text-xl font-bold text-slate-900">
-                高一数学 · 已开放模块
-              </h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            {/* 高一课程进度 */}
+            <div className="flex flex-col justify-between gap-6 rounded-2xl border border-slate-200 bg-white p-6 sm:p-7">
+              <div>
+                <p className="text-xs font-semibold text-blue-600">
+                  CURRICULUM PROGRESS · GRADE 10
+                </p>
 
-              <p className="mt-2 text-sm text-slate-500">
-                已开放 {openModules} 个知识模块，共 {openLessons} 节课程。
-              </p>
+                <h2 className="mt-3 text-xl font-bold text-slate-900">
+                  高一数学课程建设进度
+                </h2>
+
+                <p className="mt-3 text-sm leading-7 text-slate-500">
+                  高一数学共规划十个模块，目前十个模块均已开放，
+                  共五十节知识课程，涵盖从集合、函数到统计与概率的主要内容。
+                </p>
+
+                <p className="mt-4 text-xs text-slate-400">
+                  这里显示的是课程开放进度，不代表学生个人的学习完成度。
+                </p>
+              </div>
+
+              <div className="rounded-xl bg-slate-50 p-5">
+                <div className="flex items-end justify-between">
+                  <span className="text-3xl font-bold text-slate-900">
+                    {openPercent}%
+                  </span>
+
+                  <span className="pb-1 text-sm text-slate-400">
+                    {openModules} / {totalModules} 模块
+                  </span>
+                </div>
+
+                <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-200">
+                  <div
+                    className="h-full rounded-full bg-blue-600"
+                    style={{
+                      width: `${openPercent}%`,
+                    }}
+                  />
+                </div>
+
+                <p className="mt-4 text-xs text-slate-500">
+                  已开放 {openLessons} 节课程
+                </p>
+
+                <Link
+                  href="/grade1"
+                  className="mt-4 inline-flex text-sm font-medium text-slate-700 transition hover:text-blue-600"
+                >
+                  查看高一课程 →
+                </Link>
+              </div>
             </div>
 
-            <Link
-              href="/grade1"
-              className="text-sm font-medium text-slate-700 hover:text-blue-600"
-            >
-              查看完整课程目录 →
-            </Link>
-          </div>
+            {/* 高二课程进度 */}
+            <div className="flex flex-col justify-between gap-6 rounded-2xl border border-blue-100 bg-white p-6 sm:p-7">
+              <div>
+                <p className="text-xs font-semibold text-blue-600">
+                  CURRICULUM PROGRESS · GRADE 11
+                </p>
 
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {modules.map((module) => (
-              <ModuleCard
-                key={module.number}
-                number={module.number}
-                title={module.title}
-                description={module.description}
-                href={module.href}
-              />
-            ))}
+                <h2 className="mt-3 text-xl font-bold text-slate-900">
+                  高二数学课程建设进度
+                </h2>
+
+                <p className="mt-3 text-sm leading-7 text-slate-500">
+                  高二数学九章三十节课程已全部开放，覆盖直线与方程、圆与方程、圆锥曲线、数列、导数、空间向量、计数、概率与统计。
+                </p>
+
+                <p className="mt-4 text-xs text-slate-400">
+                  当前进度按已开放课程节数统计。
+                </p>
+              </div>
+
+              <div className="rounded-xl bg-slate-50 p-5">
+                <div className="flex items-end justify-between">
+                  <span className="text-3xl font-bold text-slate-900">
+                    {grade2Percent}%
+                  </span>
+
+                  <span className="pb-1 text-sm text-slate-400">
+                    {grade2OpenLessons} / {grade2TotalLessons} 节
+                  </span>
+                </div>
+
+                <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-200">
+                  <div
+                    className="h-full rounded-full bg-blue-600"
+                    style={{
+                      width: `${grade2Percent}%`,
+                    }}
+                  />
+                </div>
+
+                <p className="mt-4 text-xs text-slate-500">
+                  已开放 {grade2OpenChapters} / {grade2TotalChapters} 章
+                </p>
+
+                <Link
+                  href="/grade2"
+                  className="mt-4 inline-flex text-sm font-medium text-slate-700 transition hover:text-blue-600"
+                >
+                  查看高二课程 →
+                </Link>
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* =========================
-            建设进度
-        ========================= */}
-
-        <section className="border-t border-slate-200 py-12">
-          <div className="grid gap-6 rounded-2xl border border-slate-200 bg-white p-6 sm:p-7 lg:grid-cols-[1fr_280px] lg:items-center">
-            <div>
-              <p className="text-xs font-semibold text-blue-600">
-                CURRICULUM PROGRESS
-              </p>
-
-              <h2 className="mt-3 text-xl font-bold text-slate-900">
-                高一数学课程建设进度
-              </h2>
-
-
-              <p className="mt-3 max-w-xl text-sm leading-7 text-slate-500">
-              高一数学共规划十个模块，目前十个模块均已开放，
-              共五十节知识课程，涵盖从集合、函数到统计与概率的主要内容。
-              </p>
-
-
-              <p className="mt-4 text-xs text-slate-400">
-                注：这里显示的是课程开放进度，
-                不代表学生个人的学习完成度。
-              </p>
-            </div>
-
-            <div className="rounded-xl bg-slate-50 p-5">
-              <div className="flex items-end justify-between">
-                <span className="text-3xl font-bold text-slate-900">
-                  {openPercent}%
-                </span>
-
-                <span className="pb-1 text-sm text-slate-400">
-                  {openModules} / {totalModules} 模块
-                </span>
-              </div>
-
-              <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-200">
-                <div
-                  className="h-full rounded-full bg-blue-600"
-                  style={{
-                    width: `${openPercent}%`,
-                  }}
-                />
-              </div>
-
-              <p className="mt-4 text-xs text-slate-500">
-                已开放 {openLessons} 节课程
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* =========================
+                {/* =========================
             最新开放模块
         ========================= */}
 
@@ -889,25 +881,24 @@ export default function Home() {
   <div className="flex flex-col justify-between gap-6 rounded-2xl border border-blue-100 bg-white p-6 sm:flex-row sm:items-center sm:p-7">
     <div>
       <p className="text-xs font-medium text-blue-600">
-        最新开放 · MODULE 10
+        高二数学 · 第九章
       </p>
 
       <h2 className="mt-3 text-xl font-bold text-slate-900">
-        概率
+        统计
       </h2>
 
       <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-500">
-        本章包含随机事件与样本空间、事件的关系与运算、古典概型、
-        概率的基本性质和概率综合应用五个专题。
-        可以通过专题训练掌握概率计算与事件分析方法。
+        从散点与列联表出发，学习回归拟合、残差与独立性检验，
+        结合交互图形、典型例题与课堂自测解释统计证据和预测范围。
       </p>
     </div>
 
     <Link
-      href="/grade1/probability"
+      href="/grade2/statistics"
       className="shrink-0 rounded-lg bg-blue-600 px-5 py-3 text-center text-sm font-medium text-white transition hover:bg-blue-700"
     >
-      进入概率课程 →
+      学习本章课程 →
     </Link>
   </div>
 </section>
@@ -1024,6 +1015,13 @@ export default function Home() {
             </Link>
 
             <Link
+              href="/grade2"
+              className="hover:text-slate-700"
+            >
+              高二数学
+            </Link>
+
+            <Link
               href="/practice"
               className="hover:text-slate-700"
             >
@@ -1120,51 +1118,6 @@ function EntryCard({
 
       <p className="mt-5 text-sm font-medium text-slate-700 transition group-hover:text-blue-600">
         {action} →
-      </p>
-    </Link>
-  );
-}
-
-/* =========================
-   高一数学模块卡片
-========================= */
-
-function ModuleCard({
-  number,
-  title,
-  description,
-  href,
-}: {
-  number: string;
-  title: string;
-  description: string;
-  href: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className="group flex flex-col rounded-xl border border-slate-200 bg-white p-5 transition hover:border-slate-300 hover:shadow-sm"
-    >
-      <div className="flex items-center justify-between gap-3">
-        <span className="text-sm font-semibold text-blue-600">
-          {number}
-        </span>
-
-        <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-600">
-          5 / 5 已开放
-        </span>
-      </div>
-
-      <h3 className="mt-4 font-bold leading-7 text-slate-900">
-        {title}
-      </h3>
-
-      <p className="mt-3 flex-1 text-sm leading-7 text-slate-500">
-        {description}
-      </p>
-
-      <p className="mt-5 border-t border-slate-100 pt-4 text-sm font-medium text-slate-700 transition group-hover:text-blue-600">
-        查看模块 →
       </p>
     </Link>
   );

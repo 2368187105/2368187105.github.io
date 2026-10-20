@@ -1,6 +1,6 @@
-
 "use client";
 
+import { vectorText, vectorSvgLabel } from "@/components/VectorText";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { BlockMath } from "react-katex";
@@ -142,26 +142,22 @@ export default function VectorDotProductPage() {
         {/* 面包屑 */}
         <div className="mb-10 flex flex-wrap items-center gap-2 text-sm text-slate-400">
           <Link href="/" className="hover:text-slate-700">
-            首页
-          </Link>
-          <span>/</span>
+            {vectorText("首页")}</Link>
+          <span>{vectorText("/")}</span>
 
           <Link href="/grade1" className="hover:text-slate-700">
-            高一数学
-          </Link>
-          <span>/</span>
+            {vectorText("高一数学")}</Link>
+          <span>{vectorText("/")}</span>
 
           <Link
             href="/grade1/vectors"
             className="hover:text-slate-700"
           >
-            平面向量
-          </Link>
-          <span>/</span>
+            {vectorText("平面向量")}</Link>
+          <span>{vectorText("/")}</span>
 
           <span className="text-slate-600">
-            平面向量的数量积
-          </span>
+            {vectorText("平面向量的数量积")}</span>
         </div>
 
         {/* 页面标题 */}
@@ -169,39 +165,30 @@ export default function VectorDotProductPage() {
           <div className="max-w-3xl">
             <div className="flex flex-wrap items-center gap-3">
               <span className="text-sm font-medium text-blue-600">
-                第 06 章 · 第 04 节
-              </span>
+                {vectorText("第 06 章 · 第 04 节")}</span>
 
               <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600">
-                核心知识点
-              </span>
+                {vectorText("核心知识点")}</span>
             </div>
 
             <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-              平面向量的数量积
-            </h1>
+              {vectorText("平面向量的数量积")}</h1>
 
             <p className="mt-4 max-w-2xl text-base leading-8 text-slate-500">
-              数量积是平面向量的重要运算。
-              它建立了向量的长度、夹角与坐标之间的联系，
-              可以帮助我们计算向量夹角、判断垂直关系，
-              并解决几何中的长度问题。
-            </p>
+              {vectorText("数量积是平面向量的重要运算。 它建立了向量的长度、夹角与坐标之间的联系， 可以帮助我们计算向量夹角、判断垂直关系， 并解决几何中的长度问题。")}</p>
 
             <div className="mt-7 flex flex-wrap gap-3">
               <a
                 href="#definition"
                 className="rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-700"
               >
-                开始学习
-              </a>
+                {vectorText("开始学习")}</a>
 
               <a
                 href="#quiz"
                 className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
               >
-                即时检测
-              </a>
+                {vectorText("即时检测")}</a>
             </div>
           </div>
         </section>
@@ -218,32 +205,23 @@ export default function VectorDotProductPage() {
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                已知两个非零向量 a、b，
-                它们的夹角为 θ。
-                我们把它们的模的乘积与夹角余弦的乘积，
-                叫作这两个向量的数量积。
-              </p>
+                {vectorText("已知两个非零向量 a、b， 它们的夹角为 θ。 我们把它们的模的乘积与夹角余弦的乘积， 叫作这两个向量的数量积。")}</p>
 
               <FormulaBox
                 math={String.raw`\overrightarrow{a}\cdot\overrightarrow{b}=|\overrightarrow{a}||\overrightarrow{b}|\cos\theta`}
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                其中，θ 表示两个非零向量之间的夹角，
-                其取值范围为：
-              </p>
+                {vectorText("其中，θ 表示两个非零向量之间的夹角， 其取值范围为：")}</p>
 
               <FormulaBox
                 math={String.raw`0^\circ\leq\theta\leq180^\circ`}
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                数量积也叫作
-                <strong className="text-slate-900">
-                  {" "}点积或内积
-                </strong>
-                ，通常用一个圆点表示。
-              </p>
+                {vectorText("数量积也叫作")}<strong className="text-slate-900">
+                  {vectorText(" ")}{vectorText("点积或内积")}</strong>
+                {vectorText("，通常用一个圆点表示。")}</p>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 <InfoCard
@@ -258,11 +236,7 @@ export default function VectorDotProductPage() {
               </div>
 
               <Note>
-                数量积与向量加法不同。
-                向量加法的结果仍然是向量，
-                但两个向量的数量积是一个实数。
-                同时规定，零向量与任意向量的数量积为 0。
-              </Note>
+                {vectorText("数量积与向量加法不同。 向量加法的结果仍然是向量， 但两个向量的数量积是一个实数。 同时规定，零向量与任意向量的数量积为 0。")}</Note>
             </section>
 
             {/* 第二部分 */}
@@ -277,45 +251,34 @@ export default function VectorDotProductPage() {
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                将两个非零向量的起点放在一起，
-                它们之间形成一个夹角 θ。
-                数量积的值不仅与两个向量的模有关，
-                还与夹角的大小有关。
-              </p>
+                {vectorText("将两个非零向量的起点放在一起， 它们之间形成一个夹角 θ。 数量积的值不仅与两个向量的模有关， 还与夹角的大小有关。")}</p>
 
               <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white p-5">
                 <AngleDiagram />
 
                 <p className="mt-3 text-center text-xs text-slate-400">
-                  两个向量的夹角及一个向量在另一向量方向上的投影
-                </p>
+                  {vectorText("两个向量的夹角及一个向量在另一向量方向上的投影")}</p>
               </div>
 
               <h3 className="mt-8 text-base font-semibold text-slate-900">
-                投影的概念
-              </h3>
+                {vectorText("投影的概念")}</h3>
 
               <p className="mt-3 text-sm leading-8 text-slate-600">
-                对非零向量 a 和 b，
-                向量 b 在向量 a 方向上的数量投影为：
-              </p>
+                {vectorText("对非零向量 a 和 b， 向量 b 在向量 a 方向上的数量投影为：")}</p>
 
               <FormulaBox
                 math={String.raw`|\overrightarrow{b}|\cos\theta`}
               />
 
               <p className="mt-4 text-sm leading-8 text-slate-600">
-                因此，数量积也可以理解为：
-                向量 a 的模乘以向量 b 在 a 方向上的数量投影。
-              </p>
+                {vectorText("因此，数量积也可以理解为： 向量 a 的模乘以向量 b 在 a 方向上的数量投影。")}</p>
 
               <FormulaBox
                 math={String.raw`\overrightarrow{a}\cdot\overrightarrow{b}=|\overrightarrow{a}|(|\overrightarrow{b}|\cos\theta)`}
               />
 
               <h3 className="mt-8 text-base font-semibold text-slate-900">
-                夹角对数量积的影响
-              </h3>
+                {vectorText("夹角对数量积的影响")}</h3>
 
               <div className="mt-5 space-y-4">
                 <RuleCard
@@ -338,11 +301,7 @@ export default function VectorDotProductPage() {
               </div>
 
               <Note>
-                当两个向量都非零时，
-                数量积为正数，说明夹角为锐角或零角；
-                数量积为负数，说明夹角为钝角或平角；
-                数量积为零，说明两个向量垂直。
-              </Note>
+                {vectorText("当两个向量都非零时， 数量积为正数，说明夹角为锐角或零角； 数量积为负数，说明夹角为钝角或平角； 数量积为零，说明两个向量垂直。")}</Note>
             </section>
 
             {/* 第三部分 */}
@@ -389,23 +348,17 @@ export default function VectorDotProductPage() {
               </div>
 
               <h3 className="mt-8 text-base font-semibold text-slate-900">
-                向量模长与数量积
-              </h3>
+                {vectorText("向量模长与数量积")}</h3>
 
               <p className="mt-3 text-sm leading-8 text-slate-600">
-                利用向量与自身的数量积，
-                可以直接得到向量的模长公式：
-              </p>
+                {vectorText("利用向量与自身的数量积， 可以直接得到向量的模长公式：")}</p>
 
               <FormulaBox
                 math={String.raw`|\overrightarrow{a}|=\sqrt{\overrightarrow{a}\cdot\overrightarrow{a}}`}
               />
 
               <Note>
-                数量积满足交换律、数乘结合律和分配律，
-                但一般不满足结合律。
-                不要把三个向量的数量积直接写成普通实数乘法那样的结合形式。
-              </Note>
+                {vectorText("数量积满足交换律、数乘结合律和分配律， 但一般不满足结合律。 不要把三个向量的数量积直接写成普通实数乘法那样的结合形式。")}</Note>
             </section>
 
             {/* 第四部分 */}
@@ -420,17 +373,14 @@ export default function VectorDotProductPage() {
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                在平面直角坐标系中，
-                设两个向量的坐标分别为：
-              </p>
+                {vectorText("在平面直角坐标系中， 设两个向量的坐标分别为：")}</p>
 
               <FormulaBox
                 math={String.raw`\overrightarrow{a}=(x_1,y_1),\quad\overrightarrow{b}=(x_2,y_2)`}
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                那么两个向量的数量积可以直接通过坐标计算：
-              </p>
+                {vectorText("那么两个向量的数量积可以直接通过坐标计算：")}</p>
 
               <FormulaBox
                 math={String.raw`\overrightarrow{a}\cdot\overrightarrow{b}=x_1x_2+y_1y_2`}
@@ -438,16 +388,14 @@ export default function VectorDotProductPage() {
 
               <div className="mt-6 rounded-xl border border-slate-200 bg-white p-5">
                 <p className="text-sm font-semibold text-slate-900">
-                  计算示例
-                </p>
+                  {vectorText("计算示例")}</p>
 
                 <FormulaBox
                   math={String.raw`\overrightarrow{a}=(2,3),\quad\overrightarrow{b}=(4,-1)`}
                 />
 
                 <p className="mt-4 text-sm leading-7 text-slate-600">
-                  按照对应坐标分别相乘再相加：
-                </p>
+                  {vectorText("按照对应坐标分别相乘再相加：")}</p>
 
                 <BlockMath
                   math={String.raw`\overrightarrow{a}\cdot\overrightarrow{b}=2\times4+3\times(-1)`}
@@ -457,22 +405,17 @@ export default function VectorDotProductPage() {
               </div>
 
               <h3 className="mt-8 text-base font-semibold text-slate-900">
-                向量模长的坐标公式
-              </h3>
+                {vectorText("向量模长的坐标公式")}</h3>
 
               <p className="mt-3 text-sm leading-8 text-slate-600">
-                对于向量 a=(x,y)，
-                由向量与自身的数量积可得：
-              </p>
+                {vectorText("对于向量 a=(x,y)， 由向量与自身的数量积可得：")}</p>
 
               <FormulaBox
                 math={String.raw`|\overrightarrow{a}|=\sqrt{x^2+y^2}`}
               />
 
               <Note>
-                计算数量积时不是“横坐标和纵坐标分别相乘后组成一个新向量”，
-                而是把两个乘积相加，得到一个实数。
-              </Note>
+                {vectorText("计算数量积时不是“横坐标和纵坐标分别相乘后组成一个新向量”， 而是把两个乘积相加，得到一个实数。")}</Note>
             </section>
 
             {/* 第五部分 */}
@@ -487,14 +430,10 @@ export default function VectorDotProductPage() {
               />
 
               <h3 className="mt-6 text-base font-semibold text-slate-900">
-                1. 判断两个向量是否垂直
-              </h3>
+                {vectorText("1. 判断两个向量是否垂直")}</h3>
 
               <p className="mt-3 text-sm leading-8 text-slate-600">
-                对于两个非零向量，
-                当且仅当它们的数量积等于 0 时，
-                两个向量互相垂直。
-              </p>
+                {vectorText("对于两个非零向量， 当且仅当它们的数量积等于 0 时， 两个向量互相垂直。")}</p>
 
               <FormulaBox
                 math={String.raw`\overrightarrow{a}\perp\overrightarrow{b}\iff\overrightarrow{a}\cdot\overrightarrow{b}=0`}
@@ -503,47 +442,38 @@ export default function VectorDotProductPage() {
               <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5">
                 <PerpendicularDiagram />
                 <p className="mt-3 text-center text-xs text-slate-400">
-                  两个非零向量互相垂直，夹角为 90°
-                </p>
+                  {vectorText("两个非零向量互相垂直，夹角为 90°")}</p>
               </div>
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                对于两个非零向量的坐标：
-              </p>
+                {vectorText("对于两个非零向量的坐标：")}</p>
 
               <FormulaBox
                 math={String.raw`x_1x_2+y_1y_2=0`}
               />
 
               <h3 className="mt-9 text-base font-semibold text-slate-900">
-                2. 计算两个向量的夹角
-              </h3>
+                {vectorText("2. 计算两个向量的夹角")}</h3>
 
               <p className="mt-3 text-sm leading-8 text-slate-600">
-                对两个非零向量，
-                数量积公式可以变形成求夹角的公式：
-              </p>
+                {vectorText("对两个非零向量， 数量积公式可以变形成求夹角的公式：")}</p>
 
               <FormulaBox
                 math={String.raw`\cos\theta=\frac{\overrightarrow{a}\cdot\overrightarrow{b}}{|\overrightarrow{a}||\overrightarrow{b}|}`}
               />
 
               <p className="mt-4 text-sm leading-8 text-slate-600">
-                如果已知两个向量的坐标，
-                则可以直接计算：
-              </p>
+                {vectorText("如果已知两个向量的坐标， 则可以直接计算：")}</p>
 
               <FormulaBox
                 math={String.raw`\cos\theta=\frac{x_1x_2+y_1y_2}{\sqrt{x_1^2+y_1^2}\sqrt{x_2^2+y_2^2}}`}
               />
 
               <h3 className="mt-9 text-base font-semibold text-slate-900">
-                3. 利用数量积求向量模长
-              </h3>
+                {vectorText("3. 利用数量积求向量模长")}</h3>
 
               <p className="mt-3 text-sm leading-8 text-slate-600">
-                利用数量积的分配律可以得到：
-              </p>
+                {vectorText("利用数量积的分配律可以得到：")}</p>
 
               <FormulaBox
                 math={String.raw`|\overrightarrow{a}+\overrightarrow{b}|^2=|\overrightarrow{a}|^2+2\overrightarrow{a}\cdot\overrightarrow{b}+|\overrightarrow{b}|^2`}
@@ -554,10 +484,7 @@ export default function VectorDotProductPage() {
               />
 
               <Note>
-                两个非零向量的夹角计算，
-                一般按照“先求数量积，再求模长，最后求余弦值”的顺序进行。
-                注意夹角范围是 0° 到 180°。
-              </Note>
+                {vectorText("两个非零向量的夹角计算， 一般按照“先求数量积，再求模长，最后求余弦值”的顺序进行。 注意夹角范围是 0° 到 180°。")}</Note>
             </section>
 
             {/* 第六部分 */}
@@ -670,7 +597,7 @@ export default function VectorDotProductPage() {
               />
 
               <div className="mt-6 space-y-5">
-                {questions.map((question) => {
+                {vectorText(questions.map((question) => {
                   const selected = answers[question.id];
                   const isSubmitted = Boolean(
                     submitted[question.id]
@@ -684,21 +611,20 @@ export default function VectorDotProductPage() {
                       className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6"
                     >
                       <p className="text-xs font-medium text-blue-600">
-                        第 {question.id} 题 / 共 3 题
-                      </p>
+                        {vectorText("第 ")}{vectorText(question.id)} {vectorText("题 / 共 3 题")}</p>
 
                       <h3 className="mt-4 text-base font-semibold leading-8 text-slate-900">
-                        {question.question}
+                        {vectorText(question.question)}
                       </h3>
 
-                      {question.formula && (
+                      {vectorText(question.formula && (
                         <div className="mt-4 overflow-x-auto rounded-xl bg-slate-50 p-4">
                           <BlockMath math={question.formula} />
                         </div>
-                      )}
+                      ))}
 
                       <div className="mt-5 grid gap-3">
-                        {question.options.map((option) => {
+                        {vectorText(question.options.map((option) => {
                           const chosen =
                             selected === option.key;
 
@@ -733,18 +659,18 @@ export default function VectorDotProductPage() {
                               }`}
                             >
                               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-current text-xs font-semibold">
-                                {option.key}
+                                {vectorText(option.key)}
                               </span>
 
                               <span className="pt-0.5">
-                                {option.text}
+                                {vectorText(option.text)}
                               </span>
                             </button>
                           );
-                        })}
+                        }))}
                       </div>
 
-                      {!isSubmitted ? (
+                      {vectorText(!isSubmitted ? (
                         <button
                           type="button"
                           disabled={!selected}
@@ -753,8 +679,7 @@ export default function VectorDotProductPage() {
                           }
                           className="mt-5 rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-30"
                         >
-                          提交答案
-                        </button>
+                          {vectorText("提交答案")}</button>
                       ) : (
                         <div
                           className={`mt-5 rounded-xl p-4 ${
@@ -770,13 +695,13 @@ export default function VectorDotProductPage() {
                                 : "text-red-600"
                             }`}
                           >
-                            {correct
+                            {vectorText(correct
                               ? "回答正确"
-                              : `回答错误，正确答案：${question.answer}`}
+                              : `回答错误，正确答案：${question.answer}`)}
                           </p>
 
                           <p className="mt-2 text-sm leading-7 text-slate-600">
-                            {question.explanation}
+                            {vectorText(question.explanation)}
                           </p>
 
                           <button
@@ -786,32 +711,29 @@ export default function VectorDotProductPage() {
                             }
                             className="mt-3 text-sm font-medium text-slate-600 hover:text-slate-900"
                           >
-                            重新作答 →
-                          </button>
+                            {vectorText("重新作答 →")}</button>
                         </div>
-                      )}
+                      ))}
                     </div>
                   );
-                })}
+                }))}
               </div>
 
-              {completedCount === questions.length && (
+              {vectorText(completedCount === questions.length && (
                 <div className="mt-6 rounded-xl border border-slate-200 bg-white p-6">
                   <p className="text-sm text-slate-500">
-                    本节检测已完成
-                  </p>
+                    {vectorText("本节检测已完成")}</p>
 
                   <h3 className="mt-2 text-2xl font-bold text-slate-900">
-                    {correctCount} / {questions.length} 题正确
-                  </h3>
+                    {vectorText(correctCount)} {vectorText("/ ")}{vectorText(questions.length)} {vectorText("题正确")}</h3>
 
                   <p className="mt-3 text-sm leading-7 text-slate-500">
-                    {correctCount === questions.length
+                    {vectorText(correctCount === questions.length
                       ? "三个问题全部答对，可以继续学习平面向量的综合应用。"
-                      : "建议复习数量积的坐标公式、夹角以及垂直条件，再重新作答。"}
+                      : "建议复习数量积的坐标公式、夹角以及垂直条件，再重新作答。")}
                   </p>
                 </div>
-              )}
+              ))}
             </section>
 
             {/* 底部导航 */}
@@ -820,12 +742,10 @@ export default function VectorDotProductPage() {
                 href="/grade1/vectors/coordinates"
                 className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
               >
-                ← 上一节：基本定理与坐标表示
-              </Link>
+                {vectorText("← 上一节：基本定理与坐标表示")}</Link>
 
               <span className="text-sm text-slate-400">
-                下一节：平面向量的综合应用
-              </span>
+                {vectorText("下一节：平面向量的综合应用")}</span>
             </div>
           </div>
 
@@ -833,28 +753,26 @@ export default function VectorDotProductPage() {
           <aside className="hidden lg:block">
             <div className="sticky top-24 rounded-2xl border border-slate-200 bg-white p-5">
               <p className="text-xs font-semibold text-slate-400">
-                本节学习目录
-              </p>
+                {vectorText("本节学习目录")}</p>
 
               <nav className="mt-5 space-y-3 text-sm">
-                {sections.map(([id, label]) => (
+                {vectorText(sections.map(([id, label]) => (
                   <a
                     key={id}
                     href={`#${id}`}
                     className="block text-slate-500 transition hover:text-blue-600"
                   >
-                    {label}
+                    {vectorText(label)}
                   </a>
-                ))}
+                )))}
               </nav>
 
               <div className="mt-6 border-t border-slate-100 pt-5">
                 <p className="text-xs text-slate-400">
-                  本节核心知识
-                </p>
+                  {vectorText("本节核心知识")}</p>
 
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {[
+                  {vectorText([
                     "数量积定义",
                     "夹角",
                     "投影",
@@ -866,9 +784,9 @@ export default function VectorDotProductPage() {
                       key={item}
                       className="rounded-md bg-slate-50 px-2 py-1 text-xs text-slate-500"
                     >
-                      {item}
+                      {vectorText(item)}
                     </span>
-                  ))}
+                  )))}
                 </div>
               </div>
             </div>
@@ -896,16 +814,16 @@ function SectionTitle({
     <div>
       <div className="flex items-center gap-3">
         <span className="text-xs font-semibold text-blue-600">
-          {number}
+          {vectorText(number)}
         </span>
 
         <h2 className="text-xl font-bold text-slate-900">
-          {title}
+          {vectorText(title)}
         </h2>
       </div>
 
       <p className="mt-2 pl-7 text-sm text-slate-400">
-        {subtitle}
+        {vectorText(subtitle)}
       </p>
     </div>
   );
@@ -923,11 +841,10 @@ function Note({ children }: { children: ReactNode }) {
   return (
     <div className="mt-5 rounded-xl border border-blue-100 bg-blue-50/40 px-5 py-4">
       <p className="text-xs font-semibold text-blue-600">
-        理解提示
-      </p>
+        {vectorText("理解提示")}</p>
 
       <div className="mt-2 text-sm leading-7 text-slate-600">
-        {children}
+        {vectorText(children)}
       </div>
     </div>
   );
@@ -943,11 +860,11 @@ function InfoCard({
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5">
       <p className="text-sm font-semibold text-blue-600">
-        {title}
+        {vectorText(title)}
       </p>
 
       <p className="mt-2 text-sm leading-7 text-slate-600">
-        {description}
+        {vectorText(description)}
       </p>
     </div>
   );
@@ -965,7 +882,7 @@ function RuleCard({
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5">
       <h3 className="text-sm font-semibold text-slate-900">
-        {title}
+        {vectorText(title)}
       </h3>
 
       <div className="mt-4 overflow-x-auto rounded-lg bg-slate-50 px-3 py-3">
@@ -973,7 +890,7 @@ function RuleCard({
       </div>
 
       <p className="mt-3 text-sm leading-7 text-slate-500">
-        {explanation}
+        {vectorText(explanation)}
       </p>
     </div>
   );
@@ -995,11 +912,11 @@ function ExampleCard({
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5">
       <p className="text-xs font-medium text-blue-600">
-        {number}
+        {vectorText(number)}
       </p>
 
       <h3 className="mt-3 font-semibold text-slate-900">
-        {title}
+        {vectorText(title)}
       </h3>
 
       <div className="mt-4 overflow-x-auto rounded-xl bg-slate-50 p-4">
@@ -1007,11 +924,10 @@ function ExampleCard({
       </div>
 
       <p className="mt-4 text-sm font-semibold text-slate-700">
-        分析与解答
-      </p>
+        {vectorText("分析与解答")}</p>
 
       <p className="mt-2 text-sm leading-7 text-slate-600">
-        {explanation}
+        {vectorText(explanation)}
       </p>
 
       <div className="mt-4 overflow-x-auto rounded-xl border border-emerald-100 bg-emerald-50/40 p-3">
@@ -1031,11 +947,11 @@ function MistakeTip({
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5">
       <h3 className="text-sm font-semibold text-slate-900">
-        {title}
+        {vectorText(title)}
       </h3>
 
       <p className="mt-2 text-sm leading-7 text-slate-500">
-        {description}
+        {vectorText(description)}
       </p>
     </div>
   );
@@ -1129,28 +1045,22 @@ function AngleDiagram() {
       <circle cx="110" cy="228" r="4" fill="#334155" />
 
       <text x="93" y="249" fontSize="17" fill="#334155">
-        O
-      </text>
+        {vectorSvgLabel("O")}</text>
 
       <text x="280" y="213" fontSize="19" fill="#2563eb">
-        a
-      </text>
+        {vectorSvgLabel("a")}</text>
 
       <text x="143" y="112" fontSize="19" fill="#059669">
-        b
-      </text>
+        {vectorSvgLabel("b")}</text>
 
       <text x="166" y="183" fontSize="21" fill="#64748b">
-        θ
-      </text>
+        {vectorSvgLabel("θ")}</text>
 
       <text x="230" y="252" fontSize="14" fill="#64748b">
-        投影位置
-      </text>
+        {vectorSvgLabel("投影位置")}</text>
 
       <text x="108" y="281" fontSize="14" fill="#64748b">
-        向量的数量积与模长、夹角有关
-      </text>
+        {vectorSvgLabel("向量的数量积与模长、夹角有关")}</text>
     </svg>
   );
 }
@@ -1224,24 +1134,19 @@ function PerpendicularDiagram() {
       <circle cx="125" cy="205" r="4" fill="#334155" />
 
       <text x="106" y="226" fontSize="17" fill="#334155">
-        O
-      </text>
+        {vectorSvgLabel("O")}</text>
 
       <text x="267" y="189" fontSize="19" fill="#2563eb">
-        a
-      </text>
+        {vectorSvgLabel("a")}</text>
 
       <text x="106" y="113" fontSize="19" fill="#059669">
-        b
-      </text>
+        {vectorSvgLabel("b")}</text>
 
       <text x="164" y="178" fontSize="18" fill="#64748b">
-        90°
-      </text>
+        {vectorSvgLabel("90°")}</text>
 
       <text x="280" y="246" fontSize="14" fill="#64748b">
-        数量积为 0
-      </text>
+        {vectorSvgLabel("数量积为 0")}</text>
     </svg>
   );
 }

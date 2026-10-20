@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -9,6 +8,8 @@ import {
   practiceTopics,
   questions,
 } from "@/data/questions";
+
+import { grade2PracticeTopics, grade2PracticeChapters } from "@/data/questions";
 
 /* =========================
    数据类型
@@ -37,7 +38,7 @@ type TopicStat = {
    章节名称
 ========================= */
 
-const chapterNames = [
+const grade1ChapterNames = [
   "集合与常用逻辑用语",
   "一元二次函数、方程和不等式",
   "函数的概念与性质",
@@ -49,6 +50,13 @@ const chapterNames = [
   "统计",
   "概率",
 ];
+
+type Grade = "高一" | "高二";
+const grade2TopicSet = new Set<string>(grade2PracticeTopics);
+const grade1Topics = practiceTopics.filter((topic) => !grade2TopicSet.has(topic));
+const allTopics: readonly string[] = [...new Set<string>([...practiceTopics, ...grade2PracticeTopics])];
+const knownTopics = new Set<string>(allTopics);
+const grade2ChapterNames = grade2PracticeChapters.map((chapter) => chapter.title);
 
 const questionTopicMap = new Map(
   questions.map((question) => [
@@ -62,6 +70,31 @@ const questionTopicMap = new Map(
 ========================= */
 
 const reviewAdvice: Record<string, string> = {
+  "线性回归分析": "先看散点图，再求回归系数；残差用实际值减预测值，相关不等于因果，外推需核对适用范围。",
+  "独立性检验": "列出观测与期望频数，检查随机抽样、独立观察和期望频数条件；未拒绝独立并不等于证明独立。",
+  "条件概率": "明确条件事件及其非零概率，区分独立与互斥；不放回抽样须更新剩余构成，逆向条件不能直接交换。",
+  "离散型随机变量及其分布列": "先列出全部取值并检查概率总和，再计算期望与方差；套用二项分布前核对独立、同概率等条件。",
+  "正态分布": "N(μ，σ²) 的第二个参数为方差，标准化除以标准差；结合对称性与常用标准差区间计算近似概率。",
+  "两个基本计数原理": "先明确完整方案，区分分类与分步，检查类别是否重叠以及步骤限制是否改变可选数量。",
+  "排列": "判断顺序是否影响结果，复习特殊位置优先、相邻捆绑与不相邻插空，避免漏排内部顺序。",
+  "组合": "只选元素时使用组合；至少条件可用补集，无标签等人数分组注意排除整组交换造成的重复。",
+  "二项式定理": "用通项整理指数，第 k 项对应 r=k−1，区分二项式系数与实际项的系数。",
+  "空间向量及其运算": "复习向量首尾相接、数乘与共面表示，注意数量积是实数，夹角公式要求非零向量。",
+  "空间向量的坐标表示": "由终点减起点求位移，逐分量运算，再用模与数量积公式计算距离、夹角和垂直条件。",
+  "空间向量的应用": "先找方向向量和法向量。两直线夹角用余弦，线面角用正弦；指定二面角需结合实际半平面位置。",
+  "导数的概念": "复习平均变化率、导数定义与切线方程，区分增量趋近零和增量等于零。",
+  "导数的运算": "先辨认函数结构，复习乘积、商与链式法则，注意定义域和内层导数。",
+  "导数在研究函数中的应用": "先确定定义域，再列表判断导数符号；极值检查变号，闭区间最值必须比较端点。",
+  "数列": "复习通项与递推关系；由部分和求通项时，分别检查首项与 n≥2 的情况。",
+  "等差数列": "核对首项、公差和项数，复习通项及首末配对求和，注意 n−1 个公差。",
+  "等比数列": "复习非零项、公比和通项；求和先区分 q=1 与 q≠1，增长题核对变化次数。",
+  "数学归纳法": "按起点验证、归纳假设、递推证明与结论四个环节复习，不能用有限次验证替代证明。",
+  "椭圆": "先用较大分母确定焦点方向，再复习 a²=b²+c² 与 e=c/a。焦点距离题优先使用距离和的定义。",
+  "双曲线": "检查正平方项对应的焦点方向，区分 c²=a²+b² 与椭圆参数关系，并按方程方向写渐近线。",
+  "抛物线": "先比较系数求 p，明确焦点到顶点为 p/2。焦半径题可转化为点到准线的距离。",
+  "圆的方程": "重点复习标准方程与一般方程的转换，检查圆心坐标的符号和半径平方为正的条件。",
+  "直线与圆的位置关系": "先求圆心到直线的距离，再与半径比较；求弦长时注意半弦与整弦的区别。",
+  "圆与圆的位置关系": "同时比较圆心距、半径和与半径差，注意内切与重合的区别，再练习相减求公共弦直线。",
   "集合的概念":
     "重点复习集合元素的确定性、互异性和无序性，区分元素属于与集合包含。",
 
@@ -248,6 +281,9 @@ function normalizeTopic(
 ========================= */
 
 export default function ReportPage() {
+  const [selectedGrade, setSelectedGrade] = useState<Grade>("高一");
+  const currentPracticeTopics: readonly string[] = selectedGrade === "高一" ? grade1Topics : grade2PracticeTopics;
+  const chapterNames = selectedGrade === "高一" ? grade1ChapterNames : grade2ChapterNames;
   const supabase = useMemo(
     () => createClient(),
     []
@@ -288,7 +324,7 @@ export default function ReportPage() {
 
         if (!active) return;
 
-        if (authError) {
+        if (authError && authError.name !== "AuthSessionMissingError") {
           setErrorMessage(
             "登录状态读取失败，请刷新页面。"
           );
@@ -348,9 +384,13 @@ export default function ReportPage() {
      总体统计
   ========================= */
 
-  const total = attempts.length;
+  const gradeAttempts = attempts.filter((item) =>
+    grade2TopicSet.has(normalizeTopic(item.topic, item.question_id)) === (selectedGrade === "高二")
+  );
 
-  const correct = attempts.filter(
+  const total = gradeAttempts.length;
+
+  const correct = gradeAttempts.filter(
     (item) => item.is_correct
   ).length;
 
@@ -366,8 +406,8 @@ export default function ReportPage() {
   ========================= */
 
   const topicStats: TopicStat[] =
-    practiceTopics.map((topic) => {
-      const matches = attempts.filter(
+    currentPracticeTopics.map((topic) => {
+      const matches = gradeAttempts.filter(
         (attempt) =>
           normalizeTopic(
             attempt.topic,
@@ -400,15 +440,13 @@ export default function ReportPage() {
 
   const chapters = Array.from(
     {
-      length: Math.ceil(
-        topicStats.length / 5
-      ),
+      length: chapterNames.length,
     },
     (_, index) => {
-      const topics = topicStats.slice(
-        index * 5,
-        index * 5 + 5
-      );
+      const chapterTopics: readonly string[] = selectedGrade === "高二"
+        ? grade2PracticeChapters[index].topics
+        : currentPracticeTopics.slice(index * 5, index * 5 + 5);
+      const topics = topicStats.filter((item) => chapterTopics.includes(item.topic));
 
       const chapterTotal = topics.reduce(
         (sum, item) => sum + item.total,
@@ -469,7 +507,7 @@ export default function ReportPage() {
             b.total - a.total
         )[0];
 
-  const recentAttempts = attempts.slice(0, 10);
+  const recentAttempts = gradeAttempts.slice(0, 10);
 
   /* =========================
      加载中
@@ -592,60 +630,15 @@ export default function ReportPage() {
           </div>
         </section>
 
-        {/* 年级入口 */}
-        <section className="py-8">
-          <div className="mb-4">
-            <h2 className="text-lg font-bold text-slate-900">
-              选择年级
-            </h2>
-
-            <p className="mt-2 text-sm text-slate-500">
-              当前开放高一数学学习统计。
-            </p>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3">
-            <div
-              className="rounded-xl border border-blue-200 bg-blue-50 p-4 sm:p-5"
-              aria-current="true"
-            >
-              <p className="text-base font-bold text-blue-700">
-                高一数学
-              </p>
-
-              <p className="mt-2 text-xs text-blue-500">
-                {chapters.length} 章 · {practiceTopics.length} 专题
-              </p>
-
-              <p className="mt-3 text-xs font-medium text-blue-600">
-                已开放
-              </p>
-            </div>
-
-            {["高二数学", "高三数学"].map(
-              (grade) => (
-                <div
-                  key={grade}
-                  className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5"
-                >
-                  <p className="text-base font-semibold text-slate-400">
-                    {grade}
-                  </p>
-
-                  <p className="mt-2 text-xs text-slate-400">
-                    课程与训练建设中
-                  </p>
-
-                  <p className="mt-3 text-xs text-slate-400">
-                    暂未开放
-                  </p>
-                </div>
-              )
-            )}
-          </div>
-        </section>
-
-        {errorMessage && (
+<div className="my-5 flex gap-3" aria-label="选择年级">
+{(["高一", "高二"] as const).map((grade) => (
+<button key={grade} type="button" aria-pressed={selectedGrade === grade}
+onClick={() => { setSelectedGrade(grade); setExpandedChapter(null);  }}
+className={`rounded-xl border px-6 py-3 text-sm font-semibold ${selectedGrade === grade ? "border-blue-400 bg-blue-50 text-blue-700" : "border-slate-200 bg-white text-slate-600"}`}>
+{grade}数学
+</button>))}
+<span className="self-center text-xs text-slate-400">高三建设中</span>
+</div>        {errorMessage && (
           <div className="mb-6 rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-600">
             {errorMessage}
           </div>
@@ -790,7 +783,7 @@ export default function ReportPage() {
           <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
             <div>
               <h2 className="text-xl font-bold text-slate-900">
-                高一数学 · 章节掌握情况
+                {selectedGrade}数学 · 章节掌握情况
               </h2>
 
               <p className="mt-2 text-sm text-slate-500">
@@ -800,7 +793,7 @@ export default function ReportPage() {
             </div>
 
             <span className="text-xs text-slate-400">
-              {chapters.length} 章 · {practiceTopics.length} 个专题
+              {chapters.length} 章 · {currentPracticeTopics.length} 个专题
             </span>
           </div>
 
@@ -838,7 +831,7 @@ export default function ReportPage() {
                         </h3>
 
                         <p className="mt-1 text-xs text-slate-400">
-                          5 个专题 · 已练习 {chapter.total} 题次
+                          {chapter.topics.length} 个专题 · 已练习 {chapter.total} 题次
                         </p>
                       </div>
                     </div>
@@ -953,8 +946,8 @@ export default function ReportPage() {
 
           <ActionCard
             title="返回课程"
-            description="回到高一课程目录重新学习。"
-            href="/grade1"
+            description={`回到${selectedGrade}课程目录重新学习。`}
+            href={selectedGrade === "高一" ? "/grade1" : "/grade2"}
           />
         </section>
       </div>

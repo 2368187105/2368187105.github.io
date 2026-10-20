@@ -1,6 +1,6 @@
-
 "use client";
 
+import { vectorText, vectorSvgLabel } from "@/components/VectorText";
 import Link from "next/link";
 import { useState } from "react";
 import { BlockMath } from "react-katex";
@@ -120,29 +120,25 @@ export default function VectorsConceptPage() {
         {/* 面包屑 */}
         <div className="mb-10 flex flex-wrap items-center gap-2 text-sm text-slate-400">
           <Link href="/" className="hover:text-slate-700">
-            首页
-          </Link>
+            {vectorText("首页")}</Link>
 
-          <span>/</span>
+          <span>{vectorText("/")}</span>
 
           <Link href="/grade1" className="hover:text-slate-700">
-            高一数学
-          </Link>
+            {vectorText("高一数学")}</Link>
 
-          <span>/</span>
+          <span>{vectorText("/")}</span>
 
           <Link
             href="/grade1/vectors"
             className="hover:text-slate-700"
           >
-            平面向量
-          </Link>
+            {vectorText("平面向量")}</Link>
 
-          <span>/</span>
+          <span>{vectorText("/")}</span>
 
           <span className="text-slate-600">
-            向量的概念与表示
-          </span>
+            {vectorText("向量的概念与表示")}</span>
         </div>
 
         {/* 页面标题 */}
@@ -150,40 +146,30 @@ export default function VectorsConceptPage() {
           <div className="max-w-3xl">
             <div className="flex flex-wrap items-center gap-3">
               <span className="text-sm font-medium text-blue-600">
-                第 06 章 · 第 01 节
-              </span>
+                {vectorText("第 06 章 · 第 01 节")}</span>
 
               <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600">
-                基础知识点
-              </span>
+                {vectorText("基础知识点")}</span>
             </div>
 
             <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-              平面向量的概念与表示
-            </h1>
+              {vectorText("平面向量的概念与表示")}</h1>
 
             <p className="mt-4 max-w-2xl text-base leading-8 text-slate-500">
-              在实际生活中，有些量只有大小，
-              而有些量不仅有大小，还有方向。
-              本节从向量的基本概念开始，
-              认识向量的几何表示、向量的模，
-              以及几种特殊向量之间的关系。
-            </p>
+              {vectorText("在实际生活中，有些量只有大小， 而有些量不仅有大小，还有方向。 本节从向量的基本概念开始， 认识向量的几何表示、向量的模， 以及几种特殊向量之间的关系。")}</p>
 
             <div className="mt-7 flex flex-wrap gap-3">
               <a
                 href="#definition"
                 className="rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-700"
               >
-                开始学习
-              </a>
+                {vectorText("开始学习")}</a>
 
               <a
                 href="#quiz"
                 className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
               >
-                即时检测
-              </a>
+                {vectorText("即时检测")}</a>
             </div>
           </div>
         </section>
@@ -203,16 +189,12 @@ export default function VectorsConceptPage() {
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                数学中，我们把
-                <strong className="text-slate-900">
-                  既有大小，又有方向的量
-                </strong>
-                叫作向量。
-              </p>
+                {vectorText("数学中，我们把")}<strong className="text-slate-900">
+                  {vectorText("既有大小，又有方向的量")}</strong>
+                {vectorText("叫作向量。")}</p>
 
               <p className="mt-3 text-sm leading-8 text-slate-600">
-                与之相对，只有大小、没有方向的量叫作数量。
-              </p>
+                {vectorText("与之相对，只有大小、没有方向的量叫作数量。")}</p>
 
               <div className="mt-6 grid gap-4 sm:grid-cols-2">
                 <ConceptCard
@@ -231,10 +213,7 @@ export default function VectorsConceptPage() {
               </div>
 
               <Note>
-                例如，“汽车行驶了 5 km”描述的是路程；
-                而“向东位移 5 km”既说明大小又说明方向，
-                描述的是位移向量。
-              </Note>
+                {vectorText("例如，“汽车行驶了 5 km”描述的是路程； 而“向东位移 5 km”既说明大小又说明方向， 描述的是位移向量。")}</Note>
             </section>
 
             {/* 第二部分 */}
@@ -249,32 +228,25 @@ export default function VectorsConceptPage() {
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                向量可以用有向线段表示。
-                有向线段具有起点、终点和方向。
-                线段长度表示向量的大小，
-                箭头指向表示向量的方向。
-              </p>
+                {vectorText("向量可以用有向线段表示。 有向线段具有起点、终点和方向。 线段长度表示向量的大小， 箭头指向表示向量的方向。")}</p>
 
               <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white p-5">
                 <VectorDiagram />
 
                 <p className="mt-3 text-center text-xs text-slate-400">
-                  向量的几何表示：从起点 A 指向终点 B
-                </p>
+                  {vectorText("向量的几何表示：从起点 A 指向终点 B")}</p>
               </div>
 
               <div className="mt-6 rounded-xl bg-slate-50 px-5 py-5">
                 <p className="mb-3 text-sm font-medium text-slate-700">
-                  向量的表示方法
-                </p>
+                  {vectorText("向量的表示方法")}</p>
 
                 <BlockMath
                   math={String.raw`\overrightarrow{AB}`}
                 />
 
                 <p className="text-center text-sm leading-7 text-slate-500">
-                  或使用带箭头的小写字母
-                </p>
+                  {vectorText("或使用带箭头的小写字母")}</p>
 
                 <BlockMath
                   math={String.raw`\overrightarrow{a},\quad \overrightarrow{b},\quad \overrightarrow{c}`}
@@ -282,11 +254,7 @@ export default function VectorsConceptPage() {
               </div>
 
               <Note>
-                有向线段 AB 与 BA 的方向相反，
-                因此它们表示的向量一般不相等。
-                向量可以平移，只要大小和方向不变，
-                所表示的向量就不变。
-              </Note>
+                {vectorText("有向线段 AB 与 BA 的方向相反， 因此它们表示的向量一般不相等。 向量可以平移，只要大小和方向不变， 所表示的向量就不变。")}</Note>
             </section>
 
             {/* 第三部分 */}
@@ -301,9 +269,7 @@ export default function VectorsConceptPage() {
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                向量的大小叫作向量的长度，也叫作向量的模。
-                向量的模是一个非负数，不包含方向信息。
-              </p>
+                {vectorText("向量的大小叫作向量的长度，也叫作向量的模。 向量的模是一个非负数，不包含方向信息。")}</p>
 
               <div className="mt-6 rounded-xl bg-slate-50 px-5 py-6">
                 <BlockMath
@@ -311,14 +277,11 @@ export default function VectorsConceptPage() {
                 />
 
                 <p className="mt-2 text-center text-sm text-slate-500">
-                  表示向量 a 的模
-                </p>
+                  {vectorText("表示向量 a 的模")}</p>
               </div>
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                如果有向线段 AB 的长度为 4 个单位，
-                那么：
-              </p>
+                {vectorText("如果有向线段 AB 的长度为 4 个单位， 那么：")}</p>
 
               <div className="rounded-xl border border-slate-200 bg-white p-5">
                 <BlockMath
@@ -327,9 +290,7 @@ export default function VectorsConceptPage() {
               </div>
 
               <Note>
-                向量有大小和方向，而向量的模只有大小。
-                两个向量的模相等，不代表两个向量一定相等。
-              </Note>
+                {vectorText("向量有大小和方向，而向量的模只有大小。 两个向量的模相等，不代表两个向量一定相等。")}</Note>
             </section>
 
             {/* 第四部分 */}
@@ -346,40 +307,32 @@ export default function VectorsConceptPage() {
               <div className="mt-6 space-y-4">
                 <div className="rounded-xl border border-slate-200 bg-white p-5">
                   <h3 className="text-base font-semibold text-slate-900">
-                    零向量
-                  </h3>
+                    {vectorText("零向量")}</h3>
 
                   <p className="mt-3 text-sm leading-7 text-slate-600">
-                    长度为 0 的向量叫作零向量，
-                    记作：
-                  </p>
+                    {vectorText("长度为 0 的向量叫作零向量， 记作：")}</p>
 
                   <BlockMath
                     math={String.raw`\overrightarrow{0}`}
                   />
 
                   <p className="text-sm leading-7 text-slate-600">
-                    零向量的模等于 0，方向不确定。
-                  </p>
+                    {vectorText("零向量的模等于 0，方向不确定。")}</p>
                 </div>
 
                 <div className="rounded-xl border border-slate-200 bg-white p-5">
                   <h3 className="text-base font-semibold text-slate-900">
-                    单位向量
-                  </h3>
+                    {vectorText("单位向量")}</h3>
 
                   <p className="mt-3 text-sm leading-7 text-slate-600">
-                    长度为 1 个单位的向量叫作单位向量。
-                  </p>
+                    {vectorText("长度为 1 个单位的向量叫作单位向量。")}</p>
 
                   <BlockMath
                     math={String.raw`|\overrightarrow{e}|=1`}
                   />
 
                   <p className="text-sm leading-7 text-slate-600">
-                    单位向量只规定模长，并没有规定方向。
-                    因此，不同方向的单位向量不一定相等。
-                  </p>
+                    {vectorText("单位向量只规定模长，并没有规定方向。 因此，不同方向的单位向量不一定相等。")}</p>
                 </div>
               </div>
             </section>
@@ -419,15 +372,11 @@ export default function VectorsConceptPage() {
                 <RelationDiagram />
 
                 <p className="mt-3 text-center text-xs text-slate-400">
-                  同方向、反方向与不同方向的向量示意
-                </p>
+                  {vectorText("同方向、反方向与不同方向的向量示意")}</p>
               </div>
 
               <Note>
-                判断两个向量是否相等，需要同时满足
-                “模相等”和“方向相同”。
-                仅仅平行或者模相等，都不足以说明两个向量相等。
-              </Note>
+                {vectorText("判断两个向量是否相等，需要同时满足 “模相等”和“方向相同”。 仅仅平行或者模相等，都不足以说明两个向量相等。")}</Note>
             </section>
 
             {/* 第六部分 */}
@@ -474,7 +423,7 @@ export default function VectorsConceptPage() {
               />
 
               <div className="mt-6 space-y-5">
-                {questions.map((question) => {
+                {vectorText(questions.map((question) => {
                   const selected = answers[question.id];
 
                   const isSubmitted = Boolean(
@@ -490,15 +439,14 @@ export default function VectorsConceptPage() {
                       className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6"
                     >
                       <p className="text-xs font-medium text-blue-600">
-                        第 {question.id} 题 / 共 3 题
-                      </p>
+                        {vectorText("第 ")}{vectorText(question.id)} {vectorText("题 / 共 3 题")}</p>
 
                       <h3 className="mt-4 text-base font-semibold leading-8 text-slate-900">
-                        {question.question}
+                        {vectorText(question.question)}
                       </h3>
 
                       <div className="mt-5 grid gap-3">
-                        {question.options.map((option) => {
+                        {vectorText(question.options.map((option) => {
                           const chosen =
                             selected === option.key;
 
@@ -535,18 +483,18 @@ export default function VectorsConceptPage() {
                               }`}
                             >
                               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-current text-xs font-semibold">
-                                {option.key}
+                                {vectorText(option.key)}
                               </span>
 
                               <span className="pt-0.5">
-                                {option.text}
+                                {vectorText(option.text)}
                               </span>
                             </button>
                           );
-                        })}
+                        }))}
                       </div>
 
-                      {!isSubmitted ? (
+                      {vectorText(!isSubmitted ? (
                         <button
                           type="button"
                           disabled={!selected}
@@ -555,8 +503,7 @@ export default function VectorsConceptPage() {
                           }
                           className="mt-5 rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-30"
                         >
-                          提交答案
-                        </button>
+                          {vectorText("提交答案")}</button>
                       ) : (
                         <div
                           className={`mt-5 rounded-xl p-4 ${
@@ -572,13 +519,13 @@ export default function VectorsConceptPage() {
                                 : "text-red-600"
                             }`}
                           >
-                            {correct
+                            {vectorText(correct
                               ? "回答正确"
-                              : `回答错误，正确答案：${question.answer}`}
+                              : `回答错误，正确答案：${question.answer}`)}
                           </p>
 
                           <p className="mt-2 text-sm leading-7 text-slate-600">
-                            {question.explanation}
+                            {vectorText(question.explanation)}
                           </p>
 
                           <button
@@ -588,32 +535,29 @@ export default function VectorsConceptPage() {
                             }
                             className="mt-3 text-sm font-medium text-slate-600 hover:text-slate-900"
                           >
-                            重新作答 →
-                          </button>
+                            {vectorText("重新作答 →")}</button>
                         </div>
-                      )}
+                      ))}
                     </div>
                   );
-                })}
+                }))}
               </div>
 
-              {completedCount === questions.length && (
+              {vectorText(completedCount === questions.length && (
                 <div className="mt-6 rounded-xl border border-slate-200 bg-white p-6">
                   <p className="text-sm text-slate-500">
-                    本节检测已完成
-                  </p>
+                    {vectorText("本节检测已完成")}</p>
 
                   <h3 className="mt-2 text-2xl font-bold text-slate-900">
-                    {correctCount} / {questions.length} 题正确
-                  </h3>
+                    {vectorText(correctCount)} {vectorText("/ ")}{vectorText(questions.length)} {vectorText("题正确")}</h3>
 
                   <p className="mt-3 text-sm leading-7 text-slate-500">
-                    {correctCount === questions.length
+                    {vectorText(correctCount === questions.length
                       ? "很好，三个基础概念都掌握了，可以继续学习向量的运算。"
-                      : "建议复习答错的知识点，重点区分向量的模、方向与相等条件。"}
+                      : "建议复习答错的知识点，重点区分向量的模、方向与相等条件。")}
                   </p>
                 </div>
-              )}
+              ))}
             </section>
 
             {/* 底部导航 */}
@@ -622,12 +566,10 @@ export default function VectorsConceptPage() {
                 href="/grade1/vectors"
                 className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
               >
-                ← 返回章节目录
-              </Link>
+                {vectorText("← 返回章节目录")}</Link>
 
               <span className="text-sm text-slate-400">
-                下一节：平面向量的线性运算（即将开放）
-              </span>
+                {vectorText("下一节：平面向量的线性运算（即将开放）")}</span>
             </div>
           </div>
 
@@ -635,11 +577,10 @@ export default function VectorsConceptPage() {
           <aside className="hidden lg:block">
             <div className="sticky top-24 rounded-2xl border border-slate-200 bg-white p-5">
               <p className="text-xs font-semibold text-slate-400">
-                本节学习目录
-              </p>
+                {vectorText("本节学习目录")}</p>
 
               <nav className="mt-5 space-y-3 text-sm">
-                {[
+                {vectorText([
                   ["definition", "01 什么是向量"],
                   ["representation", "02 向量的几何表示"],
                   ["magnitude", "03 向量的模"],
@@ -653,18 +594,17 @@ export default function VectorsConceptPage() {
                     href={`#${id}`}
                     className="block text-slate-500 transition hover:text-blue-600"
                   >
-                    {label}
+                    {vectorText(label)}
                   </a>
-                ))}
+                )))}
               </nav>
 
               <div className="mt-6 border-t border-slate-100 pt-5">
                 <p className="text-xs text-slate-400">
-                  本节核心知识
-                </p>
+                  {vectorText("本节核心知识")}</p>
 
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {[
+                  {vectorText([
                     "大小与方向",
                     "有向线段",
                     "向量的模",
@@ -675,9 +615,9 @@ export default function VectorsConceptPage() {
                       key={item}
                       className="rounded-md bg-slate-50 px-2 py-1 text-xs text-slate-500"
                     >
-                      {item}
+                      {vectorText(item)}
                     </span>
-                  ))}
+                  )))}
                 </div>
               </div>
             </div>
@@ -702,16 +642,16 @@ function SectionTitle({
     <div>
       <div className="flex items-center gap-3">
         <span className="text-xs font-semibold text-blue-600">
-          {number}
+          {vectorText(number)}
         </span>
 
         <h2 className="text-xl font-bold text-slate-900">
-          {title}
+          {vectorText(title)}
         </h2>
       </div>
 
       <p className="mt-2 pl-7 text-sm text-slate-400">
-        {subtitle}
+        {vectorText(subtitle)}
       </p>
     </div>
   );
@@ -738,15 +678,15 @@ function ConceptCard({
             : "text-slate-500"
         }`}
       >
-        {title}
+        {vectorText(title)}
       </span>
 
       <h3 className="mt-3 text-base font-semibold text-slate-900">
-        {description}
+        {vectorText(description)}
       </h3>
 
       <p className="mt-3 text-sm leading-7 text-slate-500">
-        {examples}
+        {vectorText(examples)}
       </p>
     </div>
   );
@@ -761,11 +701,10 @@ function Note({
   return (
     <div className="mt-5 rounded-xl border border-blue-100 bg-blue-50/40 px-5 py-4">
       <p className="text-xs font-semibold text-blue-600">
-        理解提示
-      </p>
+        {vectorText("理解提示")}</p>
 
       <p className="mt-2 text-sm leading-7 text-slate-600">
-        {children}
+        {vectorText(children)}
       </p>
     </div>
   );
@@ -784,11 +723,11 @@ function RelationCard({
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5">
       <h3 className="font-semibold text-slate-900">
-        {title}
+        {vectorText(title)}
       </h3>
 
       <p className="mt-2 text-sm leading-7 text-slate-600">
-        {description}
+        {vectorText(description)}
       </p>
 
       <div className="mt-4 rounded-lg bg-slate-50 px-3 py-3">
@@ -811,20 +750,19 @@ function ExampleCard({
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5">
       <span className="text-xs font-medium text-blue-600">
-        {number}
+        {vectorText(number)}
       </span>
 
       <h3 className="mt-3 text-sm font-semibold leading-7 text-slate-900">
-        {question}
+        {vectorText(question)}
       </h3>
 
       <div className="mt-4 rounded-lg bg-slate-50 p-4">
         <p className="text-xs font-medium text-slate-400">
-          分析与解答
-        </p>
+          {vectorText("分析与解答")}</p>
 
         <p className="mt-2 text-sm leading-7 text-slate-600">
-          {answer}
+          {vectorText(answer)}
         </p>
       </div>
     </div>
@@ -870,24 +808,19 @@ function VectorDiagram() {
       <circle cx="480" cy="55" r="4" fill="#2563eb" />
 
       <text x="83" y="178" fontSize="17" fill="#334155">
-        A
-      </text>
+        {vectorSvgLabel("A")}</text>
 
       <text x="487" y="47" fontSize="17" fill="#334155">
-        B
-      </text>
+        {vectorSvgLabel("B")}</text>
 
       <text x="270" y="70" fontSize="18" fill="#2563eb">
-        向量 a
-      </text>
+        {vectorSvgLabel("向量 a")}</text>
 
       <text x="125" y="190" fontSize="13" fill="#94a3b8">
-        起点
-      </text>
+        {vectorSvgLabel("起点")}</text>
 
       <text x="465" y="90" fontSize="13" fill="#94a3b8">
-        终点
-      </text>
+        {vectorSvgLabel("终点")}</text>
     </svg>
   );
 }
@@ -947,8 +880,7 @@ function RelationDiagram() {
 
       {/* 相等向量 */}
       <text x="30" y="29" fontSize="16" fill="#334155">
-        相等向量
-      </text>
+        {vectorSvgLabel("相等向量")}</text>
 
       <line
         x1="150"
@@ -971,12 +903,10 @@ function RelationDiagram() {
       />
 
       <text x="200" y="43" fontSize="14" fill="#2563eb">
-        a
-      </text>
+        {vectorSvgLabel("a")}</text>
 
       <text x="395" y="43" fontSize="14" fill="#059669">
-        b
-      </text>
+        {vectorSvgLabel("b")}</text>
 
       <line
         x1="30"
@@ -988,8 +918,7 @@ function RelationDiagram() {
 
       {/* 相反向量 */}
       <text x="30" y="126" fontSize="16" fill="#334155">
-        相反向量
-      </text>
+        {vectorSvgLabel("相反向量")}</text>
 
       <line
         x1="150"
@@ -1012,12 +941,10 @@ function RelationDiagram() {
       />
 
       <text x="200" y="140" fontSize="14" fill="#2563eb">
-        a
-      </text>
+        {vectorSvgLabel("a")}</text>
 
       <text x="395" y="140" fontSize="14" fill="#dc2626">
-        b
-      </text>
+        {vectorSvgLabel("b")}</text>
 
       <line
         x1="30"
@@ -1029,8 +956,7 @@ function RelationDiagram() {
 
       {/* 不平行向量 */}
       <text x="30" y="224" fontSize="16" fill="#334155">
-        不平行向量
-      </text>
+        {vectorSvgLabel("不平行向量")}</text>
 
       <line
         x1="175"
@@ -1053,12 +979,10 @@ function RelationDiagram() {
       />
 
       <text x="220" y="257" fontSize="14" fill="#2563eb">
-        a
-      </text>
+        {vectorSvgLabel("a")}</text>
 
       <text x="390" y="257" fontSize="14" fill="#059669">
-        b
-      </text>
+        {vectorSvgLabel("b")}</text>
     </svg>
   );
 }

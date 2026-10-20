@@ -1,9 +1,9 @@
-
 "use client";
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { BlockMath } from "react-katex";
+import { vectorText } from "@/components/VectorText";
 import "katex/dist/katex.min.css";
 
 import SiteHeader from "@/components/SiteHeader";
@@ -12,6 +12,8 @@ import {
   practiceTopics,
   questions,
 } from "@/data/questions";
+
+import { grade2PracticeTopics, grade2PracticeChapters } from "@/data/questions";
 
 /* =========================
    数据类型
@@ -39,7 +41,7 @@ type Filter =
    章节与专题
 ========================= */
 
-const chapterNames = [
+const grade1ChapterNames = [
   "集合与常用逻辑用语",
   "一元二次函数、方程和不等式",
   "函数的概念与性质",
@@ -52,17 +54,12 @@ const chapterNames = [
   "概率",
 ];
 
-const chapters = chapterNames
-  .map((name, index) => ({
-    name,
-    index,
-    topics: (
-      practiceTopics as readonly string[]
-    ).slice(index * 5, index * 5 + 5),
-  }))
-  .filter((chapter) => chapter.topics.length > 0);
-
-const knownTopics = new Set<string>(practiceTopics);
+type Grade = "高一" | "高二";
+const grade2TopicSet = new Set<string>(grade2PracticeTopics);
+const grade1Topics = practiceTopics.filter((topic) => !grade2TopicSet.has(topic));
+const allTopics: readonly string[] = [...new Set<string>([...practiceTopics, ...grade2PracticeTopics])];
+const knownTopics = new Set<string>(allTopics);
+const grade2ChapterNames = grade2PracticeChapters.map((chapter) => chapter.title);
 
 const questionMap = new Map(
   questions.map((question) => [
@@ -91,7 +88,7 @@ function resolveTopic(mistake: Mistake): string {
     return question.topic;
   }
 
-  const matchedTopic = practiceTopics.find(
+  const matchedTopic = allTopics.find(
     (topic) => savedTopic.includes(topic)
   );
 
@@ -122,6 +119,9 @@ function answerLabel(
 ========================= */
 
 export default function MistakesPage() {
+  const [selectedGrade, setSelectedGrade] = useState<Grade>("高一");
+  const currentPracticeTopics: readonly string[] = selectedGrade === "高一" ? grade1Topics : grade2PracticeTopics;
+  const chapterNames = selectedGrade === "高一" ? grade1ChapterNames : grade2ChapterNames;
   const supabase = useMemo(
     () => createClient(),
     []
@@ -171,7 +171,7 @@ export default function MistakesPage() {
           setEmail(null);
           setMistakes([]);
 
-          if (authError) {
+          if (authError && authError.name !== "AuthSessionMissingError") {
             setError("登录状态检查失败，请刷新页面。");
           }
 
@@ -220,6 +220,15 @@ export default function MistakesPage() {
     };
   }, [supabase]);
 
+  const gradeMistakes = mistakes.filter((item) =>
+    grade2TopicSet.has(resolveTopic(item)) === (selectedGrade === "高二")
+  );
+  const chapters = chapterNames.map((name, index) => ({
+    name, index, topics: selectedGrade === "高二"
+      ? [...grade2PracticeChapters[index].topics]
+      : currentPracticeTopics.slice(index * 5, index * 5 + 5),
+  })).filter((chapter) => chapter.topics.length > 0);
+
   /* =========================
      专题错题数量
   ========================= */
@@ -227,7 +236,7 @@ export default function MistakesPage() {
   const topicCounts = useMemo(() => {
     const counts = new Map<string, number>();
 
-    for (const mistake of mistakes) {
+    for (const mistake of gradeMistakes) {
       const topic = resolveTopic(mistake);
 
       counts.set(
@@ -237,9 +246,9 @@ export default function MistakesPage() {
     }
 
     return counts;
-  }, [mistakes]);
+  }, [mistakes, selectedGrade]);
 
-  const otherCount = mistakes.filter(
+  const otherCount = gradeMistakes.filter(
     (mistake) => !knownTopics.has(
       resolveTopic(mistake)
     )
@@ -249,7 +258,7 @@ export default function MistakesPage() {
      按当前条件筛选
   ========================= */
 
-  const filteredMistakes = mistakes.filter(
+  const filteredMistakes = gradeMistakes.filter(
     (mistake) => {
       const topic = resolveTopic(mistake);
 
@@ -325,12 +334,12 @@ export default function MistakesPage() {
   ========================= */
 
   async function clearMistakes() {
-    if (!userId || busy || mistakes.length === 0) {
+    if (!userId || busy || gradeMistakes.length === 0) {
       return;
     }
 
     const confirmed = window.confirm(
-      `确定永久删除全部 ${mistakes.length} 道错题吗？此操作无法撤销。`
+      `确定永久删除${selectedGrade}全部 ${gradeMistakes.length} 道错题吗？此操作无法撤销。`
     );
 
     if (!confirmed) return;
@@ -342,14 +351,16 @@ export default function MistakesPage() {
       await supabase
         .from("mistakes")
         .delete()
-        .eq("user_id", userId);
+        .eq("user_id", userId)
+        .in("id", gradeMistakes.map((item) => item.id));
 
     if (clearError) {
       setError(
         `清空失败：${clearError.message}`
       );
     } else {
-      setMistakes([]);
+      const removed = new Set(gradeMistakes.map((item) => item.id));
+      setMistakes((previous) => previous.filter((item) => !removed.has(item.id)));
     }
 
     setBusy(false);
@@ -472,7 +483,7 @@ export default function MistakesPage() {
             <section className="grid gap-4 py-8 sm:grid-cols-3">
               <StatCard
                 label="当前错题"
-                value={mistakes.length}
+                value={gradeMistakes.length}
                 suffix="道"
               />
 
@@ -507,41 +518,15 @@ export default function MistakesPage() {
               {/* 左侧 */}
               <aside className="min-w-0">
                 <div className="space-y-4 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-2">
-                  {/* 年级 */}
-                  <div className="rounded-2xl border border-slate-200 bg-white p-5">
-                    <h2 className="text-sm font-semibold text-slate-900">
-                      选择年级
-                    </h2>
-
-                    <div className="mt-4 grid grid-cols-3 gap-2">
-                      <div className="rounded-lg border border-blue-200 bg-blue-50 px-2 py-3 text-center">
-                        <p className="text-sm font-semibold text-blue-700">
-                          高一
-                        </p>
-
-                        <p className="mt-1 text-[10px] text-blue-500">
-                          已开放
-                        </p>
-                      </div>
-
-                      {["高二", "高三"].map((grade) => (
-                        <div
-                          key={grade}
-                          className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-3 text-center"
-                        >
-                          <p className="text-sm font-medium text-slate-400">
-                            {grade}
-                          </p>
-
-                          <p className="mt-1 text-[10px] text-slate-400">
-                            建设中
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* 章节导航 */}
+<div className="my-5 flex gap-3" aria-label="选择年级">
+{(["高一", "高二"] as const).map((grade) => (
+<button key={grade} type="button" aria-pressed={selectedGrade === grade}
+onClick={() => { setSelectedGrade(grade); setExpandedChapter(null); setFilter({ kind: "all" }); }}
+className={`rounded-xl border px-6 py-3 text-sm font-semibold ${selectedGrade === grade ? "border-blue-400 bg-blue-50 text-blue-700" : "border-slate-200 bg-white text-slate-600"}`}>
+{grade}数学
+</button>))}
+<span className="self-center text-xs text-slate-400">高三建设中</span>
+</div>                  {/* 章节导航 */}
                   <div className="rounded-2xl border border-slate-200 bg-white p-4">
                     <div className="px-1">
                       <h2 className="text-sm font-semibold text-slate-900">
@@ -569,7 +554,7 @@ export default function MistakesPage() {
                       <span>全部错题</span>
 
                       <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500">
-                        {mistakes.length}
+                        {gradeMistakes.length}
                       </span>
                     </button>
 
@@ -721,7 +706,7 @@ export default function MistakesPage() {
                   </div>
 
                   {filter.kind === "all" &&
-                    mistakes.length > 0 && (
+                    gradeMistakes.length > 0 && (
                       <button
                         type="button"
                         disabled={busy}
@@ -730,7 +715,7 @@ export default function MistakesPage() {
                       >
                         {busy
                           ? "正在处理..."
-                          : "清空全部错题"}
+                          : "清空当前年级错题"}
                       </button>
                     )}
                 </div>
@@ -743,7 +728,7 @@ export default function MistakesPage() {
                     </p>
 
                     <h3 className="mt-3 text-xl font-bold text-slate-900">
-                      {mistakes.length === 0
+                      {gradeMistakes.length === 0
                         ? "继续保持，巩固知识"
                         : "这个专题暂时没有错题"}
                     </h3>
@@ -786,6 +771,11 @@ export default function MistakesPage() {
                           mistake.explanation ||
                           sourceQuestion?.explanation;
 
+                        const displayText = (text: string) =>
+                          (sourceQuestion?.topic ?? resolveTopic(mistake)).includes("向量")
+                            ? vectorText(text)
+                            : text;
+
                         return (
                           <article
                             key={mistake.id}
@@ -823,7 +813,7 @@ export default function MistakesPage() {
 
                             {/* 题目 */}
                             <h3 className="mt-6 text-base font-semibold leading-8 text-slate-900">
-                              {mistake.question}
+                              {displayText(mistake.question)}
                             </h3>
 
                             {/* 数学公式 */}
@@ -867,7 +857,7 @@ export default function MistakesPage() {
                                           {option.key}.
                                         </span>
 
-                                        {option.text}
+                                        {displayText(option.text)}
                                       </div>
                                     );
                                   }
@@ -883,10 +873,10 @@ export default function MistakesPage() {
                                 </p>
 
                                 <p className="mt-2 text-sm leading-7 text-slate-700">
-                                  {answerLabel(
+                                  {displayText(answerLabel(
                                     mistake.question_id,
                                     mistake.user_answer
-                                  )}
+                                  ))}
                                 </p>
                               </div>
 
@@ -896,10 +886,10 @@ export default function MistakesPage() {
                                 </p>
 
                                 <p className="mt-2 text-sm leading-7 text-slate-700">
-                                  {answerLabel(
+                                  {displayText(answerLabel(
                                     mistake.question_id,
                                     mistake.correct_answer
-                                  )}
+                                  ))}
                                 </p>
                               </div>
                             </div>
@@ -912,7 +902,7 @@ export default function MistakesPage() {
                                 </p>
 
                                 <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-600">
-                                  {explanation}
+                                  {displayText(explanation)}
                                 </p>
                               </div>
                             )}

@@ -1,6 +1,6 @@
-
 "use client";
 
+import { vectorText, vectorSvgLabel } from "@/components/VectorText";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { BlockMath } from "react-katex";
@@ -122,24 +122,21 @@ export default function VectorLinearOperationsPage() {
         {/* 面包屑 */}
         <div className="mb-10 flex flex-wrap items-center gap-2 text-sm text-slate-400">
           <Link href="/" className="hover:text-slate-700">
-            首页
-          </Link>
-          <span>/</span>
+            {vectorText("首页")}</Link>
+          <span>{vectorText("/")}</span>
 
           <Link href="/grade1" className="hover:text-slate-700">
-            高一数学
-          </Link>
-          <span>/</span>
+            {vectorText("高一数学")}</Link>
+          <span>{vectorText("/")}</span>
 
           <Link
             href="/grade1/vectors"
             className="hover:text-slate-700"
           >
-            平面向量
-          </Link>
-          <span>/</span>
+            {vectorText("平面向量")}</Link>
+          <span>{vectorText("/")}</span>
 
-          <span className="text-slate-600">平面向量的线性运算</span>
+          <span className="text-slate-600">{vectorText("平面向量的线性运算")}</span>
         </div>
 
         {/* 标题 */}
@@ -147,39 +144,30 @@ export default function VectorLinearOperationsPage() {
           <div className="max-w-3xl">
             <div className="flex flex-wrap items-center gap-3">
               <span className="text-sm font-medium text-blue-600">
-                第 06 章 · 第 02 节
-              </span>
+                {vectorText("第 06 章 · 第 02 节")}</span>
 
               <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600">
-                核心知识点
-              </span>
+                {vectorText("核心知识点")}</span>
             </div>
 
             <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-              平面向量的线性运算
-            </h1>
+              {vectorText("平面向量的线性运算")}</h1>
 
             <p className="mt-4 max-w-2xl text-base leading-8 text-slate-500">
-              在理解向量大小和方向的基础上，
-              进一步学习向量加法、减法与数乘运算。
-              通过几何图形理解运算规律，
-              并掌握向量共线的基本条件。
-            </p>
+              {vectorText("在理解向量大小和方向的基础上， 进一步学习向量加法、减法与数乘运算。 通过几何图形理解运算规律， 并掌握向量共线的基本条件。")}</p>
 
             <div className="mt-7 flex flex-wrap gap-3">
               <a
                 href="#addition"
                 className="rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-700"
               >
-                开始学习
-              </a>
+                {vectorText("开始学习")}</a>
 
               <a
                 href="#quiz"
                 className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
               >
-                即时检测
-              </a>
+                {vectorText("即时检测")}</a>
             </div>
           </div>
         </section>
@@ -197,20 +185,13 @@ export default function VectorLinearOperationsPage() {
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                向量可以像数量一样进行加法运算，
-                但是必须考虑方向。
-                两个向量的和仍然是向量。
-              </p>
+                {vectorText("向量可以像数量一样进行加法运算， 但是必须考虑方向。 两个向量的和仍然是向量。")}</p>
 
               <h3 className="mt-6 text-base font-semibold text-slate-900">
-                三角形法则
-              </h3>
+                {vectorText("三角形法则")}</h3>
 
               <p className="mt-3 text-sm leading-8 text-slate-600">
-                将第二个向量的起点移动到第一个向量的终点，
-                连接第一个向量的起点和第二个向量的终点，
-                得到的向量就是这两个向量的和。
-              </p>
+                {vectorText("将第二个向量的起点移动到第一个向量的终点， 连接第一个向量的起点和第二个向量的终点， 得到的向量就是这两个向量的和。")}</p>
 
               <FormulaBox
                 math={String.raw`\overrightarrow{AB}+\overrightarrow{BC}=\overrightarrow{AC}`}
@@ -219,25 +200,17 @@ export default function VectorLinearOperationsPage() {
               <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5">
                 <TriangleDiagram />
                 <p className="mt-3 text-center text-xs text-slate-400">
-                  向量加法的三角形法则
-                </p>
+                  {vectorText("向量加法的三角形法则")}</p>
               </div>
 
               <Note>
-                三角形法则最重要的是“首尾相接”。
-                计算时可以先寻找终点与起点相同的两个向量。
-              </Note>
+                {vectorText("三角形法则最重要的是“首尾相接”。 计算时可以先寻找终点与起点相同的两个向量。")}</Note>
 
               <h3 className="mt-9 text-base font-semibold text-slate-900">
-                平行四边形法则
-              </h3>
+                {vectorText("平行四边形法则")}</h3>
 
               <p className="mt-3 text-sm leading-8 text-slate-600">
-                将两个非共线向量放在同一个起点，
-                以它们作为平行四边形的邻边。
-                从共同起点出发的对角线向量，
-                就是这两个向量的和。
-              </p>
+                {vectorText("将两个非共线向量放在同一个起点， 以它们作为平行四边形的邻边。 从共同起点出发的对角线向量， 就是这两个向量的和。")}</p>
 
               <FormulaBox
                 math={String.raw`\overrightarrow{OA}+\overrightarrow{OB}=\overrightarrow{OC}`}
@@ -246,15 +219,11 @@ export default function VectorLinearOperationsPage() {
               <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5">
                 <ParallelogramDiagram />
                 <p className="mt-3 text-center text-xs text-slate-400">
-                  向量加法的平行四边形法则
-                </p>
+                  {vectorText("向量加法的平行四边形法则")}</p>
               </div>
 
               <Note>
-                三角形法则与平行四边形法则得到的结果相同。
-                处理首尾相接的向量常用三角形法则；
-                处理同起点的两个非共线向量常用平行四边形法则。
-              </Note>
+                {vectorText("三角形法则与平行四边形法则得到的结果相同。 处理首尾相接的向量常用三角形法则； 处理同起点的两个非共线向量常用平行四边形法则。")}</Note>
             </section>
 
             {/* 02 向量减法 */}
@@ -269,38 +238,27 @@ export default function VectorLinearOperationsPage() {
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                向量减法可以转化为向量加法。
-                两个向量相减，相当于第一个向量加上第二个向量的相反向量。
-              </p>
+                {vectorText("向量减法可以转化为向量加法。 两个向量相减，相当于第一个向量加上第二个向量的相反向量。")}</p>
 
               <FormulaBox
                 math={String.raw`\overrightarrow{a}-\overrightarrow{b}=\overrightarrow{a}+(-\overrightarrow{b})`}
               />
 
               <h3 className="mt-8 text-base font-semibold text-slate-900">
-                同起点向量的减法
-              </h3>
+                {vectorText("同起点向量的减法")}</h3>
 
               <p className="mt-3 text-sm leading-8 text-slate-600">
-                两个向量具有共同起点时，
-                第一个向量减去第二个向量，
-                结果是从第二个向量的终点，
-                指向第一个向量终点的向量。
-              </p>
+                {vectorText("两个向量具有共同起点时， 第一个向量减去第二个向量， 结果是从第二个向量的终点， 指向第一个向量终点的向量。")}</p>
 
               <FormulaBox
                 math={String.raw`\overrightarrow{AB}-\overrightarrow{AC}=\overrightarrow{CB}`}
               />
 
               <Note>
-                这里很容易写反。
-                向量 AB 减去向量 AC，结果是向量 CB，
-                不是向量 BC。
-              </Note>
+                {vectorText("这里很容易写反。 向量 AB 减去向量 AC，结果是向量 CB， 不是向量 BC。")}</Note>
 
               <h3 className="mt-8 text-base font-semibold text-slate-900">
-                向量减法的基本性质
-              </h3>
+                {vectorText("向量减法的基本性质")}</h3>
 
               <div className="mt-5 space-y-4">
                 <RuleCard
@@ -329,10 +287,7 @@ export default function VectorLinearOperationsPage() {
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                实数与向量相乘的运算叫作向量的数乘。
-                数乘结果仍然是一个向量，
-                它的模与方向由数乘系数决定。
-              </p>
+                {vectorText("实数与向量相乘的运算叫作向量的数乘。 数乘结果仍然是一个向量， 它的模与方向由数乘系数决定。")}</p>
 
               <FormulaBox
                 math={String.raw`|\lambda\overrightarrow{a}|=|\lambda|\cdot|\overrightarrow{a}|`}
@@ -362,8 +317,7 @@ export default function VectorLinearOperationsPage() {
                 <ScalarDiagram />
 
                 <p className="mt-3 text-center text-xs text-slate-400">
-                  向量数乘对模长与方向的影响
-                </p>
+                  {vectorText("向量数乘对模长与方向的影响")}</p>
               </div>
 
               <div className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -381,11 +335,7 @@ export default function VectorLinearOperationsPage() {
               </div>
 
               <Note>
-                先看系数的正负判断方向，
-                再看绝对值判断模长。
-                如果原向量是零向量，
-                数乘结果仍为零向量。
-              </Note>
+                {vectorText("先看系数的正负判断方向， 再看绝对值判断模长。 如果原向量是零向量， 数乘结果仍为零向量。")}</Note>
             </section>
 
             {/* 04 运算规律 */}
@@ -400,9 +350,7 @@ export default function VectorLinearOperationsPage() {
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                向量的加法和数乘满足一些与实数运算类似的规律。
-                利用这些规律，可以对向量表达式进行化简。
-              </p>
+                {vectorText("向量的加法和数乘满足一些与实数运算类似的规律。 利用这些规律，可以对向量表达式进行化简。")}</p>
 
               <div className="mt-6 space-y-4">
                 <RuleCard
@@ -449,15 +397,10 @@ export default function VectorLinearOperationsPage() {
               />
 
               <p className="mt-5 text-sm leading-8 text-slate-600">
-                两个非零向量方向相同或相反时，
-                它们是平行向量，也叫作共线向量。
-              </p>
+                {vectorText("两个非零向量方向相同或相反时， 它们是平行向量，也叫作共线向量。")}</p>
 
               <p className="mt-3 text-sm leading-8 text-slate-600">
-                设向量 b 是非零向量，
-                则向量 a 与向量 b 共线，
-                当且仅当存在唯一的实数 λ，使得：
-              </p>
+                {vectorText("设向量 b 是非零向量， 则向量 a 与向量 b 共线， 当且仅当存在唯一的实数 λ，使得：")}</p>
 
               <FormulaBox
                 math={String.raw`\overrightarrow{a}=\lambda\overrightarrow{b}`}
@@ -478,10 +421,7 @@ export default function VectorLinearOperationsPage() {
               </div>
 
               <Note>
-                这里要求向量 b 是非零向量。
-                按高中数学通常约定，零向量与任意向量共线。
-                当 λ 等于 0 时，向量 a 就是零向量。
-              </Note>
+                {vectorText("这里要求向量 b 是非零向量。 按高中数学通常约定，零向量与任意向量共线。 当 λ 等于 0 时，向量 a 就是零向量。")}</Note>
             </section>
 
             {/* 06 例题 */}
@@ -576,7 +516,7 @@ export default function VectorLinearOperationsPage() {
               />
 
               <div className="mt-6 space-y-5">
-                {questions.map((question) => {
+                {vectorText(questions.map((question) => {
                   const selected = answers[question.id];
                   const isSubmitted = Boolean(
                     submitted[question.id]
@@ -590,21 +530,20 @@ export default function VectorLinearOperationsPage() {
                       className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6"
                     >
                       <p className="text-xs font-medium text-blue-600">
-                        第 {question.id} 题 / 共 3 题
-                      </p>
+                        {vectorText("第 ")}{vectorText(question.id)} {vectorText("题 / 共 3 题")}</p>
 
                       <h3 className="mt-4 text-base font-semibold leading-8 text-slate-900">
-                        {question.question}
+                        {vectorText(question.question)}
                       </h3>
 
-                      {question.formula && (
+                      {vectorText(question.formula && (
                         <div className="mt-4 overflow-x-auto rounded-xl bg-slate-50 p-4">
                           <BlockMath math={question.formula} />
                         </div>
-                      )}
+                      ))}
 
                       <div className="mt-5 grid gap-3">
-                        {question.options.map((option) => {
+                        {vectorText(question.options.map((option) => {
                           const chosen =
                             selected === option.key;
                           const showCorrect =
@@ -637,17 +576,17 @@ export default function VectorLinearOperationsPage() {
                               }`}
                             >
                               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-current text-xs font-semibold">
-                                {option.key}
+                                {vectorText(option.key)}
                               </span>
                               <span className="pt-0.5">
-                                {option.text}
+                                {vectorText(option.text)}
                               </span>
                             </button>
                           );
-                        })}
+                        }))}
                       </div>
 
-                      {!isSubmitted ? (
+                      {vectorText(!isSubmitted ? (
                         <button
                           type="button"
                           disabled={!selected}
@@ -656,8 +595,7 @@ export default function VectorLinearOperationsPage() {
                           }
                           className="mt-5 rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-30"
                         >
-                          提交答案
-                        </button>
+                          {vectorText("提交答案")}</button>
                       ) : (
                         <div
                           className={`mt-5 rounded-xl p-4 ${
@@ -673,13 +611,13 @@ export default function VectorLinearOperationsPage() {
                                 : "text-red-600"
                             }`}
                           >
-                            {correct
+                            {vectorText(correct
                               ? "回答正确"
-                              : `回答错误，正确答案：${question.answer}`}
+                              : `回答错误，正确答案：${question.answer}`)}
                           </p>
 
                           <p className="mt-2 text-sm leading-7 text-slate-600">
-                            {question.explanation}
+                            {vectorText(question.explanation)}
                           </p>
 
                           <button
@@ -689,32 +627,29 @@ export default function VectorLinearOperationsPage() {
                             }
                             className="mt-3 text-sm font-medium text-slate-600 hover:text-slate-900"
                           >
-                            重新作答 →
-                          </button>
+                            {vectorText("重新作答 →")}</button>
                         </div>
-                      )}
+                      ))}
                     </div>
                   );
-                })}
+                }))}
               </div>
 
-              {completedCount === questions.length && (
+              {vectorText(completedCount === questions.length && (
                 <div className="mt-6 rounded-xl border border-slate-200 bg-white p-6">
                   <p className="text-sm text-slate-500">
-                    本节检测已完成
-                  </p>
+                    {vectorText("本节检测已完成")}</p>
 
                   <h3 className="mt-2 text-2xl font-bold text-slate-900">
-                    {correctCount} / {questions.length} 题正确
-                  </h3>
+                    {vectorText(correctCount)} {vectorText("/ ")}{vectorText(questions.length)} {vectorText("题正确")}</h3>
 
                   <p className="mt-3 text-sm leading-7 text-slate-500">
-                    {correctCount === questions.length
+                    {vectorText(correctCount === questions.length
                       ? "三个问题全部答对，可以继续学习平面向量的坐标表示。"
-                      : "建议重新理解向量加法、减法的方向和数乘运算规律。"}
+                      : "建议重新理解向量加法、减法的方向和数乘运算规律。")}
                   </p>
                 </div>
-              )}
+              ))}
             </section>
 
             {/* 底部 */}
@@ -723,12 +658,10 @@ export default function VectorLinearOperationsPage() {
                 href="/grade1/vectors/concept"
                 className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
               >
-                ← 上一节：向量的概念
-              </Link>
+                {vectorText("← 上一节：向量的概念")}</Link>
 
               <span className="text-sm text-slate-400">
-                下一节：平面向量基本定理与坐标表示
-              </span>
+                {vectorText("下一节：平面向量基本定理与坐标表示")}</span>
             </div>
           </div>
 
@@ -736,11 +669,10 @@ export default function VectorLinearOperationsPage() {
           <aside className="hidden lg:block">
             <div className="sticky top-24 rounded-2xl border border-slate-200 bg-white p-5">
               <p className="text-xs font-semibold text-slate-400">
-                本节学习目录
-              </p>
+                {vectorText("本节学习目录")}</p>
 
               <nav className="mt-5 space-y-3 text-sm">
-                {[
+                {vectorText([
                   ["addition", "01 向量加法"],
                   ["subtraction", "02 向量减法"],
                   ["scalar", "03 向量数乘"],
@@ -755,18 +687,17 @@ export default function VectorLinearOperationsPage() {
                     href={`#${id}`}
                     className="block text-slate-500 transition hover:text-blue-600"
                   >
-                    {label}
+                    {vectorText(label)}
                   </a>
-                ))}
+                )))}
               </nav>
 
               <div className="mt-6 border-t border-slate-100 pt-5">
                 <p className="text-xs text-slate-400">
-                  本节核心知识
-                </p>
+                  {vectorText("本节核心知识")}</p>
 
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {[
+                  {vectorText([
                     "三角形法则",
                     "平行四边形法则",
                     "向量减法",
@@ -777,9 +708,9 @@ export default function VectorLinearOperationsPage() {
                       key={item}
                       className="rounded-md bg-slate-50 px-2 py-1 text-xs text-slate-500"
                     >
-                      {item}
+                      {vectorText(item)}
                     </span>
-                  ))}
+                  )))}
                 </div>
               </div>
             </div>
@@ -805,14 +736,14 @@ function SectionTitle({
     <div>
       <div className="flex items-center gap-3">
         <span className="text-xs font-semibold text-blue-600">
-          {number}
+          {vectorText(number)}
         </span>
         <h2 className="text-xl font-bold text-slate-900">
-          {title}
+          {vectorText(title)}
         </h2>
       </div>
       <p className="mt-2 pl-7 text-sm text-slate-400">
-        {subtitle}
+        {vectorText(subtitle)}
       </p>
     </div>
   );
@@ -830,10 +761,9 @@ function Note({ children }: { children: ReactNode }) {
   return (
     <div className="mt-5 rounded-xl border border-blue-100 bg-blue-50/40 px-5 py-4">
       <p className="text-xs font-semibold text-blue-600">
-        理解提示
-      </p>
+        {vectorText("理解提示")}</p>
       <div className="mt-2 text-sm leading-7 text-slate-600">
-        {children}
+        {vectorText(children)}
       </div>
     </div>
   );
@@ -851,13 +781,13 @@ function RuleCard({
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5">
       <h3 className="text-sm font-semibold text-slate-900">
-        {title}
+        {vectorText(title)}
       </h3>
       <div className="mt-4 overflow-x-auto rounded-lg bg-slate-50 px-3 py-3">
         <BlockMath math={formula} />
       </div>
       <p className="mt-3 text-sm leading-7 text-slate-500">
-        {explanation}
+        {vectorText(explanation)}
       </p>
     </div>
   );
@@ -882,10 +812,10 @@ function InfoCard({
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5">
       <p className={`text-sm font-semibold ${textColor}`}>
-        {title}
+        {vectorText(title)}
       </p>
       <p className="mt-2 text-sm leading-7 text-slate-600">
-        {description}
+        {vectorText(description)}
       </p>
     </div>
   );
@@ -907,11 +837,11 @@ function ExampleCard({
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5">
       <p className="text-xs font-medium text-blue-600">
-        {number}
+        {vectorText(number)}
       </p>
 
       <h3 className="mt-3 font-semibold text-slate-900">
-        {title}
+        {vectorText(title)}
       </h3>
 
       <div className="mt-4 overflow-x-auto rounded-xl bg-slate-50 p-4">
@@ -919,11 +849,10 @@ function ExampleCard({
       </div>
 
       <p className="mt-4 text-sm font-semibold text-slate-700">
-        分析与解答
-      </p>
+        {vectorText("分析与解答")}</p>
 
       <p className="mt-2 text-sm leading-7 text-slate-600">
-        {answer}
+        {vectorText(answer)}
       </p>
 
       <div className="mt-4 overflow-x-auto rounded-xl border border-emerald-100 bg-emerald-50/40 p-3">
@@ -943,10 +872,10 @@ function MistakeTip({
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5">
       <h3 className="text-sm font-semibold text-slate-900">
-        {title}
+        {vectorText(title)}
       </h3>
       <p className="mt-2 text-sm leading-7 text-slate-500">
-        {description}
+        {vectorText(description)}
       </p>
     </div>
   );
@@ -1029,13 +958,13 @@ function TriangleDiagram() {
       <circle cx="270" cy="195" r="4" fill="#334155" />
       <circle cx="405" cy="55" r="4" fill="#334155" />
 
-      <text x="54" y="213" fontSize="17" fill="#334155">A</text>
-      <text x="265" y="221" fontSize="17" fill="#334155">B</text>
-      <text x="412" y="48" fontSize="17" fill="#334155">C</text>
+      <text x="54" y="213" fontSize="17" fill="#334155">{vectorSvgLabel("A")}</text>
+      <text x="265" y="221" fontSize="17" fill="#334155">{vectorSvgLabel("B")}</text>
+      <text x="412" y="48" fontSize="17" fill="#334155">{vectorSvgLabel("C")}</text>
 
-      <text x="150" y="217" fontSize="15" fill="#2563eb">AB</text>
-      <text x="352" y="150" fontSize="15" fill="#059669">BC</text>
-      <text x="186" y="95" fontSize="15" fill="#7c3aed">AC</text>
+      <text x="150" y="217" fontSize="15" fill="#2563eb">{vectorSvgLabel("AB")}</text>
+      <text x="352" y="150" fontSize="15" fill="#059669">{vectorSvgLabel("BC")}</text>
+      <text x="186" y="95" fontSize="15" fill="#7c3aed">{vectorSvgLabel("AC")}</text>
     </svg>
   );
 }
@@ -1133,7 +1062,7 @@ function ParallelogramDiagram() {
         markerEnd="url(#para-purple)"
       />
 
-      {[
+      {vectorSvgLabel([
         [95, 210],
         [275, 210],
         [180, 70],
@@ -1146,16 +1075,16 @@ function ParallelogramDiagram() {
           r="4"
           fill="#334155"
         />
-      ))}
+      )))}
 
-      <text x="75" y="232" fontSize="17" fill="#334155">O</text>
-      <text x="279" y="233" fontSize="17" fill="#334155">A</text>
-      <text x="165" y="58" fontSize="17" fill="#334155">B</text>
-      <text x="370" y="58" fontSize="17" fill="#334155">C</text>
+      <text x="75" y="232" fontSize="17" fill="#334155">{vectorSvgLabel("O")}</text>
+      <text x="279" y="233" fontSize="17" fill="#334155">{vectorSvgLabel("A")}</text>
+      <text x="165" y="58" fontSize="17" fill="#334155">{vectorSvgLabel("B")}</text>
+      <text x="370" y="58" fontSize="17" fill="#334155">{vectorSvgLabel("C")}</text>
 
-      <text x="166" y="234" fontSize="15" fill="#2563eb">OA</text>
-      <text x="112" y="124" fontSize="15" fill="#059669">OB</text>
-      <text x="247" y="118" fontSize="15" fill="#7c3aed">OC</text>
+      <text x="166" y="234" fontSize="15" fill="#2563eb">{vectorSvgLabel("OA")}</text>
+      <text x="112" y="124" fontSize="15" fill="#059669">{vectorSvgLabel("OB")}</text>
+      <text x="247" y="118" fontSize="15" fill="#7c3aed">{vectorSvgLabel("OC")}</text>
     </svg>
   );
 }
@@ -1233,19 +1162,16 @@ function ScalarDiagram() {
         markerEnd="url(#scalar-red)"
       />
 
-      <text x="140" y="37" fontSize="17" fill="#2563eb">a</text>
-      <text x="195" y="101" fontSize="17" fill="#059669">2a</text>
-      <text x="142" y="169" fontSize="17" fill="#dc2626">-a</text>
+      <text x="140" y="37" fontSize="17" fill="#2563eb">{vectorSvgLabel("a")}</text>
+      <text x="195" y="101" fontSize="17" fill="#059669">{vectorSvgLabel("2a")}</text>
+      <text x="142" y="169" fontSize="17" fill="#dc2626">{vectorSvgLabel("-a")}</text>
 
       <text x="352" y="60" fontSize="14" fill="#64748b">
-        原向量
-      </text>
+        {vectorSvgLabel("原向量")}</text>
       <text x="352" y="125" fontSize="14" fill="#64748b">
-        同方向，2倍
-      </text>
+        {vectorSvgLabel("同方向，2倍")}</text>
       <text x="352" y="190" fontSize="14" fill="#64748b">
-        反方向
-      </text>
+        {vectorSvgLabel("反方向")}</text>
     </svg>
   );
 }
