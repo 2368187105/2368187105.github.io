@@ -357,11 +357,11 @@ function DerivativeFigure() {
  const curve=(fn:(x:number)=>number)=>Array.from({length:161},(_,i)=>{const x=-3+i*6/160;return `${sx(x)},${sy(fn(x))}`;}).join(' ');
  const tangent=(x:number)=>f(position)+derivative(position)*(x-position);
  return <section id="explore" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-5 sm:p-7"><p className="text-xs font-semibold text-blue-600">EXPLORE THE DERIVATIVE</p><h2 className="mt-2 text-xl font-bold">动手观察：导数符号与极值</h2><p className="mt-3 text-sm leading-7 text-slate-600">蓝色是 f(x)=x³−3x，绿色虚线是 f′(x)=3x²−3。观察导数过零时是否变号，以及对应的函数增减。</p>
- 
+
  <svg viewBox="0 0 520 360" role="img" aria-label="函数曲线与导数交互图" className="mt-5 w-full overflow-hidden rounded-xl bg-slate-50">{[-2,-1,0,1,2].map(i=><g key={i}><line x1={sx(i)} x2={sx(i)} y1="15" y2="345" stroke="#e2e8f0"/><text x={sx(i)} y="198" textAnchor="middle" fontSize="10" fill="#64748b">{i}</text></g>)}<path d="M20 180H500 M260 345V15" stroke="#94a3b8"/><text x="500" y="173" fontSize="12">x</text><text x="270" y="22" fontSize="12">y</text><polyline points={curve(f)} fill="none" stroke="#2563eb" strokeWidth="2.5"/>
  <polyline points={curve(derivative)} fill="none" stroke="#059669" strokeWidth="2" strokeDasharray="6 4"/>
  <line x1={sx(-3)} y1={sy(tangent(-3))} x2={sx(3)} y2={sy(tangent(3))} stroke="#d97706" strokeWidth="1.5"/><circle cx={sx(position)} cy={sy(f(position))} r="4" fill="#2563eb"/><text x={sx(position)+6} y={sy(f(position))-8} fontSize="11" fill="#1d4ed8">P</text></svg>
  <label className="mt-5 block text-sm font-medium">切点横坐标 x₀：{position}<input aria-label="切点横坐标 x₀" type="range" min="-2" max="2" step="0.25" value={position} onChange={e=>setPosition(Number(e.target.value))} className="mt-3 w-full accent-blue-600"/></label>
- 
+
  <div aria-live="polite" className="mt-5 rounded-xl bg-blue-50 p-4 text-sm leading-7 text-blue-800"><p>f({position}) = {Number(f(position).toFixed(3))}；f′({position}) = {Number(derivative(position).toFixed(3))}。</p><p>{derivative(position)>0?"当前位置导数为正，函数局部递增。":derivative(position)<0?"当前位置导数为负，函数局部递减。":"当前位置导数为零。x=−1 处由增转减，x=1 处由减转增。"}</p></div></section>;
 }

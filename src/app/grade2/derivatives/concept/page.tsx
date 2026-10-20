@@ -358,7 +358,7 @@ function DerivativeFigure() {
  const curve=(fn:(x:number)=>number)=>Array.from({length:161},(_,i)=>{const x=-3+i*6/160;return `${sx(x)},${sy(fn(x))}`;}).join(' ');
  const tangent=(x:number)=>f(position)+derivative(position)*(x-position);
  return <section id="explore" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-5 sm:p-7"><p className="text-xs font-semibold text-blue-600">EXPLORE THE DERIVATIVE</p><h2 className="mt-2 text-xl font-bold">动手观察：割线趋近切线</h2><p className="mt-3 text-sm leading-7 text-slate-600">蓝色是 y=x²，橙色是切线，绿色虚线是割线。选择左右两侧的增量，观察 h 趋近零时的斜率。</p>
- 
+
  <svg viewBox="0 0 520 360" role="img" aria-label="函数曲线与导数交互图" className="mt-5 w-full overflow-hidden rounded-xl bg-slate-50">{[-2,-1,0,1,2].map(i=><g key={i}><line x1={sx(i)} x2={sx(i)} y1="15" y2="345" stroke="#e2e8f0"/><text x={sx(i)} y="198" textAnchor="middle" fontSize="10" fill="#64748b">{i}</text></g>)}<path d="M20 180H500 M260 345V15" stroke="#94a3b8"/><text x="500" y="173" fontSize="12">x</text><text x="270" y="22" fontSize="12">y</text><polyline points={curve(f)} fill="none" stroke="#2563eb" strokeWidth="2.5"/>
  <line x1={sx(-3)} y1={sy(f(position)+slope*(-3-position))} x2={sx(3)} y2={sy(f(position)+slope*(3-position))} stroke="#059669" strokeDasharray="6 4"/><circle cx={sx(position+h)} cy={sy(f(position+h))} r="4" fill="#059669"/><text x={sx(position+h)+6} y={sy(f(position+h))-8} fontSize="11" fill="#047857">Q</text>
  <line x1={sx(-3)} y1={sy(tangent(-3))} x2={sx(3)} y2={sy(tangent(3))} stroke="#d97706" strokeWidth="1.5"/><circle cx={sx(position)} cy={sy(f(position))} r="4" fill="#2563eb"/><text x={sx(position)+6} y={sy(f(position))-8} fontSize="11" fill="#1d4ed8">P</text></svg>

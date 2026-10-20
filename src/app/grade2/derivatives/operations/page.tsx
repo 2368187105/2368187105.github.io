@@ -362,6 +362,6 @@ function DerivativeFigure() {
  <polyline points={curve(derivative)} fill="none" stroke="#059669" strokeWidth="2" strokeDasharray="6 4"/>
  <line x1={sx(-3)} y1={sy(tangent(-3))} x2={sx(3)} y2={sy(tangent(3))} stroke="#d97706" strokeWidth="1.5"/><circle cx={sx(position)} cy={sy(f(position))} r="4" fill="#2563eb"/><text x={sx(position)+6} y={sy(f(position))-8} fontSize="11" fill="#1d4ed8">P</text></svg>
  <label className="mt-5 block text-sm font-medium">切点横坐标 x₀：{position}<input aria-label="切点横坐标 x₀" type="range" min="-2" max="2" step="0.25" value={position} onChange={e=>setPosition(Number(e.target.value))} className="mt-3 w-full accent-blue-600"/></label>
- 
+
  <div aria-live="polite" className="mt-5 rounded-xl bg-blue-50 p-4 text-sm leading-7 text-blue-800"><p>f({position}) = {Number(f(position).toFixed(3))}；f′({position}) = {Number(derivative(position).toFixed(3))}。</p><p>切线的斜率等于绿色导函数在同一横坐标处的函数值。</p></div></section>;
 }
