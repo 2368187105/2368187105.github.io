@@ -12,6 +12,9 @@ import ConstructedQuestion from "@/components/ConstructedQuestion";
 import { checkAnswer } from "@/lib/answer-checking";
 import { savePracticeRecord } from "@/lib/practice-records";
 import SiteHeader from "@/components/SiteHeader";
+import GradeSelector from "@/components/GradeSelector";
+import { gradeFromQuery, gradeUrl } from "@/lib/grade-query";
+import { accuracyPercent } from "@/lib/learning-summary";
 import { createClient } from "@/lib/supabase/client";
 import {
   practiceTopics,
@@ -202,7 +205,20 @@ export default function PracticePage() {
 
     const requestedTopic = params.get("topic");
 
-    if (!requestedTopic) return;
+    if (!requestedTopic) {
+      const grade = gradeFromQuery(window.location.search);
+      if (grade) {
+        setSelectedGrade(grade);
+        const topics = grade === "高一" ? grade1PracticeTopics : grade === "高二" ? grade2PracticeTopics : grade3PracticeTopics;
+        setSelectedTopic(topics[0] as Topic);
+        setExpandedChapter(0);
+        setQuestionIndex(0);
+        setSelectedAnswer(null);
+        setSubmitted(false);
+        setSaveMessage("");
+      }
+      return;
+    }
 
     if (grade3TopicSet.has(requestedTopic)) {
       setSelectedGrade("高三");
@@ -295,9 +311,7 @@ export default function PracticePage() {
   const sessionAccuracy =
     sessionTotal === 0
       ? 0
-      : Math.round(
-          (sessionCorrect / sessionTotal) * 100
-        );
+      : accuracyPercent(sessionCorrect, sessionTotal);
 
   const selectedOption =
     currentQuestion?.options.find(
@@ -532,14 +546,14 @@ export default function PracticePage() {
 
             <div className="flex flex-wrap gap-3">
               <Link
-                href="/mistakes"
+                href={gradeUrl("/mistakes", selectedGrade)}
                 className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
               >
                 我的错题
               </Link>
 
               <Link
-                href="/report"
+                href={gradeUrl("/report", selectedGrade)}
                 className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
               >
                 学习报告
@@ -568,68 +582,7 @@ export default function PracticePage() {
                   </span>
                 </div>
 
-                <div className="mt-4 grid grid-cols-3 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => changeGrade("高一")}
-                    disabled={submitting}
-                    aria-pressed={selectedGrade === "高一"}
-                    className={`rounded-lg border px-2 py-3 text-center transition disabled:opacity-50 ${
-                      selectedGrade === "高一"
-                        ? "border-blue-200 bg-blue-50"
-                        : "border-slate-200 bg-white hover:bg-slate-50"
-                    }`}
-                  >
-                    <p className={`text-sm font-semibold ${
-                      selectedGrade === "高一"
-                        ? "text-blue-700"
-                        : "text-slate-600"
-                    }`}>
-                      高一
-                    </p>
-                    <p className={`mt-1 text-[10px] ${
-                      selectedGrade === "高一"
-                        ? "text-blue-500"
-                        : "text-slate-400"
-                    }`}>
-                      已开放
-                    </p>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => changeGrade("高二")}
-                    disabled={submitting}
-                    aria-pressed={selectedGrade === "高二"}
-                    className={`rounded-lg border px-2 py-3 text-center transition disabled:opacity-50 ${
-                      selectedGrade === "高二"
-                        ? "border-blue-200 bg-blue-50"
-                        : "border-slate-200 bg-white hover:bg-slate-50"
-                    }`}
-                  >
-                    <p className={`text-sm font-semibold ${
-                      selectedGrade === "高二"
-                        ? "text-blue-700"
-                        : "text-slate-600"
-                    }`}>
-                      高二
-                    </p>
-                    <p className={`mt-1 text-[10px] ${
-                      selectedGrade === "高二"
-                        ? "text-blue-500"
-                        : "text-slate-400"
-                    }`}>
-                      已开放
-                    </p>
-                  </button>
-
-                  <button type="button" onClick={() => changeGrade("高三")} disabled={submitting}
-                    aria-pressed={selectedGrade === "高三"}
-                    className={`rounded-lg border px-2 py-3 text-center transition disabled:opacity-50 ${selectedGrade === "高三" ? "border-blue-200 bg-blue-50 text-blue-700" : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
-                    <p className="text-sm font-semibold">高三</p>
-                    <p className="mt-1 text-[10px]">一轮复习</p>
-                  </button>
-                </div>
+                <div className="mt-4"><GradeSelector value={selectedGrade} onChange={changeGrade} disabled={submitting} /></div>
               </div>
 
               {/* 章节与专题 */}
@@ -1155,14 +1108,14 @@ export default function PracticePage() {
                   ) : (
                     <div className="flex flex-wrap gap-3">
                       <Link
-                        href="/mistakes"
+                        href={gradeUrl("/mistakes", selectedGrade)}
                         className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50"
                       >
                         查看错题
                       </Link>
 
                       <Link
-                        href="/report"
+                        href={gradeUrl("/report", selectedGrade)}
                         className="rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-slate-700"
                       >
                         查看报告

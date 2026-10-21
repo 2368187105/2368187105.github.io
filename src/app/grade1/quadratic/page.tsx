@@ -115,7 +115,7 @@ export default function QuadraticPage() {
           <div className="grid gap-8 lg:grid-cols-[1fr_280px] lg:items-end">
             <div>
               <p className="text-sm font-medium text-blue-600">
-                第 02 模块
+                第 02 章
               </p>
 
               <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
@@ -126,7 +126,7 @@ export default function QuadraticPage() {
                 从等式与不等式性质出发，
                 系统学习基本不等式、二次函数、
                 一元二次方程、一元二次不等式以及综合应用。
-                本模块全部内容现在已经开放。
+                本章全部内容现在已经开放。
               </p>
 
               <div className="mt-7 flex flex-wrap gap-3">
@@ -182,7 +182,7 @@ export default function QuadraticPage() {
                 </span>
 
                 <h2 className="mt-4 text-xl font-bold text-slate-900">
-                  第二模块已经全部开放
+                  第二章已经全部开放
                 </h2>
 
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
@@ -228,7 +228,7 @@ export default function QuadraticPage() {
             <aside className="space-y-4">
               <div className="rounded-xl border border-slate-200 bg-white p-5">
                 <p className="text-xs text-slate-400">
-                  模块进度
+                  课程开放情况
                 </p>
 
                 <div className="mt-3 flex items-end gap-1">
@@ -259,7 +259,7 @@ export default function QuadraticPage() {
                 </p>
 
                 <p className="mt-2 text-sm leading-6 text-slate-500">
-                  通过题目检查本模块掌握情况。
+                  通过题目检查本章掌握情况。
                 </p>
 
                 <p className="mt-4 text-sm font-medium text-slate-700">
@@ -276,7 +276,7 @@ export default function QuadraticPage() {
                 </p>
 
                 <p className="mt-2 text-sm leading-6 text-slate-500">
-                  重新练习本模块中的错误题目。
+                  重新练习本章中的错误题目。
                 </p>
 
                 <p className="mt-4 text-sm font-medium text-slate-700">
@@ -287,15 +287,15 @@ export default function QuadraticPage() {
           </div>
         </section>
 
-        {/* 模块总结 */}
+        {/* 本章小结 */}
         <section className="mt-14 border-t border-slate-200 pt-10">
           <div className="mb-6">
             <h2 className="text-xl font-bold text-slate-900">
-              本模块核心能力
+              本章核心能力
             </h2>
 
             <p className="mt-1 text-sm text-slate-500">
-              完成本模块后，你应该能够：
+              完成本章后，你应该能够：
             </p>
           </div>
 

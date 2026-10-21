@@ -9,7 +9,7 @@ import SiteHeader from "@/components/SiteHeader";
 
 export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader/><article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-  <Link href="/grade3/analytic-geometry" className="text-sm text-blue-600">← 解析几何复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第七模块 · 7.5</p><h1 className="mt-3 text-3xl font-bold text-slate-900">直线与圆锥曲线、弦与中点</h1><p className="mt-5 leading-8">按方程次数、判别式和韦达定理处理交点，再连接弦长、中点与面积；点差法得到候选后补上交点存在性。</p>
+  <Link href="/grade3/analytic-geometry" className="text-sm text-blue-600">← 解析几何复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第七章 · 7.5</p><h1 className="mt-3 text-3xl font-bold text-slate-900">直线与圆锥曲线、弦与中点</h1><p className="mt-5 leading-8">按方程次数、判别式和韦达定理处理交点，再连接弦长、中点与面积；点差法得到候选后补上交点存在性。</p>
   <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图形探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
   <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 联立后先数清次数</h3><p className="mt-3 leading-8">{"把直线代入曲线后，先检查二次项系数是否非零，再使用判别式：严格大于零对应两个不同实交点。若降为一次或常数式，必须另行分类。竖直直线可直接代 x=常数，避免强行使用斜率。"}</p></section>
 <section className="mt-6"><h3 className="font-semibold text-slate-900">2. 弦长的投影差不是实际长度</h3><p className="mt-3 leading-8">{mathText("非竖直直线 y=kx+b 上两点的距离是横坐标差绝对值乘 √(1+k²)。根和、根积可以避免显式求根。竖直弦直接用纵坐标差；水平弦则用横坐标差。三角形面积还需乘顶点到弦所在直线的垂直距离。")}</p></section>

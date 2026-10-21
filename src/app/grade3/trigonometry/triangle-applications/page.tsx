@@ -10,7 +10,7 @@ import SiteHeader from "@/components/SiteHeader";
 export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader/><article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
   <Link href="/grade3/trigonometry" className="text-sm text-blue-600">← 三角函数与解三角形目录</Link>
-  <p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第三模块 · 3.6</p><h1 className="mt-3 text-3xl font-bold text-slate-900">三角形面积与综合应用</h1><p className="mt-5 leading-8">用面积连接边角、内切圆与外接圆，结合正余弦定理求范围和最值，检查取等位置与三角形非退化条件。</p>
+  <p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第三章 · 3.6</p><h1 className="mt-3 text-3xl font-bold text-slate-900">三角形面积与综合应用</h1><p className="mt-5 leading-8">用面积连接边角、内切圆与外接圆，结合正余弦定理求范围和最值，检查取等位置与三角形非退化条件。</p>
   <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图形探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
   <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 面积的几种表达相互衔接</h3><p className="mt-3 leading-8">{"两边及夹角已知，用 bc sinA/2。内切圆半径 r 与半周长 p 满足 S=pr；将三角形按内心分成三个高为 r 的小三角形即可证明。再由 a=2RsinA，得到 S=abc/(4R)。"}</p></section>
 <section className="mt-6"><h3 className="font-semibold text-slate-900">2. 先求角或正弦，再算面积</h3><p className="mt-3 leading-8">{mathText("三边已知时可先由余弦定理求 cosA，再用 sinA=√(1−cos²A)；内角正弦为正，所以此处取正根。求角还须限定在 (0,π)，不能留下区间外的周期解。")}</p></section>
@@ -20,7 +20,7 @@ export default function LessonPage() {
 <details className="mt-5 rounded-xl border border-slate-200 p-5"><summary className="cursor-pointer font-semibold text-slate-900">固定两边时求面积最大值</summary><p className="mt-4 leading-8">{"两边为 2、5，夹角 θ∈(0,π)，求面积最大值及此时第三边。"}</p><ol className="mt-4 list-decimal space-y-3 pl-6 leading-8"><li>{"S=(1/2)×2×5sinθ=5sinθ，且 sinθ≤1。"}</li><li>{"θ=π/2 时取等，确能组成直角三角形，因此面积最大值为 5。"}</li><li>{mathText("余弦定理给出第三边平方为 2²+5²−2×2×5cos(π/2)=29，所以第三边为 √29。")}</li></ol></details></section>
   <aside className="mt-8 rounded-xl border border-amber-200 bg-amber-50 p-6"><h2 className="font-semibold text-slate-900">易错提醒</h2><p className="mt-3 leading-8">{"面积公式漏掉 1/2；半周长错当周长；由余弦求正弦时忽略内角范围；把退化三角形边界写成可取端点。"}</p></aside>
   <section id="practice" className="mt-8 scroll-mt-24 rounded-2xl border border-blue-200 bg-white p-6"><h2 className="text-xl font-bold text-slate-900">分层训练</h2><p className="mt-3 leading-8">4 道选择题、3 道填空题、2 道解答题，均为本站原创。解析写清代入、变形、分支筛选与边界检验。解答题先独立书写，再对照步骤自评；登录后保存练习记录及未掌握题目。</p><Link href={"/practice/?topic="+encodeURIComponent("高三三角与解三角形·面积与综合")} className="mt-5 inline-flex rounded-lg bg-blue-600 px-5 py-3 text-white">开始本节 9 道训练 →</Link></section>
-  <div className="mt-8 flex justify-between gap-4 text-sm text-blue-600"><Link href="/grade3/trigonometry/sine-cosine-laws">← 上一节</Link><Link href="/grade3/trigonometry">完成本模块，返回目录 →</Link></div>
+  <div className="mt-8 flex justify-between gap-4 text-sm text-blue-600"><Link href="/grade3/trigonometry/sine-cosine-laws">← 上一节</Link><Link href="/grade3/trigonometry">完成本章，返回目录 →</Link></div>
  </article></main>;
 }
 

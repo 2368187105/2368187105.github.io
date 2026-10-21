@@ -9,7 +9,7 @@ import { vectorText, vectorSvgLabel } from "@/components/VectorText";
 
 export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader/><article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-  <Link href="/grade3/solid-geometry" className="text-sm text-blue-600">← 立体几何与空间向量复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第六模块 · 6.3</p><h1 className="mt-3 text-3xl font-bold text-slate-900">空间向量、坐标与法向量</h1><p className="mt-5 leading-8">选择正交坐标系，把起终点、基向量与坐标分量对应起来；用两个不共线方向建立法向量方程，保留非零条件。</p>
+  <Link href="/grade3/solid-geometry" className="text-sm text-blue-600">← 立体几何与空间向量复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第六章 · 6.3</p><h1 className="mt-3 text-3xl font-bold text-slate-900">空间向量、坐标与法向量</h1><p className="mt-5 leading-8">选择正交坐标系，把起终点、基向量与坐标分量对应起来；用两个不共线方向建立法向量方程，保留非零条件。</p>
   <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图形探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
   <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 建系需要真实的相互垂直关系</h3><p className="mt-3 leading-8">{vectorText("优先以三条两两垂直的棱或辅助线为坐标轴，统一长度单位并明确原点。斜投影图上的三条线不一定在空间中正交，不能仅凭画法建立直角坐标系。方向向量由终点减起点，各坐标分量可正可负。")}</p></section>
 <section className="mt-6"><h3 className="font-semibold text-slate-900">2. 空间数量积逐分量计算</h3><p className="mt-3 leading-8">{vectorText("向量 u、v 的数量积是三个对应分量乘积的和，结果为实数。模平方是自身数量积，模非负。若用数量积判夹角或垂直方向，必须先确认两个方向向量非零。")}</p></section>

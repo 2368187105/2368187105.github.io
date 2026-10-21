@@ -111,7 +111,7 @@ export default function FunctionsPage() {
           <div className="grid gap-8 lg:grid-cols-[1fr_280px] lg:items-end">
             <div>
               <p className="text-sm font-medium text-blue-600">
-                第 03 模块
+                第 03 章
               </p>
 
               <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
@@ -121,7 +121,7 @@ export default function FunctionsPage() {
               <p className="mt-4 max-w-2xl text-base leading-8 text-slate-500">
                 从函数的基本概念开始，
                 系统学习定义域与值域、单调性、奇偶性以及最大值和最小值。
-                本模块全部内容现在已经开放。
+                本章全部内容现在已经开放。
               </p>
 
               <div className="mt-7 flex flex-wrap gap-3">
@@ -167,7 +167,7 @@ export default function FunctionsPage() {
           </div>
         </section>
 
-        {/* 模块完成提示 */}
+        {/* 章节完成提示 */}
         <section className="py-10">
           <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-7">
             <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
@@ -177,7 +177,7 @@ export default function FunctionsPage() {
                 </span>
 
                 <h2 className="mt-4 text-xl font-bold text-slate-900">
-                  函数模块已经全部开放
+                  函数章节已经全部开放
                 </h2>
 
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
@@ -309,11 +309,11 @@ export default function FunctionsPage() {
         <section className="mt-14 border-t border-slate-200 pt-10">
           <div className="mb-6">
             <h2 className="text-xl font-bold text-slate-900">
-              本模块学习目标
+              本章学习目标
             </h2>
 
             <p className="mt-1 text-sm text-slate-500">
-              完成本模块后，你应该能够：
+              完成本章后，你应该能够：
             </p>
           </div>
 

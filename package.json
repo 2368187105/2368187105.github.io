@@ -9,6 +9,7 @@
     "lint": "eslint",
     "check:learning": "node scripts/verify-learning.cjs",
     "check:rankings": "node scripts/verify-learning-rankings.cjs",
+    "check:curriculum": "node scripts/verify-curriculum.cjs",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",

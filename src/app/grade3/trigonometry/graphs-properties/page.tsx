@@ -9,7 +9,7 @@ import SiteHeader from "@/components/SiteHeader";
 export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader/><article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
   <Link href="/grade3/trigonometry" className="text-sm text-blue-600">← 三角函数与解三角形目录</Link>
-  <p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第三模块 · 3.3</p><h1 className="mt-3 text-3xl font-bold text-slate-900">三角函数图象与性质</h1><p className="mt-5 leading-8">将 A、ω、φ 与振幅、周期、水平移动联系起来，整体求单调区间、对称轴和中心，并核对定义域。</p>
+  <p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第三章 · 3.3</p><h1 className="mt-3 text-3xl font-bold text-slate-900">三角函数图象与性质</h1><p className="mt-5 leading-8">将 A、ω、φ 与振幅、周期、水平移动联系起来，整体求单调区间、对称轴和中心，并核对定义域。</p>
   <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图形探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
   <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 振幅、周期与平移分清</h3><p className="mt-3 leading-8">{"振幅为 |A|，纵向中心为 b。对非零 A、ω，正弦和余弦最小正周期为 2π/|ω|，正切为 π/|ω|。水平移动量为 −φ/ω，不能把 φ 直接当作平移距离。"}</p></section>
 <section className="mt-6"><h3 className="font-semibold text-slate-900">2. 整体角区间逐步解回</h3><p className="mt-3 leading-8">{"先令 t=ωx+φ，套基本正弦或余弦的单调区间，再解出 x。若 A<0 或 ω<0，增减方向需相应改变。对称轴由极值角位置确定，对称中心由中心高度对应的角位置确定。"}</p></section>

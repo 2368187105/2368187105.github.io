@@ -112,7 +112,7 @@ const lessons = [
     number: "05",
     title: "平面与平面的位置关系",
     href: "/grade1/solid-geometry/plane-plane-relations",
-    ready: false,
+    ready: true,
   },
 ];
 

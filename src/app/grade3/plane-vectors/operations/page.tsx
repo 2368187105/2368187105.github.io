@@ -9,7 +9,7 @@ import { vectorText, vectorSvgLabel } from "@/components/VectorText";
 
 export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader/><article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-  <Link href="/grade3/plane-vectors" className="text-sm text-blue-600">← 平面向量复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第四模块 · 4.1</p><h1 className="mt-3 text-3xl font-bold text-slate-900">向量概念与线性运算</h1><p className="mt-5 leading-8">区分有方向的位移与无方向的长度，正确使用加减、数乘和模，说明零向量及夹角的适用前提。</p>
+  <Link href="/grade3/plane-vectors" className="text-sm text-blue-600">← 平面向量复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第四章 · 4.1</p><h1 className="mt-3 text-3xl font-bold text-slate-900">向量概念与线性运算</h1><p className="mt-5 leading-8">区分有方向的位移与无方向的长度，正确使用加减、数乘和模，说明零向量及夹角的适用前提。</p>
   <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图形探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
   <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 向量与长度是不同对象</h3><p className="mt-3 leading-8">{vectorText("向量由大小和方向确定，可平移比较；起点不同不妨碍两向量相等。模是非负实数，位移为零时得到零向量。夹角只对两个非零向量定义，不能给零向量强行指定方向和角度。")}</p></section>
 <section className="mt-6"><h3 className="font-semibold text-slate-900">2. 路径法统一加减</h3><p className="mt-3 leading-8">{vectorText("首尾相接的位移之和指向总终点；同起点相减可改成相反向量相加。每一步写出起点、终点，尤其注意减法顺序。闭合路径的位移和为零，不意味着路径总长度为零。")}</p></section>
@@ -19,7 +19,7 @@ export default function LessonPage() {
 <details className="mt-5 rounded-xl border border-slate-200 p-5"><summary className="cursor-pointer font-semibold text-slate-900">平行四边形与中点</summary><p className="mt-4 leading-8">{vectorText("平行四边形 ABCD 中 AB=u、AD=v，N 为 CD 中点，求 AN、BN。")}</p><ol className="mt-4 list-decimal space-y-3 pl-6 leading-8"><li>{vectorText("因为 CD=−AB=−u，故 DN=DC/2=u/2。")}</li><li>{vectorText("AN=AD+DN=v+u/2。")}</li><li>{vectorText("BN=BA+AN=−u+(v+u/2)=v−u/2。每一步都按有向路径相接。")}</li></ol></details></section>
   <aside className="mt-8 rounded-xl border border-amber-200 bg-amber-50 p-6"><h2 className="font-semibold text-slate-900">易错提醒</h2><p className="mt-3 leading-8">{vectorText("把模当作向量；相减时写反方向；负倍数的模写为负；忘记同向才可能在三角不等式取等。")}</p></aside>
   <section id="practice" className="mt-8 scroll-mt-24 rounded-2xl border border-blue-200 bg-white p-6"><h2 className="text-xl font-bold text-slate-900">分层训练</h2><p className="mt-3 leading-8">4 道选择题、3 道填空题、2 道解答题，均为本站原创。向量采用箭头记号，模与参数区分；解析展开基底、坐标、数量积与边界检验。先独立完成解答，再分步自评，登录后保存练习记录与未掌握题目。</p><Link href={"/practice/?topic="+encodeURIComponent("高三平面向量·概念与运算")} className="mt-5 inline-flex rounded-lg bg-blue-600 px-5 py-3 text-white">开始本节 9 道训练 →</Link></section>
-  <div className="mt-8 flex justify-between gap-4 text-sm text-blue-600"><Link href="/grade3/plane-vectors">← 模块目录</Link><Link href="/grade3/plane-vectors/basis-collinearity">下一节 →</Link></div>
+  <div className="mt-8 flex justify-between gap-4 text-sm text-blue-600"><Link href="/grade3/plane-vectors">← 章节目录</Link><Link href="/grade3/plane-vectors/basis-collinearity">下一节 →</Link></div>
  </article></main>;
 }
 

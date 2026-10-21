@@ -9,7 +9,7 @@ import SiteHeader from "@/components/SiteHeader";
 
 export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader/><article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-  <Link href="/grade3/analytic-geometry" className="text-sm text-blue-600">← 解析几何复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第七模块 · 7.7</p><h1 className="mt-3 text-3xl font-bold text-slate-900">解析几何综合与最值</h1><p className="mt-5 leading-8">先把弦、面积或距离写成有范围的单变量式，再配方或估界求最值；用能覆盖特殊方向的参数方式检验取等条件。</p>
+  <Link href="/grade3/analytic-geometry" className="text-sm text-blue-600">← 解析几何复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第七章 · 7.7</p><h1 className="mt-3 text-3xl font-bold text-slate-900">解析几何综合与最值</h1><p className="mt-5 leading-8">先把弦、面积或距离写成有范围的单变量式，再配方或估界求最值；用能覆盖特殊方向的参数方式检验取等条件。</p>
   <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图形探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
   <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 先建立真实允许范围</h3><p className="mt-3 leading-8">{"两个不同交点要求严格的判别式条件；三角形非退化还要排除顶点落在弦上。先把这些限制写入参数范围，再求最值。不能把切点、零面积或范围外参数当成可取位置。"}</p></section>
 <section className="mt-6"><h3 className="font-semibold text-slate-900">2. 非负目标可以先平方</h3><p className="mt-3 leading-8">{"弦长、面积和距离均非负，平方后常可消根式并配方。平方最值算完后必须开根，还要逐一检查全部取等点；上下对称的位置可能同时达到最大值。"}</p></section>
@@ -19,7 +19,7 @@ export default function LessonPage() {
 <details className="mt-5 rounded-xl border border-slate-200 p-5"><summary className="cursor-pointer font-semibold text-slate-900">单位方向使参数差成为长度</summary><p className="mt-4 leading-8">{"求椭圆 x²/9+y²/4=1 的中心弦长度范围。"}</p><ol className="mt-4 list-decimal space-y-3 pl-6 leading-8"><li>{"设直线上点为 (s cosθ,s sinθ)，θ∈[0,π)、s∈R。代入得 s²D=1，其中 D=cos²θ/9+sin²θ/4>0。"}</li><li>{mathText("两端点对应 s=±1/√D。因方向为单位长度，所以真实弦长为参数差 2/√D。")}</li><li>{"D=1/9+(5/36)sin²θ∈[1/9,1/4]，因此弦长在 [4,6] 内。"}</li><li>{"竖直方向 x=0 取得 4，水平方向 y=0 取得 6，两端均能达到。"}</li></ol></details></section>
   <aside className="mt-8 rounded-xl border border-amber-200 bg-amber-50 p-6"><h2 className="font-semibold text-slate-900">易错提醒</h2><p className="mt-3 leading-8">最大平方当成最大长度或面积；忽略非退化条件；只列一个对称取点；有限斜率法漏掉竖直方向；图中看不到便当作没有交点。</p></aside>
   <section id="practice" className="mt-8 scroll-mt-24 rounded-2xl border border-blue-200 bg-white p-6"><h2 className="text-xl font-bold text-slate-900">分层训练</h2><p className="mt-3 leading-8">4 道选择题、3 道填空题、2 道解答题，均为本站原创。解析逐步展开方程整理、次数分类、范围筛选和取等回代。解答题先独立书写，再按步骤自评；登录后沿用练习记录、错题与学习报告。</p><Link href={"/practice/?topic="+encodeURIComponent("高三解析几何·综合与最值")} className="mt-5 inline-flex rounded-lg bg-blue-600 px-5 py-3 text-white">开始本节 9 道训练 →</Link></section>
-  <div className="mt-8 flex justify-between gap-4 text-sm text-blue-600"><Link href="/grade3/analytic-geometry/loci-equations">← 上一节</Link><Link href="/grade3/analytic-geometry">完成本模块，返回目录 →</Link></div>
+  <div className="mt-8 flex justify-between gap-4 text-sm text-blue-600"><Link href="/grade3/analytic-geometry/loci-equations">← 上一节</Link><Link href="/grade3/analytic-geometry">完成本章，返回目录 →</Link></div>
  </article></main>;
 }
 

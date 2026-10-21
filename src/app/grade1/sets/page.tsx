@@ -95,7 +95,7 @@ export default function SetsPage() {
           <div className="grid gap-8 lg:grid-cols-[1fr_280px] lg:items-end">
             <div>
               <p className="text-sm font-medium text-blue-600">
-                第 01 模块
+                第 01 章
               </p>
 
               <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
@@ -105,7 +105,7 @@ export default function SetsPage() {
               <p className="mt-4 max-w-2xl text-base leading-8 text-slate-500">
                 从集合与元素开始，学习集合间关系、
                 集合基本运算、充分必要条件以及全称量词和存在量词。
-                本模块的全部知识点现在已经开放。
+                本章的全部知识点现在已经开放。
               </p>
 
               <div className="mt-7 flex flex-wrap gap-3">
@@ -190,7 +190,7 @@ export default function SetsPage() {
             <aside className="space-y-4">
               <div className="rounded-xl border border-slate-200 bg-white p-5">
                 <p className="text-xs text-slate-400">
-                  模块进度
+                  课程开放情况
                 </p>
 
                 <div className="mt-3 flex items-end gap-1">
@@ -221,7 +221,7 @@ export default function SetsPage() {
                 </p>
 
                 <p className="mt-2 text-sm leading-6 text-slate-500">
-                  通过练习检查本模块掌握情况。
+                  通过练习检查本章掌握情况。
                 </p>
 
                 <p className="mt-4 text-sm font-medium text-slate-700">
@@ -253,11 +253,11 @@ export default function SetsPage() {
         <section className="border-t border-slate-200 pt-10">
           <div className="mb-6">
             <h2 className="text-xl font-bold text-slate-900">
-              本模块学习目标
+              本章学习目标
             </h2>
 
             <p className="mt-1 text-sm text-slate-500">
-              完成本模块后，你应该能够：
+              完成本章后，你应该能够：
             </p>
           </div>
 

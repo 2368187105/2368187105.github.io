@@ -11,7 +11,7 @@ export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader />
   <article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
    <Link href="/grade3/functions-derivatives" className="text-sm text-blue-600">← 函数与导数复习目录</Link>
-   <p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第二模块 · 2.4</p>
+   <p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第二章 · 2.4</p>
    <h1 className="mt-3 text-3xl font-bold text-slate-900">函数零点与方程根数</h1><p className="mt-5 leading-8">把函数零点转化为方程解，用连续与异号证明存在，用单调性控制根数；换元后准确还原不同实根个数。</p>
    <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图象探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
    <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 零点是横坐标</h3><p className="mt-3 leading-8">{"函数零点是方程 f(x)=0 的自变量解，不是图象交点本身。重根在不同实根个数中只计一次；偶重根附近函数可能不变号。"}</p></section>

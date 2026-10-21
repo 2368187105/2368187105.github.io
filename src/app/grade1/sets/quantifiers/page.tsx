@@ -743,20 +743,20 @@ export default function QuantifiersPage() {
               </div>
             </Section>
 
-            {/* 完成模块 */}
+            {/* 完成章节 */}
             <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
               <p className="text-sm font-medium text-blue-600">
                 集合与常用逻辑用语 · 完成
               </p>
 
               <h2 className="mt-3 text-2xl font-bold text-slate-900">
-                第一模块全部知识点已开放
+                第一章全部知识点已开放
               </h2>
 
               <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-500">
                 现在已经完成集合概念、集合间关系、集合基本运算、
                 充分必要条件以及全称量词与存在量词。
-                下一步可以进入专题训练巩固这一模块。
+                下一步可以进入专题训练巩固本章。
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3">

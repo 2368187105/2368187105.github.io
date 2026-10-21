@@ -8,7 +8,7 @@ import SiteHeader from "@/components/SiteHeader";
 
 export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader/><article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-  <Link href="/grade3/analytic-geometry" className="text-sm text-blue-600">← 解析几何复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第七模块 · 7.6</p><h1 className="mt-3 text-3xl font-bold text-slate-900">轨迹方程与参数范围</h1><p className="mt-5 leading-8">将动点条件转成坐标关系，消参数后逐一保留范围与排除点，并用反向构造证明候选方程没有多余点或遗漏。</p>
+  <Link href="/grade3/analytic-geometry" className="text-sm text-blue-600">← 解析几何复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第七章 · 7.6</p><h1 className="mt-3 text-3xl font-bold text-slate-900">轨迹方程与参数范围</h1><p className="mt-5 leading-8">将动点条件转成坐标关系，消参数后逐一保留范围与排除点，并用反向构造证明候选方程没有多余点或遗漏。</p>
   <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图形探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
   <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 先写原条件，再消去参数</h3><p className="mt-3 leading-8">{"常见轨迹来自点点等距、点线等距、距离和或差、固定比例和中点关系。先明确哪个点在动、哪个点待求，分别设坐标，再把关系写成等式。点线距离要取绝对值；平方前后应说明是否等价。"}</p></section>
 <section className="mt-6"><h3 className="font-semibold text-slate-900">2. 方程必须连同范围一起保留</h3><p className="mt-3 leading-8">{"代数方程有时只表示候选曲线，原条件的非重合、非零线段、上下半支、线段参数范围等限制不能在消元后消失。椭圆、双曲线和抛物线的定义也各有非退化前提。"}</p></section>

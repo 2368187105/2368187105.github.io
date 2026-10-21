@@ -22,19 +22,19 @@ const lessons = [
     number: "03",
     title: "古典概型",
     href: "/grade1/probability/classical-probability",
-    ready: false,
+    ready: true,
   },
   {
     number: "04",
     title: "概率的基本性质",
     href: "/grade1/probability/probability-properties",
-    ready: false,
+    ready: true,
   },
   {
     number: "05",
     title: "概率综合应用",
     href: "/grade1/probability/probability-application",
-    ready: false,
+    ready: true,
   },
 ];
 
@@ -645,9 +645,7 @@ export default function EventRelationsPage() {
                 ← 上一节：随机事件与样本空间
               </Link>
 
-              <span className="rounded-xl bg-slate-100 px-5 py-3 text-sm text-slate-400">
-                下一节：古典概型（待开发）
-              </span>
+              <Link href="/grade1/probability/classical-probability" className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-medium text-blue-700 hover:bg-blue-100">下一节：古典概型 →</Link>
             </div>
           </div>
 

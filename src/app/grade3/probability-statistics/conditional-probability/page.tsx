@@ -6,7 +6,7 @@ import "katex/dist/katex.min.css";
 import SiteHeader from "@/components/SiteHeader";
 export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader/><article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-<Link href="/grade3/probability-statistics" className="text-sm text-blue-600">← 计数、概率与统计复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第八模块 · 8.3</p><h1 className="mt-3 text-3xl font-bold text-slate-900">概率、条件概率与全概率</h1><p className="mt-5 leading-8">建立样本空间与事件关系，再处理条件、独立性和全概率；用路径概率解释倒推来源，避免把两个方向的条件概率颠倒。</p>
+<Link href="/grade3/probability-statistics" className="text-sm text-blue-600">← 计数、概率与统计复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第八章 · 8.3</p><h1 className="mt-3 text-3xl font-bold text-slate-900">概率、条件概率与全概率</h1><p className="mt-5 leading-8">建立样本空间与事件关系，再处理条件、独立性和全概率；用路径概率解释倒推来源，避免把两个方向的条件概率颠倒。</p>
 <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图形探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
 <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 样本空间、和事件与对立</h3><p className="mt-3 leading-8">{"古典概型要求有限且等可能，概率才是有利样本数除以全部样本数。和事件概率要减去交集，互斥时才可直接相加；至少一次常用一减去一次也没有。"}</p></section>
 <section className="mt-6"><h3 className="font-semibold text-slate-900">2. 条件与独立是不同概念</h3><p className="mt-3 leading-8">{"P(B)>0 时，P(A|B)=P(AB)/P(B)。条件事件成为新的样本空间。独立由 P(AB)=P(A)P(B) 判断，不需要除以零概率；正概率的互斥事件不能同时独立。连续不放回抽样通常不独立。"}</p></section>

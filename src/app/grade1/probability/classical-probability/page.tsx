@@ -28,13 +28,13 @@ const lessons = [
     number: "04",
     title: "概率的基本性质",
     href: "/grade1/probability/probability-properties",
-    ready: false,
+    ready: true,
   },
   {
     number: "05",
     title: "概率综合应用",
     href: "/grade1/probability/probability-application",
-    ready: false,
+    ready: true,
   },
 ];
 

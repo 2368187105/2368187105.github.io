@@ -6,7 +6,7 @@ import "katex/dist/katex.min.css";
 import SiteHeader from "@/components/SiteHeader";
 export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader/><article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-<Link href="/grade3/probability-statistics" className="text-sm text-blue-600">← 计数、概率与统计复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第八模块 · 8.8</p><h1 className="mt-3 text-3xl font-bold text-slate-900">回归分析与独立性检验</h1><p className="mt-5 leading-8">用离差建立最小二乘直线，区分拟合、残差与外推；按列联表、原假设、统计量和给定临界值完成检验，规范解释关联与显著性水平。</p>
+<Link href="/grade3/probability-statistics" className="text-sm text-blue-600">← 计数、概率与统计复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第八章 · 8.8</p><h1 className="mt-3 text-3xl font-bold text-slate-900">回归分析与独立性检验</h1><p className="mt-5 leading-8">用离差建立最小二乘直线，区分拟合、残差与外推；按列联表、原假设、统计量和给定临界值完成检验，规范解释关联与显著性水平。</p>
 <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图形探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
 <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 回归直线与残差</h3><p className="mt-3 leading-8">{"含截距的一元最小二乘直线 ŷ=a+bx 经过均值点。分母 Σ(xᵢ−均值)² 必须大于零，否则斜率无法由这些数据确定。残差采用实际值减拟合值。回归描述趋势，样本区间外的外推需谨慎。"}</p></section>
 <section className="mt-6"><h3 className="font-semibold text-slate-900">2. 列联表与独立性检验</h3><p className="mt-3 leading-8">{"2×2 列联表按固定行列含义写 a,b,c,d。H₀ 为两分类变量独立，先检查边际和非零及期望频数是否适合近似检验。计算统计量后只使用题给显著性水平与临界值比较，不擅自套阈值。"}</p></section>
@@ -16,7 +16,7 @@ export default function LessonPage() {
 <details className="mt-5 rounded-xl border border-slate-200 p-5"><summary className="cursor-pointer font-semibold text-slate-900">证据不足不等于证明独立</summary><p className="mt-4 leading-8">{"列联表两行是 (30,20)、(20,30)，题给 0.05 显著性水平临界值 3.841。计算并解释检验结果。"}</p><ol className="mt-4 list-decimal space-y-3 pl-6 leading-8"><li>{"n=100，四个边际和均为 50，H₀ 下每格期望频数均为 25。"}</li><li>{"ad−bc=900−400=500，所以 χ²=100×500²/50⁴=4。"}</li><li>{"4>3.841，在 0.05 水平拒绝独立性假设，认为存在关联证据。"}</li><li>{"若改用题给 0.01 水平临界值 6.635，则 4<6.635，不拒绝 H₀。这表示更严格标准下证据不足，不能因此宣称已经证明独立。"}</li></ol></details></section>
 <aside className="mt-8 rounded-xl border border-amber-200 bg-amber-50 p-6"><h2 className="font-semibold text-slate-900">易错提醒</h2><p className="mt-3 leading-8">回归分母为零仍求斜率；残差符号颠倒；将拟合值当实际值；行列抄乱；不检查小期望频数；拒绝独立等同因果；将显著性水平当后验概率。</p></aside>
 <section id="practice" className="mt-8 scroll-mt-24 rounded-2xl border border-blue-200 bg-white p-6"><h2 className="text-xl font-bold text-slate-900">分层训练</h2><p className="mt-3 leading-8">4 道选择题、3 道填空题、2 道解答题，均为本站原创。完整列出计数依据、事件与模型条件、代入计算及统计结论。解答题先独立书写，再按步骤自评；登录后沿用练习记录、错题与学习报告。</p><Link href={"/practice/?topic="+encodeURIComponent("高三计数概率统计·回归与独立性检验")} className="mt-5 inline-flex rounded-lg bg-blue-600 px-5 py-3 text-white">开始本节 9 道训练 →</Link></section>
-<div className="mt-8 flex justify-between gap-4 text-sm text-blue-600"><Link href="/grade3/probability-statistics/sampling-estimation">← 上一节</Link><Link href="/grade3/probability-statistics">完成本模块，返回目录 →</Link></div>
+<div className="mt-8 flex justify-between gap-4 text-sm text-blue-600"><Link href="/grade3/probability-statistics/sampling-estimation">← 上一节</Link><Link href="/grade3/probability-statistics">完成本章，返回目录 →</Link></div>
 </article></main>;
 }
 function Explore() {

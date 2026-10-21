@@ -10,7 +10,7 @@ export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader />
   <article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
    <Link href="/grade3/functions-derivatives" className="text-sm text-blue-600">← 函数与导数复习目录</Link>
-   <p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第二模块 · 2.8</p>
+   <p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第二章 · 2.8</p>
    <h1 className="mt-3 text-3xl font-bold text-slate-900">导数综合与分类讨论</h1><p className="mt-5 leading-8">把求导、最值、零点与参数边界合为一条完整推理链，对对数与指数方程逐类核对根的存在、唯一和取值范围。</p>
    <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图象探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
    <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 先整理参数出现的位置</h3><p className="mt-3 leading-8">{"参数可以独立成水平线高度时，优先研究一个固定函数；参数进入导数零点时，按参数决定的根数和位置分类。每一类都要保留原定义域。"}</p></section>
@@ -21,7 +21,7 @@ export default function LessonPage() {
 <details className="mt-5 rounded-xl border border-slate-200 p-5"><summary className="cursor-pointer font-semibold text-slate-900">分离参数后的根数</summary><p className="mt-4 leading-8">{"讨论 ln x=ax 在 a=0、a=1/e 及 0<a<1/e 时的不同正根个数。"}</p><ol className="mt-4 list-decimal space-y-3 pl-6 leading-8"><li>{"x>0，可除以 x，研究 g=ln x/x。导数为 (1−ln x)/x²，故在 (0,e] 递增、[e,+∞) 递减。"}</li><li>{"g(1)=0，最大值 g(e)=1/e；右支始终为正并趋于 0。"}</li><li>{"a=0 时唯一根为 x=1，右支接近 0 不意味着还能交到 0。a=1/e 时唯一根为 x=e。"}</li><li>{"0<a<1/e 时左支在 (1,e) 有一个交点，右支在 (e,+∞) 也有一个，共 2 根；完整的全参数论证见本节解答题。"}</li></ol></details></section>
    <aside className="mt-8 rounded-xl border border-amber-200 bg-amber-50 p-6"><h2 className="font-semibold text-slate-900">易错提醒</h2><p className="mt-3 leading-8">{"只画大致图象而不给分支单调与覆盖范围；把渐近高度当成可取值；临界参数不单列；忘记重根只算一个不同根。"}</p></aside>
    <section id="practice" className="mt-8 scroll-mt-24 rounded-2xl border border-blue-200 bg-white p-6"><h2 className="text-xl font-bold text-slate-900">分层训练</h2><p className="mt-3 leading-8">4 道选择题、3 道填空题、2 道解答题，均为本站原创。先独立作答，再查看完整解析；解答题逐步自评，单独记入学习报告。登录后保存记录并收集未掌握题目。</p><Link href={"/practice/?topic="+encodeURIComponent("高三函数与导数·导数综合")} className="mt-5 inline-flex rounded-lg bg-blue-600 px-5 py-3 text-white">开始本节 9 道训练 →</Link></section>
-   <div className="mt-8 flex justify-between gap-4 text-sm text-blue-600"><Link href="/grade3/functions-derivatives/parameter-inequalities">← 上一节</Link><Link href="/grade3/functions-derivatives">完成本模块，返回目录 →</Link></div>
+   <div className="mt-8 flex justify-between gap-4 text-sm text-blue-600"><Link href="/grade3/functions-derivatives/parameter-inequalities">← 上一节</Link><Link href="/grade3/functions-derivatives">完成本章，返回目录 →</Link></div>
   </article></main>;
 }
 

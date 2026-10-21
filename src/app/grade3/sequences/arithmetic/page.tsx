@@ -8,7 +8,7 @@ import SiteHeader from "@/components/SiteHeader";
 
 export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader/><article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-  <Link href="/grade3/sequences" className="text-sm text-blue-600">← 数列复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第五模块 · 5.2</p><h1 className="mt-3 text-3xl font-bold text-slate-900">等差数列与前 n 项和</h1><p className="mt-5 leading-8">从公差不变出发，处理对称项、首末配对求和和部分和最值；把实数二次函数的取点落实到整数项号。</p>
+  <Link href="/grade3/sequences" className="text-sm text-blue-600">← 数列复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第五章 · 5.2</p><h1 className="mt-3 text-3xl font-bold text-slate-900">等差数列与前 n 项和</h1><p className="mt-5 leading-8">从公差不变出发，处理对称项、首末配对求和和部分和最值；把实数二次函数的取点落实到整数项号。</p>
   <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图形探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
   <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 相隔多少项就有多少个公差</h3><p className="mt-3 leading-8">aₙ−aₘ=(n−m)d；对称项的下标和相等时，项值之和相等，例如 a₂+a₈=a₁+a₉。反过来证明等差数列，要说明任意相邻差均为同一常数，不能只核对前三项。</p></section>
 <section className="mt-6"><h3 className="font-semibold text-slate-900">2. 求和先确定首项、末项和项数</h3><p className="mt-3 leading-8">等差求和来自首末配对。若题目只给中间两项，可先用对称关系求首末和；若只加一段，要把该段的第一项、最后一项与真实项数重新确定。</p></section>

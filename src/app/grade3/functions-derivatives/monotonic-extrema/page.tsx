@@ -11,7 +11,7 @@ export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader />
   <article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
    <Link href="/grade3/functions-derivatives" className="text-sm text-blue-600">← 函数与导数复习目录</Link>
-   <p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第二模块 · 2.6</p>
+   <p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第二章 · 2.6</p>
    <h1 className="mt-3 text-3xl font-bold text-slate-900">导数、单调性与极值最值</h1><p className="mt-5 leading-8">从导数符号建立完整变化顺序，区分驻点、极值与闭区间最值；参数改变时重新确定驻点数量和位置。</p>
    <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图象探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
    <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 先定域、求导、解临界点</h3><p className="mt-3 leading-8">{"按定义域分区间，求导后列出零点及可能的不可导点。用这些点划分区间，再判断每段导数符号。不要在分母为零或函数未定义的位置直接套用单调结论。"}</p></section>

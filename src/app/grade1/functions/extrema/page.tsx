@@ -630,7 +630,7 @@ export default function ExtremaPage() {
               </p>
 
               <h2 className="mt-3 text-2xl font-bold text-slate-900">
-                你已经完成这一模块的全部知识点
+                本章知识点均已开放，可通过练习检查掌握情况
               </h2>
 
               <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-500">

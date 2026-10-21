@@ -8,7 +8,7 @@ import SiteHeader from "@/components/SiteHeader";
 
 export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader/><article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-  <Link href="/grade3/sequences" className="text-sm text-blue-600">← 数列复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第五模块 · 5.6</p><h1 className="mt-3 text-3xl font-bold text-slate-900">数列综合、最值与不等式</h1><p className="mt-5 leading-8">用相邻差、正项比值或整数配方确定最值；通过裂项与显式余项证明不等式，完整处理恒成立参数与严格阈值。</p>
+  <Link href="/grade3/sequences" className="text-sm text-blue-600">← 数列复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第五章 · 5.6</p><h1 className="mt-3 text-3xl font-bold text-slate-900">数列综合、最值与不等式</h1><p className="mt-5 leading-8">用相邻差、正项比值或整数配方确定最值；通过裂项与显式余项证明不等式，完整处理恒成立参数与严格阈值。</p>
   <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图形探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
   <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 数列最值要落到整数项号</h3><p className="mt-3 leading-8">{"比较 aₙ₊₁−aₙ适用于一般数列；比值与 1 比较需要 aₙ>0。相邻差或比值等于临界值时，可能出现两个相邻项共同取到最大值。配方中心不是整数时，需要比较两侧合法整数。"}</p></section>
 <section className="mt-6"><h3 className="font-semibold text-slate-900">2. 部分和的不等式保留余项</h3><p className="mt-3 leading-8">裂项求和后，若写成固定常数减去正余项，就能给出严格上界。先有明确表达式，再判断每个余项正负，不把数列趋近的数与有限项或有限和混为一谈。</p></section>
@@ -18,7 +18,7 @@ export default function LessonPage() {
 <details className="mt-5 rounded-xl border border-slate-200 p-5"><summary className="cursor-pointer font-semibold text-slate-900">严格阈值与非严格阈值不同</summary><p className="mt-4 leading-8">{"设 Tₙ=1−1/(n+1)，分别求 Tₙ≥9/10 和 Tₙ>9/10 时最小的 n。"}</p><ol className="mt-4 list-decimal space-y-3 pl-6 leading-8"><li>{"n+1>0，Tₙ≥9/10 等价于 n/(n+1)≥9/10，交叉相乘得 10n≥9n+9，即 n≥9。"}</li><li>因此非严格条件的最小正整数 n=9，且 T₉=9/10，等号成立。</li><li>{"严格条件同理得到 10n>9n+9，即 n>9，最小正整数 n=10。"}</li><li>{"核验 T₁₀=10/11>9/10，说明只改一个等号就会改变最小项号。"}</li></ol></details></section>
   <aside className="mt-8 rounded-xl border border-amber-200 bg-amber-50 p-6"><h2 className="font-semibold text-slate-900">易错提醒</h2><p className="mt-3 leading-8">数列非正时用比值大小直接判增减；只给连续函数顶点；把上界误当作有限项值；严格不等号的边界项未排除。</p></aside>
   <section id="practice" className="mt-8 scroll-mt-24 rounded-2xl border border-blue-200 bg-white p-6"><h2 className="text-xl font-bold text-slate-900">分层训练</h2><p className="mt-3 leading-8">4 道选择题、3 道填空题、2 道解答题，均为本站原创。解析写出首项检验、代数变形、求和首尾项和整数边界。解答题先独立完成，再展开完整过程逐步自评；登录后沿用练习记录、错题与学习报告。</p><Link href={"/practice/?topic="+encodeURIComponent("高三数列·综合与不等式")} className="mt-5 inline-flex rounded-lg bg-blue-600 px-5 py-3 text-white">开始本节 9 道训练 →</Link></section>
-  <div className="mt-8 flex justify-between gap-4 text-sm text-blue-600"><Link href="/grade3/sequences/recurrence">← 上一节</Link><Link href="/grade3/sequences">完成本模块，返回目录 →</Link></div>
+  <div className="mt-8 flex justify-between gap-4 text-sm text-blue-600"><Link href="/grade3/sequences/recurrence">← 上一节</Link><Link href="/grade3/sequences">完成本章，返回目录 →</Link></div>
  </article></main>;
 }
 

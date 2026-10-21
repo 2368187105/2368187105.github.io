@@ -9,7 +9,7 @@ import SiteHeader from "@/components/SiteHeader";
 
 export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader/><article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-  <Link href="/grade3/analytic-geometry" className="text-sm text-blue-600">← 解析几何复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第七模块 · 7.1</p><h1 className="mt-3 text-3xl font-bold text-slate-900">直线与圆的综合复习</h1><p className="mt-5 leading-8">用一般式保留竖直直线，按圆心、半径和点线距离处理相交、相切、弦长及切线，核对位置与非零前提。</p>
+  <Link href="/grade3/analytic-geometry" className="text-sm text-blue-600">← 解析几何复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第七章 · 7.1</p><h1 className="mt-3 text-3xl font-bold text-slate-900">直线与圆的综合复习</h1><p className="mt-5 leading-8">用一般式保留竖直直线，按圆心、半径和点线距离处理相交、相切、弦长及切线，核对位置与非零前提。</p>
   <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图形探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
   <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 直线方程先核对覆盖范围</h3><p className="mt-3 leading-8">{"一般式 Ax+By+C=0 要求 A、B 不同时为零，能表示竖直直线。斜率式 y=kx+b 不能表示竖直直线；过定点求全体直线时，应单独检查，或采用能够覆盖相应方向的另一种参数式。"}</p></section>
 <section className="mt-6"><h3 className="font-semibold text-slate-900">2. 圆的一般式先配方</h3><p className="mt-3 leading-8">{"把 x²、y²系数归一后配方，得到圆心和半径平方。半径平方严格为正才是非退化圆；为零是单点，为负没有实点。点在圆内、圆上或圆外时，可比较到圆心的距离与半径。"}</p></section>

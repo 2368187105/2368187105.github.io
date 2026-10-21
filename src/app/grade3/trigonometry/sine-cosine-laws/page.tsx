@@ -10,7 +10,7 @@ import SiteHeader from "@/components/SiteHeader";
 export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader/><article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
   <Link href="/grade3/trigonometry" className="text-sm text-blue-600">← 三角函数与解三角形目录</Link>
-  <p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第三模块 · 3.5</p><h1 className="mt-3 text-3xl font-bold text-slate-900">正弦定理、余弦定理与多解</h1><p className="mt-5 leading-8">明确边 a、b、c 与对角 A、B、C 的对应，按已知条件选定理，并在两边一对角问题中完整排查多解与退化。</p>
+  <p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第三章 · 3.5</p><h1 className="mt-3 text-3xl font-bold text-slate-900">正弦定理、余弦定理与多解</h1><p className="mt-5 leading-8">明确边 a、b、c 与对角 A、B、C 的对应，按已知条件选定理，并在两边一对角问题中完整排查多解与退化。</p>
   <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图形探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
   <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 边角对应与内角范围</h3><p className="mt-3 leading-8">{"本节统一用小写边 a、b、c 分别表示 A、B、C 的对边。三边必须为正，满足两边之和大于第三边，内角在 (0,π)，且角和为 π。给定边角后应先确认是否能构成非退化三角形。"}</p></section>
 <section className="mt-6"><h3 className="font-semibold text-slate-900">2. 按信息选正弦或余弦定理</h3><p className="mt-3 leading-8">{"已知两角一边、两边一对角，通常用正弦定理；已知两边夹角求第三边，或三边求角，通常用余弦定理。扩展正弦定理中的 2R 是外接圆直径，而不是半径。"}</p></section>

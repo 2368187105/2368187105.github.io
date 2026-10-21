@@ -9,7 +9,7 @@ import { vectorText } from "@/components/VectorText";
 
 export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader/><article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-  <Link href="/grade3/solid-geometry" className="text-sm text-blue-600">← 立体几何与空间向量复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第六模块 · 6.1</p><h1 className="mt-3 text-3xl font-bold text-slate-900">空间几何体与表面积、体积</h1><p className="mt-5 leading-8">从底面、垂直高度和母线区分面积与体积，借助直角三角形处理球的截面、长方体对角线与外接球。</p>
+  <Link href="/grade3/solid-geometry" className="text-sm text-blue-600">← 立体几何与空间向量复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第六章 · 6.1</p><h1 className="mt-3 text-3xl font-bold text-slate-900">空间几何体与表面积、体积</h1><p className="mt-5 leading-8">从底面、垂直高度和母线区分面积与体积，借助直角三角形处理球的截面、长方体对角线与外接球。</p>
   <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图形探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
   <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 先确定对象与所求量</h3><p className="mt-3 leading-8">{vectorText("棱柱、圆柱体积是底面积乘垂直高度；棱锥、圆锥还要乘三分之一。侧面积不含底面，总表面积需要加上实际存在的底面。圆锥母线、侧面斜高和几何体的高不是同一条线段。")}</p></section>
 <section className="mt-6"><h3 className="font-semibold text-slate-900">2. 由直角三角形找长度</h3><p className="mt-3 leading-8">{vectorText("圆锥母线满足母线平方等于半径平方加高平方；长方体体对角线平方为三条相邻棱长平方之和。球的截面圆半径、球心到截面的距离、球半径也组成直角三角形，先标明哪一条是斜边。")}</p></section>

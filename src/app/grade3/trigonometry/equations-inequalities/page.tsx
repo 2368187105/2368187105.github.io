@@ -9,7 +9,7 @@ import SiteHeader from "@/components/SiteHeader";
 export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader/><article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
   <Link href="/grade3/trigonometry" className="text-sm text-blue-600">← 三角函数与解三角形目录</Link>
-  <p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第三模块 · 3.4</p><h1 className="mt-3 text-3xl font-bold text-slate-900">三角方程与不等式</h1><p className="mt-5 leading-8">先求基本角的周期解，再按整体角或原变量范围筛选；解不等式时说明区间选择、等号端点与定义域。</p>
+  <p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第三章 · 3.4</p><h1 className="mt-3 text-3xl font-bold text-slate-900">三角方程与不等式</h1><p className="mt-5 leading-8">先求基本角的周期解，再按整体角或原变量范围筛选；解不等式时说明区间选择、等号端点与定义域。</p>
   <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图形探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
   <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 等值角往往不止一支</h3><p className="mt-3 leading-8">{"sin t=c 的两支来自单位圆两个相同纵坐标；cos t=c 也要保留两侧。c=±1 时分支会合并，应去重；|c|>1 则无解。正切的周期为 π，同时注意其定义域。"}</p></section>
 <section className="mt-6"><h3 className="font-semibold text-slate-900">2. 有限区间要逐支筛整数</h3><p className="mt-3 leading-8">{"先写 t=ωx+φ 的通解，再分别解出 x，最后用定义区间确定整数 k。另一种方法是先把 x 范围转为 t 范围，再筛周期区间，两种方法均应写明筛选依据。"}</p></section>

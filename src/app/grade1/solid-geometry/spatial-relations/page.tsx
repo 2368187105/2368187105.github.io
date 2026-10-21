@@ -92,14 +92,14 @@ const lessons = [
     title: "直线与平面的位置关系",
     description: "学习直线与平面平行、垂直的判定与性质。",
     href: "/grade1/solid-geometry/line-plane-relations",
-    ready: false,
+    ready: true,
   },
   {
     number: "05",
     title: "平面与平面的位置关系",
     description: "学习两个平面平行、垂直的判定与性质。",
     href: "/grade1/solid-geometry/plane-plane-relations",
-    ready: false,
+    ready: true,
   },
 ];
 

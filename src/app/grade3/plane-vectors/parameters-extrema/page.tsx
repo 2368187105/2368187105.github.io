@@ -9,7 +9,7 @@ import { vectorText, vectorSvgLabel } from "@/components/VectorText";
 
 export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader/><article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-  <Link href="/grade3/plane-vectors" className="text-sm text-blue-600">← 平面向量复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第四模块 · 4.6</p><h1 className="mt-3 text-3xl font-bold text-slate-900">含参向量与模的最值</h1><p className="mt-5 leading-8">把平行、垂直和模的最值转成参数方程或配方，处理零向量、轨迹与非退化筛选，完整说明取等条件。</p>
+  <Link href="/grade3/plane-vectors" className="text-sm text-blue-600">← 平面向量复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第四章 · 4.6</p><h1 className="mt-3 text-3xl font-bold text-slate-900">含参向量与模的最值</h1><p className="mt-5 leading-8">把平行、垂直和模的最值转成参数方程或配方，处理零向量、轨迹与非退化筛选，完整说明取等条件。</p>
   <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图形探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
   <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 含参关系先写判据</h3><p className="mt-3 leading-8">{vectorText("共线用交叉乘积，垂直用数量积。得到参数后回代，尤其检查题目是否要求两个向量非零。代数判据成立，不一定满足夹角、非退化三角形等额外条件。")}</p></section>
 <section className="mt-6"><h3 className="font-semibold text-slate-900">2. 最小模先平方配方</h3><p className="mt-3 leading-8">{vectorText("若 u 固定、v 非零，|u+tv|² 是关于 t 的开口向上二次式。配方给出最小平方及取点，再开根得到最小模。若 t 被限制在区间内，需检查配方中心是否可取。")}</p></section>
@@ -19,7 +19,7 @@ export default function LessonPage() {
 <details className="mt-5 rounded-xl border border-slate-200 p-5"><summary className="cursor-pointer font-semibold text-slate-900">等距轨迹</summary><p className="mt-4 leading-8">{vectorText("A(0,0)、B(4,0)，求满足 |PA|=|PB| 的点 P(x,y) 的轨迹。")}</p><ol className="mt-4 list-decimal space-y-3 pl-6 leading-8"><li>{vectorText("两距离非负，等价平方：x²+y²=(x−4)²+y²。")}</li><li>{vectorText("展开消去同类项，得 8x=16，即 x=2，y 任意。")}</li><li>{vectorText("反过来，x=2 时两边平方均为 4+y²，故两距离相等；轨迹正是线段 AB 的垂直平分线。")}</li></ol></details></section>
   <aside className="mt-8 rounded-xl border border-amber-200 bg-amber-50 p-6"><h2 className="font-semibold text-slate-900">易错提醒</h2><p className="mt-3 leading-8">{vectorText("把共线与垂直判据混用；参数回代后漏掉零向量；平方最小值没有开根；轨迹方程中保留退化点。")}</p></aside>
   <section id="practice" className="mt-8 scroll-mt-24 rounded-2xl border border-blue-200 bg-white p-6"><h2 className="text-xl font-bold text-slate-900">分层训练</h2><p className="mt-3 leading-8">4 道选择题、3 道填空题、2 道解答题，均为本站原创。向量采用箭头记号，模与参数区分；解析展开基底、坐标、数量积与边界检验。先独立完成解答，再分步自评，登录后保存练习记录与未掌握题目。</p><Link href={"/practice/?topic="+encodeURIComponent("高三平面向量·参数与最值")} className="mt-5 inline-flex rounded-lg bg-blue-600 px-5 py-3 text-white">开始本节 9 道训练 →</Link></section>
-  <div className="mt-8 flex justify-between gap-4 text-sm text-blue-600"><Link href="/grade3/plane-vectors/geometry-applications">← 上一节</Link><Link href="/grade3/plane-vectors">完成本模块，返回目录 →</Link></div>
+  <div className="mt-8 flex justify-between gap-4 text-sm text-blue-600"><Link href="/grade3/plane-vectors/geometry-applications">← 上一节</Link><Link href="/grade3/plane-vectors">完成本章，返回目录 →</Link></div>
  </article></main>;
 }
 

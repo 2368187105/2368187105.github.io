@@ -11,7 +11,7 @@ export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader />
   <article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
    <Link href="/grade3/functions-derivatives" className="text-sm text-blue-600">← 函数与导数复习目录</Link>
-   <p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第二模块 · 2.1</p>
+   <p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第二章 · 2.1</p>
    <h1 className="mt-3 text-3xl font-bold text-slate-900">函数的概念、定义域与值域</h1><p className="mt-5 leading-8">从函数三要素出发，确定定义域，区分函数值与值域；对分式、根式和换元问题保留所有取值限制。</p>
    <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图象探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
    <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 函数是对应关系</h3><p className="mt-3 leading-8">{"判断函数先确定输入集合和对应法则，每个允许输入只能有一个输出。解析式相同但定义域不同，不是同一个函数；值域是实际能得到的所有输出，不是随意指定的数集。"}</p></section>
@@ -22,7 +22,7 @@ export default function LessonPage() {
 <details className="mt-5 rounded-xl border border-slate-200 p-5"><summary className="cursor-pointer font-semibold text-slate-900">受限区间上的二次值域</summary><p className="mt-4 leading-8">{"求 f(x)=x²−2x+3 在 [−1,2] 上的值域。"}</p><ol className="mt-4 list-decimal space-y-3 pl-6 leading-8"><li>{"配方 f(x)=(x−1)²+2，顶点 x=1 属于定义区间，所以最小值为 2。"}</li><li>{"在 [−1,1] 上平方项随 x 递减，在 [1,2] 上递增；最大值需比较端点。"}</li><li>{"f(−1)=1+2+3=6，f(2)=4−4+3=3，所以最大值为 6。"}</li><li>{"函数在整个闭区间连续，因此 2 到 6 之间的值均可取到，值域为 [2,6]。"}</li></ol></details></section>
    <aside className="mt-8 rounded-xl border border-amber-200 bg-amber-50 p-6"><h2 className="font-semibold text-slate-900">易错提醒</h2><p className="mt-3 leading-8">{"把约分后的解析式当作新的原函数；换元后忘记范围；只求最值却不说明最值是否取得；把定义域和值域混用。"}</p></aside>
    <section id="practice" className="mt-8 scroll-mt-24 rounded-2xl border border-blue-200 bg-white p-6"><h2 className="text-xl font-bold text-slate-900">分层训练</h2><p className="mt-3 leading-8">4 道选择题、3 道填空题、2 道解答题，均为本站原创。先独立作答，再查看完整解析；解答题逐步自评，单独记入学习报告。登录后保存记录并收集未掌握题目。</p><Link href={"/practice/?topic="+encodeURIComponent("高三函数与导数·定义域与值域")} className="mt-5 inline-flex rounded-lg bg-blue-600 px-5 py-3 text-white">开始本节 9 道训练 →</Link></section>
-   <div className="mt-8 flex justify-between gap-4 text-sm text-blue-600"><Link href="/grade3/functions-derivatives">← 模块目录</Link><Link href="/grade3/functions-derivatives/properties">下一节 →</Link></div>
+   <div className="mt-8 flex justify-between gap-4 text-sm text-blue-600"><Link href="/grade3/functions-derivatives">← 章节目录</Link><Link href="/grade3/functions-derivatives/properties">下一节 →</Link></div>
   </article></main>;
 }
 

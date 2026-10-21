@@ -9,7 +9,7 @@ import { vectorText } from "@/components/VectorText";
 
 export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader/><article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-  <Link href="/grade3/solid-geometry" className="text-sm text-blue-600">← 立体几何与空间向量复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第六模块 · 6.2</p><h1 className="mt-3 text-3xl font-bold text-slate-900">空间平行与垂直的证明</h1><p className="mt-5 leading-8">按位置前提、平行方向与相交垂线组织证明，写清“线线→线面→面面”的每一步，避免把图上看起来垂直当作证据。</p>
+  <Link href="/grade3/solid-geometry" className="text-sm text-blue-600">← 立体几何与空间向量复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第六章 · 6.2</p><h1 className="mt-3 text-3xl font-bold text-slate-900">空间平行与垂直的证明</h1><p className="mt-5 leading-8">按位置前提、平行方向与相交垂线组织证明，写清“线线→线面→面面”的每一步，避免把图上看起来垂直当作证据。</p>
   <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图形探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
   <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 平行判定要补位置前提</h3><p className="mt-3 leading-8">{vectorText("证明直线平行于平面，先在平面内找一条与它平行的直线，再说明原直线不在该平面内。证明两平面平行，通常需要一个平面内两条相交直线分别平行于另一个平面。一个方向不够决定平面。")}</p></section>
 <section className="mt-6"><h3 className="font-semibold text-slate-900">2. 线面垂直要找两个独立方向</h3><p className="mt-3 leading-8">{vectorText("平面内两条相交直线提供两个不共线方向。若所用直线与待证垂线不直接相交，可过交点作平行线，把方向垂直转成共点的垂直。两条平行直线只能提供一个方向，不能替代判定中的两条相交直线。")}</p></section>

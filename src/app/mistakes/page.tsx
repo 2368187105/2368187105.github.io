@@ -9,6 +9,9 @@ import "katex/dist/katex.min.css";
 
 import { answerLabel as constructedAnswerLabel } from "@/lib/answer-checking";
 import SiteHeader from "@/components/SiteHeader";
+import GradeSelector from "@/components/GradeSelector";
+import { gradeUrl } from "@/lib/grade-query";
+import { useGradeQuery } from "@/components/useGradeQuery";
 import { createClient } from "@/lib/supabase/client";
 import {
   practiceTopics,
@@ -127,6 +130,7 @@ function answerLabel(
 
 export default function MistakesPage() {
   const [selectedGrade, setSelectedGrade] = useState<Grade>("高一");
+  useGradeQuery(setSelectedGrade);
   const currentPracticeTopics: readonly string[] = selectedGrade === "高一" ? grade1Topics : selectedGrade === "高三" ? grade3PracticeTopics : grade2PracticeTopics;
   const chapterNames = selectedGrade === "高一" ? grade1ChapterNames : selectedGrade === "高三" ? grade3ChapterNames : grade2ChapterNames;
   const supabase = useMemo(
@@ -438,14 +442,14 @@ export default function MistakesPage() {
 
             <div className="flex flex-wrap gap-3">
               <Link
-                href="/practice"
+                href={gradeUrl("/practice", selectedGrade)}
                 className="rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-700"
               >
                 去专题训练
               </Link>
 
               <Link
-                href="/report"
+                href={gradeUrl("/report", selectedGrade)}
                 className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
               >
                 查看学习报告
@@ -525,15 +529,7 @@ export default function MistakesPage() {
               {/* 左侧 */}
               <aside className="min-w-0">
                 <div className="space-y-4 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-2">
-<div className="my-5 flex gap-3" aria-label="选择年级">
-{(["高一", "高二", "高三"] as const).map((grade) => (
-<button key={grade} type="button" aria-pressed={selectedGrade === grade}
-onClick={() => { setSelectedGrade(grade); setExpandedChapter(null); setFilter({ kind: "all" }); }}
-className={`rounded-xl border px-6 py-3 text-sm font-semibold ${selectedGrade === grade ? "border-blue-400 bg-blue-50 text-blue-700" : "border-slate-200 bg-white text-slate-600"}`}>
-{grade}数学
-</button>))}
-<span className="self-center text-xs text-slate-400">高三一轮复习八模块均已开放</span>
-</div>                  {/* 章节导航 */}
+<div className="my-5"><GradeSelector value={selectedGrade} onChange={grade => { setSelectedGrade(grade); setExpandedChapter(null); setFilter({ kind: "all" }); }} /></div>                  {/* 章节导航 */}
                   <div className="rounded-2xl border border-slate-200 bg-white p-4">
                     <div className="px-1">
                       <h2 className="text-sm font-semibold text-slate-900">
@@ -757,7 +753,7 @@ className={`rounded-xl border px-6 py-3 text-sm font-semibold ${selectedGrade ==
                       </button>
 
                       <Link
-                        href="/practice"
+                        href={gradeUrl("/practice", selectedGrade)}
                         className="rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white"
                       >
                         去专题训练

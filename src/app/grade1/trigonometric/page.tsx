@@ -99,7 +99,7 @@ export default function TrigonometricPage() {
                 从任意角与弧度制出发，
                 系统学习三角函数的定义、诱导公式、
                 三角函数图象与性质以及三角恒等变换。
-                本章 5 个知识模块现已全部开放。
+                本章 5 个知识章节现已全部开放。
               </p>
 
               <div className="mt-7 flex flex-wrap gap-3">
@@ -208,7 +208,7 @@ export default function TrigonometricPage() {
             </h2>
 
             <p className="mt-1 text-sm text-slate-500">
-              5 个知识模块已经全部开放，建议按照 01 → 05 的顺序学习。
+              5 个知识章节已经全部开放，建议按照 01 → 05 的顺序学习。
             </p>
           </div>
 
@@ -359,7 +359,7 @@ export default function TrigonometricPage() {
             </h2>
 
             <p className="mt-2 text-sm leading-7 text-slate-500">
-              五个模块不是彼此独立的内容，而是逐层建立联系。
+              五章不是彼此独立的内容，而是逐层建立联系。
             </p>
           </div>
 

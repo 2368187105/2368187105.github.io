@@ -925,7 +925,7 @@ export default function TrigIdentitiesPage() {
           <SectionTitle
             label="CHAPTER COMPLETE"
             title="第 05 章知识结构"
-            description="完成本节后，三角函数章节的 5 个主要模块已经全部学习。"
+            description="完成本节后，三角函数章节的 5 个主要章节已经全部学习。"
           />
 
           <div className="mt-7 grid gap-4 md:grid-cols-5">

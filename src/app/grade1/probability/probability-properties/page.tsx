@@ -34,7 +34,7 @@ const lessons = [
     number: "05",
     title: "概率综合应用",
     href: "/grade1/probability/probability-application",
-    ready: false,
+    ready: true,
   },
 ];
 

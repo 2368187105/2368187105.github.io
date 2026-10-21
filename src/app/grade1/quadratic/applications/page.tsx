@@ -180,7 +180,7 @@ export default function QuadraticApplicationsPage() {
               </span>
 
               <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600">
-                模块总结
+                本章小结
               </span>
             </div>
 
@@ -821,14 +821,14 @@ export default function QuadraticApplicationsPage() {
               </div>
             </Section>
 
-            {/* 模块完成 */}
+            {/* 章节完成 */}
             <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
               <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-600">
                 5 / 5 全部开放
               </span>
 
               <h2 className="mt-4 text-2xl font-bold text-slate-900">
-                第二模块全部知识点已经开放
+                第二章全部知识点已经开放
               </h2>
 
               <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-500">
@@ -841,7 +841,7 @@ export default function QuadraticApplicationsPage() {
                   href="/grade1/quadratic"
                   className="rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-700"
                 >
-                  查看模块目录
+                  查看章节目录
                 </Link>
 
                 <Link

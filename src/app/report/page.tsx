@@ -3,6 +3,10 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
+import GradeSelector from "@/components/GradeSelector";
+import { gradeUrl } from "@/lib/grade-query";
+import { useGradeQuery } from "@/components/useGradeQuery";
+import { accuracyPercent } from "@/lib/learning-summary";
 import { mathText } from "@/components/MathText";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -360,6 +364,7 @@ function normalizeTopic(
 
 export default function ReportPage() {
   const [selectedGrade, setSelectedGrade] = useState<Grade>("高一");
+  useGradeQuery(setSelectedGrade);
   const currentPracticeTopics: readonly string[] = selectedGrade === "高一" ? grade1Topics : selectedGrade === "高三" ? grade3PracticeTopics : grade2PracticeTopics;
   const chapterNames = selectedGrade === "高一" ? grade1ChapterNames : selectedGrade === "高三" ? grade3ChapterNames : grade2ChapterNames;
   const supabase = useMemo(
@@ -479,7 +484,7 @@ export default function ReportPage() {
   const accuracy =
     total === 0
       ? 0
-      : Math.round((correct / total) * 100);
+      : accuracyPercent(correct, total);
 
   /* =========================
      各专题统计
@@ -507,10 +512,7 @@ export default function ReportPage() {
         accuracy:
           matches.length === 0
             ? 0
-            : Math.round(
-                (topicCorrect / matches.length) *
-                  100
-              ),
+            : accuracyPercent(topicCorrect, matches.length),
       };
     });
 
@@ -553,10 +555,7 @@ export default function ReportPage() {
         accuracy:
           chapterTotal === 0
             ? 0
-            : Math.round(
-                (chapterCorrect / chapterTotal) *
-                  100
-              ),
+            : accuracyPercent(chapterCorrect, chapterTotal),
       };
     }
   );
@@ -599,7 +598,8 @@ export default function ReportPage() {
         <SiteHeader />
 
         <div className="mx-auto max-w-6xl px-4 py-16">
-          <div className="rounded-2xl border border-slate-200 bg-white p-8 text-sm text-slate-500">
+          <h1 className="mb-6 text-2xl font-bold text-slate-900">我的学习报告</h1>
+          <div role="status" className="rounded-2xl border border-slate-200 bg-white p-8 text-sm text-slate-500">
             正在加载学习报告...
           </div>
         </div>
@@ -694,14 +694,14 @@ export default function ReportPage() {
 
             <div className="flex flex-wrap gap-3">
               <Link
-                href="/practice"
+                href={gradeUrl("/practice", selectedGrade)}
                 className="rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-700"
               >
                 继续训练
               </Link>
 
               <Link
-                href="/mistakes"
+                href={gradeUrl("/mistakes", selectedGrade)}
                 className="rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
               >
                 我的错题
@@ -710,15 +710,7 @@ export default function ReportPage() {
           </div>
         </section>
 
-<div className="my-5 flex gap-3" aria-label="选择年级">
-{(["高一", "高二", "高三"] as const).map((grade) => (
-<button key={grade} type="button" aria-pressed={selectedGrade === grade}
-onClick={() => { setSelectedGrade(grade); setExpandedChapter(null);  }}
-className={`rounded-xl border px-6 py-3 text-sm font-semibold ${selectedGrade === grade ? "border-blue-400 bg-blue-50 text-blue-700" : "border-slate-200 bg-white text-slate-600"}`}>
-{grade}数学
-</button>))}
-<span className="self-center text-xs text-slate-400">高三一轮复习八模块均已开放，含计数、概率与统计</span>
-</div>        {errorMessage && (
+<div className="my-5 max-w-md"><GradeSelector value={selectedGrade} onChange={grade => { setSelectedGrade(grade); setExpandedChapter(null); }} /></div>        {errorMessage && (
           <div className="mb-6 rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-600">
             {errorMessage}
           </div>
@@ -732,13 +724,13 @@ className={`rounded-xl border px-6 py-3 text-sm font-semibold ${selectedGrade ==
             </h2>
 
             <p className="mt-2 text-sm text-slate-500">
-              根据账号已保存的练习记录进行统计。
+              统计当前年级的客观题表现，解答题自评在下方单独展示。
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <StatCard
-              label="累计答题"
+              label="客观题答题"
               value={total}
               suffix="题次"
             />
@@ -776,7 +768,7 @@ className={`rounded-xl border px-6 py-3 text-sm font-semibold ${selectedGrade ==
               </p>
 
               <Link
-                href="/practice"
+                href={gradeUrl("/practice", selectedGrade)}
                 className="mt-5 inline-block rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white"
               >
                 开始专题训练
@@ -1008,19 +1000,19 @@ className={`rounded-xl border px-6 py-3 text-sm font-semibold ${selectedGrade ==
           </section>
         )}
 
-        {selectedGrade === "高三" && <section className="mb-8 rounded-xl border border-blue-200 bg-blue-50 p-6"><h2 className="text-lg font-semibold text-slate-900">题型记录与解答题自评</h2><p className="mt-3 text-sm text-slate-600">客观题：选择题 {gradeAttempts.filter(item => !questionMap.get(item.question_id)?.kind || questionMap.get(item.question_id)?.kind === "choice").length} 题次；填空题 {gradeAttempts.filter(item => questionMap.get(item.question_id)?.kind === "fill").length} 题次。</p><p className="mt-3 text-sm leading-7 text-slate-600">共 {selfAttempts.length} 题次；全部步骤自评完整 {selfAttempts.filter(item => item.is_correct).length} 题次，需复练 {selfAttempts.filter(item => !item.is_correct).length} 题次。此处为学生自评，不计入客观题正确率与薄弱专题排序。</p><div className="mt-4 space-y-3">{selfAttempts.slice(0, 10).map(item => <div key={item.id} className="rounded-lg bg-white p-4 text-sm"><p>{questionMap.get(item.question_id)?.title ?? item.topic} · {item.is_correct ? "自评完整" : "需要复练"}</p><p className="mt-2 text-xs text-slate-500">{formatDate(item.created_at)}</p></div>)}</div><Link href="/mistakes" className="mt-4 inline-block text-sm text-blue-600">前往错题本查看需要复练的步骤 →</Link></section>}
+        {selectedGrade === "高三" && <section className="mb-8 rounded-xl border border-blue-200 bg-blue-50 p-6"><h2 className="text-lg font-semibold text-slate-900">题型记录与解答题自评</h2><p className="mt-3 text-sm text-slate-600">客观题：选择题 {gradeAttempts.filter(item => !questionMap.get(item.question_id)?.kind || questionMap.get(item.question_id)?.kind === "choice").length} 题次；填空题 {gradeAttempts.filter(item => questionMap.get(item.question_id)?.kind === "fill").length} 题次。</p><p className="mt-3 text-sm leading-7 text-slate-600">共 {selfAttempts.length} 题次；全部步骤自评完整 {selfAttempts.filter(item => item.is_correct).length} 题次，需复练 {selfAttempts.filter(item => !item.is_correct).length} 题次。此处为学生自评，不计入客观题正确率与薄弱专题排序。</p><div className="mt-4 space-y-3">{selfAttempts.slice(0, 10).map(item => <div key={item.id} className="rounded-lg bg-white p-4 text-sm"><p>{questionMap.get(item.question_id)?.title ?? item.topic} · {item.is_correct ? "自评完整" : "需要复练"}</p><p className="mt-2 text-xs text-slate-500">{formatDate(item.created_at)}</p></div>)}</div><Link href={gradeUrl("/mistakes", selectedGrade)} className="mt-4 inline-block text-sm text-blue-600">前往错题本查看需要复练的步骤 →</Link></section>}
         {/* 底部导航 */}
         <section className="grid gap-4 border-t border-slate-200 pt-10 sm:grid-cols-3">
           <ActionCard
             title="继续专题训练"
             description="选择知识点，通过练习进一步巩固。"
-            href="/practice"
+            href={gradeUrl("/practice", selectedGrade)}
           />
 
           <ActionCard
             title="复习错题"
             description="查看历史错题，针对薄弱专题复习。"
-            href="/mistakes"
+            href={gradeUrl("/mistakes", selectedGrade)}
           />
 
           <ActionCard

@@ -9,7 +9,7 @@ const navItems = [
   { label: "首页", href: "/" },
   { label: "高一数学", href: "/grade1" },
   { label: "高二数学", href: "/grade2" },
-  { label: "高三复习", href: "/grade3" },
+  { label: "高三数学", href: "/grade3" },
   { label: "专题训练", href: "/practice" },
   { label: "我的错题", href: "/mistakes" },
   { label: "学习报告", href: "/report" },
@@ -140,12 +140,12 @@ export default function SiteHeader() {
           ) : user ? (
             <>
               <div className="max-w-40 text-right">
-                <p className="text-[11px] text-slate-400">当前学生</p>
+                <p className="text-[11px] text-slate-400">当前账号</p>
                 <p title={displayName} className="truncate text-sm font-medium text-slate-700">{displayName}</p>
               </div>
               <button type="button" onClick={handleLogout} disabled={loggingOut}
                 className="rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50">
-                {loggingOut ? "退出中..." : "退出"}
+                {loggingOut ? "退出中..." : "退出登录"}
               </button>
             </>
           ) : (
@@ -186,7 +186,7 @@ export default function SiteHeader() {
             ) : user ? (
               <div className="flex items-center justify-between gap-4">
                 <div className="min-w-0">
-                  <p className="text-xs text-slate-400">当前学生</p>
+                  <p className="text-xs text-slate-400">当前账号</p>
                   <p title={displayName} className="truncate text-sm font-medium text-slate-700">{displayName}</p>
                 </div>
                 <button type="button" onClick={handleLogout} disabled={loggingOut}

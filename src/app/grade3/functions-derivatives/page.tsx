@@ -89,7 +89,7 @@ export default function FunctionsDerivativesPage() {
       <SiteHeader />
       <article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
         <Link href="/grade3" className="text-sm text-blue-600 hover:underline">← 高三复习目录</Link>
-        <p className="mt-8 text-sm font-semibold text-blue-600">一轮复习 · 第二模块 · 八节已开放</p>
+        <p className="mt-8 text-sm font-semibold text-blue-600">一轮复习 · 第二章 · 八节已开放</p>
         <h1 className="mt-3 text-3xl font-bold text-slate-900 sm:text-4xl">函数与导数</h1>
         <p className="mt-5 leading-8">从函数概念与性质到导数综合，八节课程包含 16 个典型例题、32 道选择题、24 道填空题和 16 道解答题。原有 4 个汇总例题与 9 道选择题继续保留，可用于复练。</p>
         <nav aria-label="专题内容" className="my-8 flex flex-wrap gap-3">

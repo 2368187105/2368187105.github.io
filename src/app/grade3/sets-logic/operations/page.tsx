@@ -10,7 +10,7 @@ export default function LessonPage() {
   return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader />
     <article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <Link href="/grade3/sets-logic" className="text-sm text-blue-600">← 集合与逻辑复习目录</Link>
-      <p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第一模块 · 1.3</p>
+      <p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第一章 · 1.3</p>
       <h1 className="mt-3 text-3xl font-bold text-slate-900">集合的交并补运算</h1>
       <p className="mt-5 leading-8">先求集合本身，再进行交、并、补运算，准确判断每个端点并处理参数位置关系。</p>
       <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">交互探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>

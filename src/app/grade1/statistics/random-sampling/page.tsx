@@ -729,9 +729,7 @@ export default function RandomSamplingPage() {
                 ← 返回第 09 章目录
               </Link>
 
-              <span className="rounded-xl bg-slate-100 px-5 py-3 text-sm text-slate-400">
-                下一节：数据的收集与整理（待开发）
-              </span>
+              <Link href="/grade1/statistics/data-organization" className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-medium text-blue-700 hover:bg-blue-100">下一节：数据的收集与整理 →</Link>
             </div>
           </div>
 
@@ -786,13 +784,13 @@ export default function RandomSamplingPage() {
                               {lesson.title}
                             </p>
                           ) : (
-                            <p className="text-sm leading-6 text-slate-600">
+                            <Link href={lesson.href} className="text-sm leading-6 text-slate-600 hover:text-blue-600">
                               {lesson.title}
-                            </p>
+                            </Link>
                           )}
 
                           <p className="mt-1 text-xs text-slate-400">
-                            {active ? "正在学习" : "待开发"}
+                            {active ? "当前学习" : "已开放"}
                           </p>
                         </div>
                       </div>
@@ -815,7 +813,7 @@ export default function RandomSamplingPage() {
             <section className="rounded-2xl border border-slate-200 bg-white p-5">
               <h2 className="font-bold text-slate-900">学习进度</h2>
               <p className="mt-3 text-sm leading-7 text-slate-500">
-                已完成本节页面中的知识阅读与练习模块。练习成绩目前在本页面内计算，
+                已完成本节页面中的知识阅读与练习章节。练习成绩目前在本页面内计算，
                 尚未接入网站的统一学习记录。
               </p>
             </section>

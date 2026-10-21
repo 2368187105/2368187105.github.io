@@ -9,7 +9,7 @@ import { vectorText, vectorSvgLabel } from "@/components/VectorText";
 
 export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader/><article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-  <Link href="/grade3/solid-geometry" className="text-sm text-blue-600">← 立体几何与空间向量复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第六模块 · 6.6</p><h1 className="mt-3 text-3xl font-bold text-slate-900">立体几何综合与动点问题</h1><p className="mt-5 leading-8">用线段参数表达动点，依次处理方向、法向量、角与距离；每个候选都回代原条件并检查范围、非零和退化情形。</p>
+  <Link href="/grade3/solid-geometry" className="text-sm text-blue-600">← 立体几何与空间向量复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第六章 · 6.6</p><h1 className="mt-3 text-3xl font-bold text-slate-900">立体几何综合与动点问题</h1><p className="mt-5 leading-8">用线段参数表达动点，依次处理方向、法向量、角与距离；每个候选都回代原条件并检查范围、非零和退化情形。</p>
   <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图形探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
   <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 动点先写参数范围</h3><p className="mt-3 leading-8">{vectorText("线段 BD 上的点写成 P=B+t(D−B)，t∈[0,1]；射线、整条直线与线段的参数范围不同。坐标既要符合直线方程，也要满足题目实际允许的位置。")}</p></section>
 <section className="mt-6"><h3 className="font-semibold text-slate-900">2. 存在性从方程到回代完整闭合</h3><p className="mt-3 leading-8">{vectorText("垂直列数量积为零，线面角列正弦公式，点在平面内代入平面方程。方程解出后检查参数范围；平方或约分后还要核对原式正负、分母非零及所求方向非零，才能断言存在或不存在。")}</p></section>
@@ -19,7 +19,7 @@ export default function LessonPage() {
 <details className="mt-5 rounded-xl border border-slate-200 p-5"><summary className="cursor-pointer font-semibold text-slate-900">最短模回到真实长度</summary><p className="mt-4 leading-8">{vectorText("S(0,0,2)，P=(2−2t,2t,0)，0≤t≤1，求 SP 最小长度。")}</p><ol className="mt-4 list-decimal space-y-3 pl-6 leading-8"><li>{vectorText("SP=(2−2t,2t,−2)，平方为 4(1−t)²+4t²+4。")}</li><li>{vectorText("展开配方为 8(t−1/2)²+6。t=1/2 在允许范围内，因此最小平方为 6。")}</li><li>{vectorText("最短长度为 √6，取点 P=(1,1,0)。不能把平方最小值 6 当成长度。")}</li><li>{vectorText("若线段方向为 BD=(−2,2,0)，该处 SP=(1,1,−2) 与 BD 数量积为零，证实最短点确为垂足。")}</li></ol></details></section>
   <aside className="mt-8 rounded-xl border border-amber-200 bg-amber-50 p-6"><h2 className="font-semibold text-slate-900">易错提醒</h2><p className="mt-3 leading-8">解出参数便结束，漏筛线段范围；平方后不回代；忽略零方向与退化面；最小平方忘开根；图中没有交点就武断说全空间无解。</p></aside>
   <section id="practice" className="mt-8 scroll-mt-24 rounded-2xl border border-blue-200 bg-white p-6"><h2 className="text-xl font-bold text-slate-900">分层训练</h2><p className="mt-3 leading-8">4 道选择题、3 道填空题、2 道解答题，均为本站原创。完整解析写清位置前提、建系理由、法向量、角的范围与参数回代。解答题先独立书写，再按步骤自评；登录后沿用练习记录、错题与学习报告。</p><Link href={"/practice/?topic="+encodeURIComponent("高三立体几何与空间向量·动点综合")} className="mt-5 inline-flex rounded-lg bg-blue-600 px-5 py-3 text-white">开始本节 9 道训练 →</Link></section>
-  <div className="mt-8 flex justify-between gap-4 text-sm text-blue-600"><Link href="/grade3/solid-geometry/distances-volume">← 上一节</Link><Link href="/grade3/solid-geometry">完成本模块，返回目录 →</Link></div>
+  <div className="mt-8 flex justify-between gap-4 text-sm text-blue-600"><Link href="/grade3/solid-geometry/distances-volume">← 上一节</Link><Link href="/grade3/solid-geometry">完成本章，返回目录 →</Link></div>
  </article></main>;
 }
 

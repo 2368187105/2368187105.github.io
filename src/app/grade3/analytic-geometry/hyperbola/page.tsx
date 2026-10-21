@@ -8,7 +8,7 @@ import SiteHeader from "@/components/SiteHeader";
 
 export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader/><article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-  <Link href="/grade3/analytic-geometry" className="text-sm text-blue-600">← 解析几何复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第七模块 · 7.3</p><h1 className="mt-3 text-3xl font-bold text-slate-900">双曲线的方程与渐近线</h1><p className="mt-5 leading-8">分清实轴与虚轴、平方和关系与渐近线；联立直线时先看方程次数，处理与渐近线平行的特殊方向。</p>
+  <Link href="/grade3/analytic-geometry" className="text-sm text-blue-600">← 解析几何复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第七章 · 7.3</p><h1 className="mt-3 text-3xl font-bold text-slate-900">双曲线的方程与渐近线</h1><p className="mt-5 leading-8">分清实轴与虚轴、平方和关系与渐近线；联立直线时先看方程次数，处理与渐近线平行的特殊方向。</p>
   <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图形探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
   <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 正号项决定实轴方向</h3><p className="mt-3 leading-8">{"到两焦点距离差的绝对值为 2a，且 0<2a<2c 时，轨迹为双曲线两支。标准式等于 1 时，x²项为正则实轴沿 x 轴，y²项为正则实轴沿 y 轴。a、b 都取正数；虚轴长不表示曲线上有对应的两个截点。焦点关系为 c²=a²+b²，离心率大于 1。"}</p></section>
 <section className="mt-6"><h3 className="font-semibold text-slate-900">2. 渐近线来自二次齐次部分</h3><p className="mt-3 leading-8">{"把标准式右侧常数改成零，再因式分解得到两条渐近线。对 x²/a²−y²/b²=1，斜率是 ±b/a；换成纵轴双曲线时要重新从方程推导，不能机械照抄。"}</p></section>

@@ -305,3 +305,9 @@
 - 保存逻辑：`src/lib/practice-records.ts`。沿用原表和列，重复错题更新最近答案/自评；网络失败保留本地结果并显示失败提示，不伪称已保存。
 - 指定题目重练 URL：`/practice/?topic=专题名&question=题目ID`。错题本提供直接入口；无效 ID 回到当前专题第一题，不能跨专题误定位。
 - 可重复运行 `npm run check:learning` 检查答案别名、自评统计分离、记录保存故障与重复错题处理。它使用隔离测试客户端，不代表实际 Supabase 写入验收。
+
+## 统一的课程展示
+
+- 首页三个年级均展示“章节数、课程数、训练题数”。名称、章节顺序及课程链接集中在 `src/data/curriculum.ts`，数量从实际目录和原有题库计算；新增课程时同步核对该目录。
+- 年级总目录共用 `src/components/GradeDirectory.tsx`，统计共用 `CurriculumStats.tsx`。课程讲解、例题和交互仍在原有 `src/app/grade*/章节/课程/page.tsx`，题库分组与 ID 沿用原有文件。
+- `npm run check:curriculum` 检查目录与路由、题目分组总数、年级链接及正确率精度。全站展示检查记录见 `presentation-review.md`。

@@ -118,7 +118,7 @@ export default function VectorsPage() {
           <div className="grid gap-8 lg:grid-cols-[1fr_280px] lg:items-end">
             <div>
               <p className="text-sm font-medium text-blue-600">
-                第 06 模块
+                第 06 章
               </p>
 
               <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
@@ -130,7 +130,7 @@ export default function VectorsPage() {
                 系统学习向量的线性运算、
                 平面向量基本定理与坐标表示、
                 数量积及其综合应用。
-                本模块五节课程已经全部开放。
+                本章五节课程已经全部开放。
               </p>
 
               <div className="mt-7 flex flex-wrap gap-3">
@@ -194,7 +194,7 @@ export default function VectorsPage() {
                 </span>
 
                 <h2 className="mt-4 text-xl font-bold text-slate-900">
-                  第六模块已经全部开放
+                  第六章已经全部开放
                 </h2>
 
                 <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-500">
@@ -335,11 +335,11 @@ export default function VectorsPage() {
         <section className="mt-14 border-t border-slate-200 pt-10">
           <div className="mb-6">
             <h2 className="text-xl font-bold text-slate-900">
-              本模块学习目标
+              本章学习目标
             </h2>
 
             <p className="mt-2 text-sm text-slate-500">
-              完成本模块后，你应该能够：
+              完成本章后，你应该能够：
             </p>
           </div>
 
@@ -382,13 +382,13 @@ export default function VectorsPage() {
           </div>
         </section>
 
-        {/* 下一模块 */}
+        {/* 下一章节 */}
         <section className="mt-14 border-t border-slate-200 pt-10">
           <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-7">
             <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
               <div>
                 <p className="text-xs font-medium text-blue-600">
-                  下一模块
+                  下一章节
                 </p>
 
                 <h2 className="mt-3 text-xl font-bold text-slate-900">

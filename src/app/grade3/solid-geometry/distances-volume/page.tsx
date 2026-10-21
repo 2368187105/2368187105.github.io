@@ -9,7 +9,7 @@ import { vectorText } from "@/components/VectorText";
 
 export default function LessonPage() {
  return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader/><article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
-  <Link href="/grade3/solid-geometry" className="text-sm text-blue-600">← 立体几何与空间向量复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第六模块 · 6.5</p><h1 className="mt-3 text-3xl font-bold text-slate-900">空间距离与体积的转化</h1><p className="mt-5 leading-8">从法向量的投影求点面距离与垂足，用同一几何体换底求高；始终区分所选底面、垂直高度和斜线长度。</p>
+  <Link href="/grade3/solid-geometry" className="text-sm text-blue-600">← 立体几何与空间向量复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第六章 · 6.5</p><h1 className="mt-3 text-3xl font-bold text-slate-900">空间距离与体积的转化</h1><p className="mt-5 leading-8">从法向量的投影求点面距离与垂足，用同一几何体换底求高；始终区分所选底面、垂直高度和斜线长度。</p>
   <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图形探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
   <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 距离是垂线长度，不是随意连线</h3><p className="mt-3 leading-8">{vectorText("点面距离等于从点到平面的垂足线段长。设 P 为已知点、A 在平面内，n 为非零法向量，则距离为 |AP·n|/|n|。分子取绝对值，结果非负；点在平面上时距离为零。")}</p></section>
 <section className="mt-6"><h3 className="font-semibold text-slate-900">2. 求垂足要同时满足方向和位置</h3><p className="mt-3 leading-8">{vectorText("过 P 沿法向量作直线，设 H=P−t n，再将 H 坐标代入平面方程求 t。最后核验 H 在平面内且 PH 平行于 n。垂足可以落在题图有限三角片之外，因为整个平面无限延伸。")}</p></section>
