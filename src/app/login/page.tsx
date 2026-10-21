@@ -2,7 +2,9 @@
 
 import { type FormEvent, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { passwordResetPath } from "@/lib/password-recovery";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -96,13 +98,13 @@ export default function LoginPage() {
     setResetLoading(true);
     try {
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: `${window.location.origin}${passwordResetPath}`,
       });
       if (resetError) {
         setError("发送失败：" + resetError.message);
         return;
       }
-      setMessage("如果该邮箱已注册，你将收到密码重置邮件，请检查收件箱和垃圾邮件。");
+      setMessage("如果该邮箱已注册，你将收到密码重置邮件，请检查收件箱和垃圾邮件。在发起请求的同一浏览器中打开最新邮件；请勿从本地网站切换到正式网站完成验证。");
     } catch {
       setError("邮件请求未完成，请检查网络后重试。");
     } finally {
@@ -122,8 +124,8 @@ export default function LoginPage() {
     <main className="min-h-screen bg-slate-50">
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-          <a href="/" className="text-xl font-bold text-slate-900">高中数学学习平台</a>
-          <a href="/" className="text-sm text-slate-500 hover:text-blue-600">← 返回首页</a>
+          <Link href="/" className="text-xl font-bold text-slate-900">高中数学学习平台</Link>
+          <Link href="/" className="text-sm text-slate-500 hover:text-blue-600">← 返回首页</Link>
         </div>
       </header>
 
