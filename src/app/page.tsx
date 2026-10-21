@@ -2,7 +2,6 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import { grade2PracticeChapters, grade2PracticeTopics, questions } from "@/data/questions";
 import { practiceTopics as setsReviewTopics } from "@/data/questions-part5";
@@ -13,8 +12,7 @@ import { practiceTopics as sequenceReviewTopics } from "@/data/questions-part9";
 import { practiceTopics as spatialReviewTopics } from "@/data/questions-part10";
 import { practiceTopics as analyticReviewTopics } from "@/data/questions-part11";
 import { practiceTopics as reviewTopics, questions as reviewQuestions } from "@/data/questions-part12";
-import { summarizeLearning } from "@/lib/learning-summary";
-import { createClient } from "@/lib/supabase/client";
+import HomeLearningDashboard from "@/components/HomeLearningDashboard";
 
 /* =========================
    已开放的高一数学模块
@@ -116,7 +114,6 @@ const totalOpenModules = openModules + grade2OpenChapters;
 const totalOpenLessons = openLessons + grade2OpenLessons;
 
 const reviewLessonCount = reviewTopics.length;
-const writtenIds = new Set(questions.filter(question => question.kind === "written").map(question => question.id));
 const reviewQuestionCounts = {
   choice: reviewQuestions.filter(question => question.kind === "choice").length,
   fill: reviewQuestions.filter(question => question.kind === "fill").length,
@@ -138,144 +135,6 @@ const reviewModules = [
 ========================= */
 
 export default function Home() {
-  const supabase = useMemo(() => createClient(), []);
-
-  const [email, setEmail] =
-    useState<string | null>(null);
-
-  const [checkingUser, setCheckingUser] =
-    useState(true);
-
-  const [statsLoading, setStatsLoading] =
-    useState(false);
-
-  const [selfAssessed, setSelfAssessed] = useState(0);
-  const [statsError, setStatsError] = useState("");
-
-  const [totalAttempts, setTotalAttempts] =
-    useState(0);
-
-  const [correctAttempts, setCorrectAttempts] =
-    useState(0);
-
-  const [wrongAttempts, setWrongAttempts] =
-    useState(0);
-
-  const [accuracy, setAccuracy] =
-    useState(0);
-
-  const [latestTopic, setLatestTopic] =
-    useState<string | null>(null);
-
-  /* =========================
-     登录与学习数据
-  ========================= */
-
-  useEffect(() => {
-    let active = true;
-    let requestNumber = 0;
-    let currentUserId: string | null = null;
-
-    function resetStats() {
-      setTotalAttempts(0);
-      setCorrectAttempts(0);
-      setWrongAttempts(0);
-      setAccuracy(0);
-      setLatestTopic(null);
-      setSelfAssessed(0);
-      setStatsError("");
-      setStatsLoading(false);
-    }
-
-    async function loadLearningStats(userId: string) {
-      const requestId = ++requestNumber;
-
-      setStatsLoading(true);
-      setStatsError("");
-
-      const { data, error } = await supabase
-        .from("practice_attempts")
-        .select("question_id, selected_answer, is_correct, topic, created_at")
-        .eq("user_id", userId)
-        .order("created_at", {
-          ascending: false,
-        });
-
-      if (!active || requestId !== requestNumber) {
-        return;
-      }
-
-      if (error) {
-        console.error("读取学习数据失败：", error);
-        setStatsError("学习数据暂时读取失败，请刷新重试。");
-        setStatsLoading(false);
-        return;
-      }
-
-      const summary = summarizeLearning(data ?? [], writtenIds);
-      setTotalAttempts(summary.total);
-      setCorrectAttempts(summary.correct);
-      setWrongAttempts(summary.wrong);
-      setAccuracy(summary.accuracy);
-      setSelfAssessed(summary.selfAssessed);
-      setLatestTopic(summary.latestTopic);
-
-      setStatsLoading(false);
-    }
-
-    function applyUser(
-      user: {
-        id: string;
-        email?: string | null;
-      } | null
-    ) {
-      if (!active) return;
-
-      const userId = user?.id ?? null;
-
-      setEmail(user?.email ?? null);
-      setCheckingUser(false);
-
-      if (userId === currentUserId) {
-        return;
-      }
-
-      currentUserId = userId;
-
-      if (userId) {
-        void loadLearningStats(userId);
-      } else {
-        requestNumber += 1;
-        resetStats();
-      }
-    }
-
-    void supabase.auth.getUser().then(
-      ({ data: { user } }) => {
-        applyUser(user);
-      },
-      () => {
-        if (active) {
-          setCheckingUser(false);
-        }
-      }
-    );
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        applyUser(session?.user ?? null);
-      }
-    );
-
-    return () => {
-      active = false;
-      requestNumber += 1;
-      subscription.unsubscribe();
-    };
-  }, [supabase]);
-
   return (
     <main className="min-h-screen bg-[#fafafa]">
       <SiteHeader />
@@ -400,6 +259,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <HomeLearningDashboard />
 
       {/* =========================
           高一、高二、高三入口
@@ -550,156 +411,6 @@ export default function Home() {
       </section>
 
       <div className="mx-auto max-w-6xl px-4 pb-20 sm:px-6 lg:px-8">
-        {/* =========================
-            登录后的学习概览
-        ========================= */}
-
-        {email && (
-          <section className="py-12">
-            <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <h2 className="text-xl font-bold text-slate-900">
-                  我的学习概览
-                </h2>
-
-                <p className="mt-1 text-sm text-slate-500">
-                  根据云端记录统计客观题表现，解答题自评单独展示。
-                </p>
-              </div>
-
-              <Link
-                href="/report"
-                className="text-sm font-medium text-slate-500 transition hover:text-blue-600"
-              >
-                查看完整学习报告 →
-              </Link>
-            </div>
-
-            {statsLoading ? (
-              <div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-400">
-                正在读取学习数据...
-              </div>
-            ) : statsError ? (<p role="alert" className="rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-800">{statsError}</p>) : (
-              <>
-                <div className="grid grid-cols-2 border-y border-slate-200 bg-white sm:grid-cols-4">
-                  <StatItem
-                    label="客观题答题"
-                    value={String(totalAttempts)}
-                    suffix="题次"
-                  />
-
-                  <StatItem
-                    label="答对"
-                    value={String(correctAttempts)}
-                    suffix="题次"
-                  />
-
-                  <StatItem
-                    label="答错"
-                    value={String(wrongAttempts)}
-                    suffix="题次"
-                  />
-
-                  <StatItem
-                    label="客观题正确率"
-                    value={`${accuracy}%`}
-                  />
-                </div>
-
-                <p className="mt-4 text-sm text-slate-500">解答题自评 {selfAssessed} 题次，未计入客观题正确率。<Link href="/report" className="ml-2 text-blue-600">查看分步自评 →</Link></p>
-                <div className="mt-4 grid gap-4 md:grid-cols-2">
-                  {/* 最近学习 */}
-                  <div className="rounded-xl border border-slate-200 bg-white p-5">
-                    <p className="text-xs text-slate-400">
-                      最近练习
-                    </p>
-
-                    <p className="mt-2 font-semibold text-slate-800">
-                      {latestTopic ?? "还没有练习记录"}
-                    </p>
-
-                    <p className="mt-2 text-sm leading-6 text-slate-500">
-                      {latestTopic
-                        ? "可以继续完成相关专题练习，巩固刚刚学习过的内容。"
-                        : "完成第一道练习后，这里会显示最近练习的专题。"}
-                    </p>
-                    {latestTopic && <Link href={"/practice/?topic=" + encodeURIComponent(latestTopic)} className="mt-4 inline-flex text-sm font-medium text-blue-600">继续该专题 →</Link>}
-                  </div>
-
-                  {/* 正确率 */}
-                  <div className="rounded-xl border border-slate-200 bg-white p-5">
-                    <div className="flex items-center justify-between">
-                      <p className="text-xs text-slate-400">
-                        当前正确率
-                      </p>
-
-                      <span className="text-sm font-semibold text-slate-800">
-                        {accuracy}%
-                      </span>
-                    </div>
-
-                    <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100">
-                      <div
-                        className="h-full rounded-full bg-blue-600 transition-all"
-                        style={{
-                          width: `${accuracy}%`,
-                        }}
-                      />
-                    </div>
-
-                    <p className="mt-3 text-sm leading-6 text-slate-500">
-                      {getAccuracyMessage(
-                        accuracy,
-                        totalAttempts
-                      )}
-                    </p>
-                  </div>
-                </div>
-
-                {!latestTopic && (
-                  <div className="mt-4 rounded-xl border border-dashed border-slate-300 bg-white px-5 py-4">
-                    <p className="text-sm text-slate-500">
-                      你还没有答题记录。
-                      <Link
-                        href="/practice"
-                        className="ml-1 font-medium text-blue-600"
-                      >
-                        去完成第一道练习 →
-                      </Link>
-                    </p>
-                  </div>
-                )}
-              </>
-            )}
-          </section>
-        )}
-
-        {/* 未登录提示 */}
-        {!checkingUser && !email && (
-          <section className="py-12">
-            <div className="flex flex-col justify-between gap-5 rounded-2xl border border-slate-200 bg-white p-6 sm:flex-row sm:items-center">
-              <div>
-                <h2 className="font-bold text-slate-900">
-                  登录彻凌数学，保存学习记录
-                </h2>
-
-                <p className="mt-2 text-sm leading-6 text-slate-500">
-                  登录账号后，
-                  练习记录、错题和学习数据将保存到云端，
-                  方便在不同设备之间同步。
-                </p>
-              </div>
-
-              <Link
-                href="/login"
-                className="shrink-0 rounded-lg bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white transition hover:bg-slate-700"
-              >
-                登录 / 注册
-              </Link>
-            </div>
-          </section>
-        )}
-
         {/* =========================
             学习工具
         ========================= */}
@@ -1025,40 +736,6 @@ export default function Home() {
 }
 
 /* =========================
-   统计组件
-========================= */
-
-function StatItem({
-  label,
-  value,
-  suffix,
-}: {
-  label: string;
-  value: string;
-  suffix?: string;
-}) {
-  return (
-    <div className="border-b border-r border-slate-200 p-5 last:border-r-0 sm:border-b-0 sm:p-6">
-      <p className="text-xs text-slate-400">
-        {label}
-      </p>
-
-      <div className="mt-3 flex items-end gap-1.5">
-        <span className="text-3xl font-bold tracking-tight text-slate-900">
-          {value}
-        </span>
-
-        {suffix && (
-          <span className="pb-1 text-xs text-slate-400">
-            {suffix}
-          </span>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* =========================
    学习工具卡片
 ========================= */
 
@@ -1129,31 +806,4 @@ function MethodItem({
       </div>
     </div>
   );
-}
-
-/* =========================
-   正确率提示
-========================= */
-
-function getAccuracyMessage(
-  accuracy: number,
-  total: number
-) {
-  if (total === 0) {
-    return "完成练习后，这里会自动分析你的正确率。";
-  }
-
-  if (accuracy >= 90) {
-    return "掌握情况很好，可以尝试更综合的题目。";
-  }
-
-  if (accuracy >= 75) {
-    return "基础掌握较稳定，继续巩固易错题型。";
-  }
-
-  if (accuracy >= 60) {
-    return "还有一些知识点需要加强，建议结合错题复习。";
-  }
-
-  return "建议先回到知识点学习，再针对错题进行练习。";
 }

@@ -532,7 +532,7 @@ onClick={() => { setSelectedGrade(grade); setExpandedChapter(null); setFilter({ 
 className={`rounded-xl border px-6 py-3 text-sm font-semibold ${selectedGrade === grade ? "border-blue-400 bg-blue-50 text-blue-700" : "border-slate-200 bg-white text-slate-600"}`}>
 {grade}数学
 </button>))}
-<span className="self-center text-xs text-slate-400">高三已开放函数与导数</span>
+<span className="self-center text-xs text-slate-400">高三一轮复习八模块均已开放</span>
 </div>                  {/* 章节导航 */}
                   <div className="rounded-2xl border border-slate-200 bg-white p-4">
                     <div className="px-1">

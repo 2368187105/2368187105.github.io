@@ -1,4 +1,4 @@
-type AttemptSummaryInput = {
+export type AttemptSummaryInput = {
   question_id: string;
   topic: string;
   selected_answer?: string | null;

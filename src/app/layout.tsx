@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "katex/dist/katex.min.css";
 import "./globals.css";
+import StudyTimeTracker from "@/components/StudyTimeTracker";
 
 export const metadata: Metadata = {
   title: "彻凌数学",
@@ -15,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <body>{children}</body>
+      <body><StudyTimeTracker />{children}</body>
     </html>
   );
 }

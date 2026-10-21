@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "check:learning": "node scripts/verify-learning.cjs",
+    "check:rankings": "node scripts/verify-learning-rankings.cjs",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
@@ -24,6 +25,7 @@
     "react-katex": "^3.1.0"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.10",
     "@tailwindcss/postcss": "^4.3.3",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
