@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { mathText } from "@/components/MathText";
 import { useState, type ReactNode } from "react";
 import SiteHeader from "@/components/SiteHeader";
 
@@ -14,29 +15,9 @@ type QuizQuestion = {
   explanation: ReactNode;
 };
 
-/** 用 SVG 绘制根号钩，并让被开方数的上横线与根号顶端自然衔接。 */
-function Radical({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return (
-    <span className={`inline-flex items-start align-middle whitespace-nowrap ${className}`}>
-      <svg
-        aria-hidden="true"
-        viewBox="0 0 16 32"
-        className="h-[1.12em] w-[0.62em] shrink-0 overflow-visible text-current"
-        fill="none"
-      >
-        <path
-          d="M1 17 L5 24 L13 3"
-          stroke="currentColor"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-      <span className="-ml-[0.07em] mt-[0.075em] inline-block min-w-[0.3em] border-t-2 border-current px-[0.035em] pt-[0.055em] leading-tight">
-        {children}
-      </span>
-    </span>
-  );
+/** 与课程及题库使用相同的 KaTeX 根式，横线完整覆盖被开方数。 */
+function Radical({ children, className = "" }: { children: string | number; className?: string }) {
+  return <span className={className}>{mathText(`√(${children})`)}</span>;
 }
 
 /** 竖排分数：避免使用斜杠时，分子、分母和根号挤在同一条基线上。 */
@@ -287,7 +268,7 @@ export default function DistancePage() {
               <div className="mt-6 space-y-6">
                 {quizQuestions.map((question, index) => (
                   <article key={question.id} className="rounded-xl border border-slate-100 p-4 sm:p-5">
-                    <div className="flex items-start gap-3"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-sm font-bold text-blue-700">{index + 1}</span><div className="min-w-0 flex-1"><h3 className="font-semibold leading-7 text-slate-900">{question.title}</h3><p className="mt-2 text-sm leading-7 text-slate-700">{question.question}</p></div></div>
+                    <div className="flex items-start gap-3"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-sm font-bold text-blue-700">{index + 1}</span><div className="min-w-0 flex-1"><h3 className="font-semibold leading-7 text-slate-900">{question.title}</h3><p className="mt-2 text-sm leading-7 text-slate-700">{mathText(question.question)}</p></div></div>
                     <div className="mt-4 space-y-2">
                       {question.options.map((option) => {
                         const selected = answers[question.id] === option.key;
@@ -301,7 +282,7 @@ export default function DistancePage() {
                         </span>{submitted && isCorrect && <span className="shrink-0 text-xs font-medium text-emerald-700">正确答案</span>}</label>;
                       })}
                     </div>
-                    {submitted && <div className="mt-4 rounded-xl bg-slate-50 p-4"><p className={`text-sm font-semibold ${answers[question.id] === question.answer ? "text-emerald-700" : "text-red-600"}`}>{answers[question.id] === question.answer ? "回答正确" : `回答错误，正确答案是 ${question.answer}`}</p><p className="mt-2 text-sm leading-7 text-slate-600">{question.explanation}</p></div>}
+                    {submitted && <div className="mt-4 rounded-xl bg-slate-50 p-4"><p className={`text-sm font-semibold ${answers[question.id] === question.answer ? "text-emerald-700" : "text-red-600"}`}>{answers[question.id] === question.answer ? "回答正确" : `回答错误，正确答案是 ${question.answer}`}</p><p className="mt-2 text-sm leading-7 text-slate-600">{mathText(question.explanation)}</p></div>}
                   </article>
                 ))}
               </div>

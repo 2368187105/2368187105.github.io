@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
+import { mathText } from "@/components/MathText";
 import { createClient } from "@/lib/supabase/client";
 import {
   practiceTopics,
   questions,
 } from "@/data/questions";
 
-import { grade2PracticeTopics, grade2PracticeChapters } from "@/data/questions";
+import { grade2PracticeTopics, grade2PracticeChapters, grade3PracticeTopics, grade3PracticeChapters } from "@/data/questions";
 
 /* =========================
    数据类型
@@ -51,12 +52,18 @@ const grade1ChapterNames = [
   "概率",
 ];
 
-type Grade = "高一" | "高二";
+type Grade = "高一" | "高二" | "高三";
+const grade3TopicSet = new Set<string>(grade3PracticeTopics);
+const grade3ChapterNames = grade3PracticeChapters.map((chapter) => chapter.title);
+function topicGrade(topic: string): Grade {
+  return grade3TopicSet.has(topic) ? "高三" : grade2TopicSet.has(topic) ? "高二" : "高一";
+}
 const grade2TopicSet = new Set<string>(grade2PracticeTopics);
-const grade1Topics = practiceTopics.filter((topic) => !grade2TopicSet.has(topic));
-const allTopics: readonly string[] = [...new Set<string>([...practiceTopics, ...grade2PracticeTopics])];
-const knownTopics = new Set<string>(allTopics);
+const grade1Topics = practiceTopics.filter((topic) => !grade2TopicSet.has(topic) && !grade3TopicSet.has(topic));
+
 const grade2ChapterNames = grade2PracticeChapters.map((chapter) => chapter.title);
+
+const questionMap = new Map(questions.map(question => [question.id, question]));
 
 const questionTopicMap = new Map(
   questions.map((question) => [
@@ -70,6 +77,77 @@ const questionTopicMap = new Map(
 ========================= */
 
 const reviewAdvice: Record<string, string> = {
+  "高三集合与逻辑·章末综合": "回看集合与逻辑对应知识与例题，再重练章末综合；先确认前提和允许范围，再逐步计算，重点复核未完成的解答步骤。",
+  "高三函数与导数·章末综合": "回看函数与导数对应知识与例题，再重练章末综合；先确认前提和允许范围，再逐步计算，重点复核未完成的解答步骤。",
+  "高三三角函数与解三角形·章末综合": "回看三角函数与解三角形对应知识与例题，再重练章末综合；先确认前提和允许范围，再逐步计算，重点复核未完成的解答步骤。",
+  "高三平面向量·章末综合": "回看平面向量对应知识与例题，再重练章末综合；先确认前提和允许范围，再逐步计算，重点复核未完成的解答步骤。",
+  "高三数列·章末综合": "回看数列对应知识与例题，再重练章末综合；先确认前提和允许范围，再逐步计算，重点复核未完成的解答步骤。",
+  "高三立体几何与空间向量·章末综合": "回看立体几何与空间向量对应知识与例题，再重练章末综合；先确认前提和允许范围，再逐步计算，重点复核未完成的解答步骤。",
+  "高三解析几何·章末综合": "回看解析几何对应知识与例题，再重练章末综合；先确认前提和允许范围，再逐步计算，重点复核未完成的解答步骤。",
+  "高三计数、概率与统计·章末综合": "回看计数、概率与统计对应知识与例题，再重练章末综合；先确认前提和允许范围，再逐步计算，重点复核未完成的解答步骤。",
+
+  "高三计数概率统计·计数与排列组合": "回看计数、概率与统计第 8.1 节：先区分有序无序，再判分类与分步；捆绑、插空都检查零首位与重复。",
+  "高三计数概率统计·二项式定理": "回看计数、概率与统计第 8.2 节：一般项保留系数和负号；次数方程筛选整数 r，项号为 r+1。",
+  "高三计数概率统计·条件概率与全概率": "回看计数、概率与统计第 8.3 节：以条件事件作分母；先汇总全部路径，再倒推来源，区分独立与互斥。",
+  "高三计数概率统计·离散型随机变量": "回看计数、概率与统计第 8.4 节：列全取值，概率和为一；用 E(X²)−[E(X)]² 算方差，倍数平方。",
+  "高三计数概率统计·二项与超几何分布": "回看计数、概率与统计第 8.5 节：放回混匀才考虑独立同概率；不放回按超几何范围与组合概率计算。",
+  "高三计数概率统计·正态分布": "回看计数、概率与统计第 8.6 节：明确第二参数是方差；标准化除以 σ，单尾概率按对称性平分，表值写近似。",
+  "高三计数概率统计·抽样与总体估计": "回看计数、概率与统计第 8.7 节：直方图面积为频率；总体层权重加权，分组组中值只是估计，方差口径要一致。",
+  "高三计数概率统计·回归与独立性检验": "回看计数、概率与统计第 8.8 节：离差求回归，残差为实际减拟合；按题给阈值检验，关联不等于因果。",
+
+  "高三解析几何·直线与圆": "回看解析几何第 7.1 节：配方确定圆心和半径，点线距离核对相交相切；过点直线单独检查竖直方向。",
+  "高三解析几何·椭圆": "回看解析几何第 7.2 节：较大分母决定长轴，c²=a²−b²；焦点距离先用和与平方差，再回代比例。",
+  "高三解析几何·双曲线": "回看解析几何第 7.3 节：c²=a²+b²；渐近线方向可能使二次项消失，须先分类方程次数。",
+  "高三解析几何·抛物线": "回看解析几何第 7.4 节：明确 2p 的约定和准线方向；焦点弦先证两交点与焦点在弦内，保留竖直弦。",
+  "高三解析几何·弦与中点": "回看解析几何第 7.5 节：联立先查二次项与判别式，斜弦长补 √(1+k²)；点差法后验证交点与中点。",
+  "高三解析几何·轨迹方程": "回看解析几何第 7.6 节：消参后保留排除点与半支范围，并从候选轨迹反向构造原动点。",
+  "高三解析几何·综合与最值": "回看解析几何第 7.7 节：先写非退化范围，平方后开根；检查对称取点、特殊方向及全部取等条件。",
+
+  "高三立体几何与空间向量·几何体度量": "回看立体几何与空间向量第 6.1 节：区分垂直高度、母线与斜高，按所求侧面积、总表面积或体积选择公式。",
+  "高三立体几何与空间向量·平行与垂直": "回看立体几何与空间向量第 6.2 节：平行补位置前提，垂直找两条相交直线，逐步写清线线、线面与面面转化。",
+  "高三立体几何与空间向量·坐标与法向量": "回看立体几何与空间向量第 6.3 节：先用正交关系建系，终点减起点，求法向量时列两个独立方程并排除零向量。",
+  "高三立体几何与空间向量·空间角": "回看立体几何与空间向量第 6.4 节：直线角用余弦、线面角用正弦；指定二面角核对射线朝向，不能一律取锐角。",
+  "高三立体几何与空间向量·距离与体积": "回看立体几何与空间向量第 6.5 节：垂足同时检查落面与法线方向；换底后重算对应高度，距离结果非负。",
+  "高三立体几何与空间向量·动点综合": "回看立体几何与空间向量第 6.6 节：先写线段参数范围，求解后回代并检查非零与退化条件，最小平方最终开根。",
+
+  "高三数列·通项与递推": "回看数列第 5.1 节：首项单独求 S₁，n≥2 再作差；回代核对通项与项号。",
+  "高三数列·等差数列": "回看数列第 5.2 节：写清公差与真实项数；部分和最值比较邻近整数并检查零项。",
+  "高三数列·等比数列": "回看数列第 5.3 节：各项非零；求和分 q=1 与 q≠1，偶次方保留双符号。",
+  "高三数列·求和方法": "回看数列第 5.4 节：裂项保留系数与跨距；错位相减对齐幂次，保留首尾项。",
+  "高三数列·递推转化": "回看数列第 5.5 节：说明非零前提，写出变换后的首项，求通项后还原并检验。",
+  "高三数列·综合与不等式": "回看数列第 5.6 节：比较差或正项比值，阈值落实正整数；恒成立给出充分性与必要性。",
+
+  "高三平面向量·概念与运算": "回看平面向量第 4.1 节：按有向路径统一起终点，数乘方向与模分开检查。",
+  "高三平面向量·基底与共线": "回看平面向量第 4.2 节：先核对基底不共线，再比较系数；分点额外检查位置。",
+  "高三平面向量·坐标表示": "回看平面向量第 4.3 节：先终点减起点，再逐分量计算；共线判据避免除零。",
+  "高三平面向量·数量积与投影": "回看平面向量第 4.4 节：夹角先确认非零，模平方保留交叉项，数量投影保留符号。",
+  "高三平面向量·几何应用": "回看平面向量第 4.5 节：统一起点或设坐标，垂足先允许在整条直线上，再检验位置。",
+  "高三平面向量·参数与最值": "回看平面向量第 4.6 节：回代排除零向量与退化点，模的最值先平方配方再开根。",
+
+  "高三三角与解三角形·角与基本关系": "回看三角函数与解三角形第 3.1 节：先核对角度与弧度、单位圆坐标、象限和正切定义域。",
+  "高三三角与解三角形·恒等变换": "回看三角函数与解三角形第 3.2 节：按目标结构选公式，约分保留定义域，辅助角变换同步区间。",
+  "高三三角与解三角形·图象与性质": "回看三角函数与解三角形第 3.3 节：将整体角的单调与对称条件解回 x，核对角频率和平移量。",
+  "高三三角与解三角形·方程与不等式": "回看三角函数与解三角形第 3.4 节：保留全部周期分支，逐一筛整数并检验端点，避免约分漏解。",
+  "高三三角与解三角形·正余弦定理": "回看三角函数与解三角形第 3.5 节：逐一验证两个候选内角，检查 A+B<π 以及退化情形。",
+  "高三三角与解三角形·面积与综合": "回看三角函数与解三角形第 3.6 节：用面积连接边角与半周长，最值取等必须满足非退化条件。",
+
+  "高三函数与导数·定义域与值域": "回看函数与导数复习第 2.1 节：函数的概念、定义域与值域，对照解析检查定义域、关键变形、分类边界与结论。",
+  "高三函数与导数·函数性质": "回看函数与导数复习第 2.2 节：单调性、奇偶性与周期性，对照解析检查定义域、关键变形、分类边界与结论。",
+  "高三函数与导数·基本初等函数": "回看函数与导数复习第 2.3 节：基本初等函数与图象变换，对照解析检查定义域、关键变形、分类边界与结论。",
+  "高三函数与导数·零点与方程": "回看函数与导数复习第 2.4 节：函数零点与方程根数，对照解析检查定义域、关键变形、分类边界与结论。",
+  "高三函数与导数·导数运算与切线": "回看函数与导数复习第 2.5 节：导数运算与切线方程，对照解析检查定义域、关键变形、分类边界与结论。",
+  "高三函数与导数·单调性与最值": "回看函数与导数复习第 2.6 节：导数、单调性与极值最值，对照解析检查定义域、关键变形、分类边界与结论。",
+  "高三函数与导数·含参不等式": "回看函数与导数复习第 2.7 节：含参不等式与恒成立问题，对照解析检查定义域、关键变形、分类边界与结论。",
+  "高三函数与导数·导数综合": "回看函数与导数复习第 2.8 节：导数综合与分类讨论，对照解析检查定义域、关键变形、分类边界与结论。",
+
+  "高三集合与逻辑·集合的概念": "回看集合的概念与表示，先辨别代表元素，再检查重根、重复元素和参数回代。",
+  "高三集合与逻辑·集合关系与参数": "先判断空集情形，再比较区间端点；真子集还需排除集合相等。",
+  "高三集合与逻辑·集合运算": "先求集合本身，在数轴上分别核对交并补的每个端点。",
+  "高三集合与逻辑·充分必要条件": "先写推理箭头，转化为解集包含；用满足原取值范围的反例检验反向。",
+  "高三集合与逻辑·量词与综合应用": "否定量词和结论时保持变量范围不变，用能否取到的最值检查参数边界。",
+  "高三函数与导数·基础巩固": "回看高三专题例题 1、2，逐项检查定义域条件、切点坐标和导数是否变号。",
+  "高三函数与导数·综合应用": "回看例题 2、3，列出导数符号表，比较端点与驻点，并单独检查参数边界。",
+  "高三函数与导数·进阶挑战": "回看例题 4，先确认乘除因子的符号，再区分恒成立与存在，检查最值能否取到。",
   "线性回归分析": "先看散点图，再求回归系数；残差用实际值减预测值，相关不等于因果，外推需核对适用范围。",
   "独立性检验": "列出观测与期望频数，检查随机抽样、独立观察和期望频数条件；未拒绝独立并不等于证明独立。",
   "条件概率": "明确条件事件及其非零概率，区分独立与互斥；不放回抽样须更新剩余构成，逆向条件不能直接交换。",
@@ -282,8 +360,8 @@ function normalizeTopic(
 
 export default function ReportPage() {
   const [selectedGrade, setSelectedGrade] = useState<Grade>("高一");
-  const currentPracticeTopics: readonly string[] = selectedGrade === "高一" ? grade1Topics : grade2PracticeTopics;
-  const chapterNames = selectedGrade === "高一" ? grade1ChapterNames : grade2ChapterNames;
+  const currentPracticeTopics: readonly string[] = selectedGrade === "高一" ? grade1Topics : selectedGrade === "高三" ? grade3PracticeTopics : grade2PracticeTopics;
+  const chapterNames = selectedGrade === "高一" ? grade1ChapterNames : selectedGrade === "高三" ? grade3ChapterNames : grade2ChapterNames;
   const supabase = useMemo(
     () => createClient(),
     []
@@ -384,9 +462,11 @@ export default function ReportPage() {
      总体统计
   ========================= */
 
-  const gradeAttempts = attempts.filter((item) =>
-    grade2TopicSet.has(normalizeTopic(item.topic, item.question_id)) === (selectedGrade === "高二")
+  const allGradeAttempts = attempts.filter((item) =>
+    topicGrade(normalizeTopic(item.topic, item.question_id)) === selectedGrade
   );
+  const selfAttempts = allGradeAttempts.filter(item => questionMap.get(item.question_id)?.kind === "written" || item.selected_answer?.startsWith("self:"));
+  const gradeAttempts = allGradeAttempts.filter(item => !selfAttempts.includes(item));
 
   const total = gradeAttempts.length;
 
@@ -443,7 +523,7 @@ export default function ReportPage() {
       length: chapterNames.length,
     },
     (_, index) => {
-      const chapterTopics: readonly string[] = selectedGrade === "高二"
+      const chapterTopics: readonly string[] = selectedGrade === "高三" ? grade3PracticeChapters[index].topics : selectedGrade === "高二"
         ? grade2PracticeChapters[index].topics
         : currentPracticeTopics.slice(index * 5, index * 5 + 5);
       const topics = topicStats.filter((item) => chapterTopics.includes(item.topic));
@@ -631,13 +711,13 @@ export default function ReportPage() {
         </section>
 
 <div className="my-5 flex gap-3" aria-label="选择年级">
-{(["高一", "高二"] as const).map((grade) => (
+{(["高一", "高二", "高三"] as const).map((grade) => (
 <button key={grade} type="button" aria-pressed={selectedGrade === grade}
 onClick={() => { setSelectedGrade(grade); setExpandedChapter(null);  }}
 className={`rounded-xl border px-6 py-3 text-sm font-semibold ${selectedGrade === grade ? "border-blue-400 bg-blue-50 text-blue-700" : "border-slate-200 bg-white text-slate-600"}`}>
 {grade}数学
 </button>))}
-<span className="self-center text-xs text-slate-400">高三建设中</span>
+<span className="self-center text-xs text-slate-400">高三一轮复习八模块均已开放，含计数、概率与统计</span>
 </div>        {errorMessage && (
           <div className="mb-6 rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-600">
             {errorMessage}
@@ -766,9 +846,7 @@ className={`rounded-xl border px-6 py-3 text-sm font-semibold ${selectedGrade ==
                       </p>
 
                       <p className="mt-2 text-sm leading-7 text-slate-600">
-                        {getReviewAdvice(
-                          weakestTopic.topic
-                        )}
+                        {mathText(getReviewAdvice(weakestTopic.topic))}
                       </p>
                     </div>
                   </>
@@ -881,7 +959,7 @@ className={`rounded-xl border px-6 py-3 text-sm font-semibold ${selectedGrade ==
               </h2>
 
               <p className="mt-2 text-sm text-slate-500">
-                最近 10 次答题记录。
+                最近 10 次客观题答题记录（选择题与填空题）。
               </p>
             </div>
 
@@ -930,6 +1008,7 @@ className={`rounded-xl border px-6 py-3 text-sm font-semibold ${selectedGrade ==
           </section>
         )}
 
+        {selectedGrade === "高三" && <section className="mb-8 rounded-xl border border-blue-200 bg-blue-50 p-6"><h2 className="text-lg font-semibold text-slate-900">题型记录与解答题自评</h2><p className="mt-3 text-sm text-slate-600">客观题：选择题 {gradeAttempts.filter(item => !questionMap.get(item.question_id)?.kind || questionMap.get(item.question_id)?.kind === "choice").length} 题次；填空题 {gradeAttempts.filter(item => questionMap.get(item.question_id)?.kind === "fill").length} 题次。</p><p className="mt-3 text-sm leading-7 text-slate-600">共 {selfAttempts.length} 题次；全部步骤自评完整 {selfAttempts.filter(item => item.is_correct).length} 题次，需复练 {selfAttempts.filter(item => !item.is_correct).length} 题次。此处为学生自评，不计入客观题正确率与薄弱专题排序。</p><div className="mt-4 space-y-3">{selfAttempts.slice(0, 10).map(item => <div key={item.id} className="rounded-lg bg-white p-4 text-sm"><p>{questionMap.get(item.question_id)?.title ?? item.topic} · {item.is_correct ? "自评完整" : "需要复练"}</p><p className="mt-2 text-xs text-slate-500">{formatDate(item.created_at)}</p></div>)}</div><Link href="/mistakes" className="mt-4 inline-block text-sm text-blue-600">前往错题本查看需要复练的步骤 →</Link></section>}
         {/* 底部导航 */}
         <section className="grid gap-4 border-t border-slate-200 pt-10 sm:grid-cols-3">
           <ActionCard
@@ -947,7 +1026,7 @@ className={`rounded-xl border px-6 py-3 text-sm font-semibold ${selectedGrade ==
           <ActionCard
             title="返回课程"
             description={`回到${selectedGrade}课程目录重新学习。`}
-            href={selectedGrade === "高一" ? "/grade1" : "/grade2"}
+            href={selectedGrade === "高一" ? "/grade1" : selectedGrade === "高三" ? "/grade3" : "/grade2"}
           />
         </section>
       </div>

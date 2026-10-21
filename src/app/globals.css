@@ -24,3 +24,14 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* A complete radical stays on one line; KaTeX sizes its bar to the radicand. */
+.math-radical {
+  display: inline-block;
+  white-space: nowrap;
+  text-indent: 0;
+}
+
+.math-radical .katex {
+  font-size: 1.12em;
+}

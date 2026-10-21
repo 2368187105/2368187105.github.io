@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import { mathText } from "@/components/MathText";
 import { useState } from "react";
 import { BlockMath, InlineMath } from "react-katex";
 import "katex/dist/katex.min.css";
@@ -740,7 +741,7 @@ export default function ComplexApplicationsPage() {
                 key={item}
                 className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-500"
               >
-                {item}
+                {mathText(item)}
               </span>
             ))}
           </div>
@@ -937,7 +938,7 @@ export default function ComplexApplicationsPage() {
                   </p>
 
                   <p className="mt-2 text-xs leading-6 text-slate-500">
-                    {item.text}
+                    {mathText(item.text)}
                   </p>
                 </div>
               ))}
@@ -1170,7 +1171,7 @@ export default function ComplexApplicationsPage() {
                   </p>
 
                   <p className="mt-2 text-sm leading-7 text-slate-500">
-                    {item.description}
+                    {mathText(item.description)}
                   </p>
                 </div>
               </div>
@@ -1296,7 +1297,7 @@ export default function ComplexApplicationsPage() {
                   </div>
 
                   <h3 className="mt-5 text-base font-semibold leading-8 text-slate-900">
-                    {exercise.question}
+                    {mathText(exercise.question)}
                   </h3>
 
                   <div className="my-5 overflow-x-auto rounded-xl bg-slate-50 px-3 py-4">
@@ -1375,7 +1376,7 @@ export default function ComplexApplicationsPage() {
                       </p>
 
                       <p className="mt-3 text-sm leading-7 text-slate-600">
-                        {exercise.explanation}
+                        {mathText(exercise.explanation)}
                       </p>
                     </div>
                   )}
@@ -1519,7 +1520,7 @@ function SectionHeading({
       </h2>
 
       <p className="mt-3 text-sm leading-7 text-slate-500">
-        {description}
+        {mathText(description)}
       </p>
     </div>
   );
@@ -1539,7 +1540,7 @@ function GoalCard({
       </span>
 
       <p className="text-sm leading-7 text-slate-600">
-        {text}
+        {mathText(text)}
       </p>
     </div>
   );
@@ -1569,7 +1570,7 @@ function KeyFormula({
       <BlockMath math={formula} />
 
       <p className="mt-3 text-center text-sm leading-7 text-slate-500">
-        {description}
+        {mathText(description)}
       </p>
     </div>
   );
@@ -1595,7 +1596,7 @@ function ConceptCard({
       </div>
 
       <p className="text-sm leading-7 text-slate-500">
-        {description}
+        {mathText(description)}
       </p>
     </div>
   );
@@ -1629,7 +1630,7 @@ function NoteBox({
       </p>
 
       <p className="mt-2 text-sm leading-7 text-slate-600">
-        {text}
+        {mathText(text)}
       </p>
     </div>
   );
@@ -1685,7 +1686,7 @@ function ExampleCard({
                 {index + 1}.
               </span>
 
-              <p>{step}</p>
+              <p>{mathText(step)}</p>
             </div>
           ))}
         </div>

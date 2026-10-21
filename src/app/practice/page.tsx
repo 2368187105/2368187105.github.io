@@ -5,15 +5,19 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { BlockMath } from "react-katex";
 import { vectorText } from "@/components/VectorText";
+import { mathText } from "@/components/MathText";
 import "katex/dist/katex.min.css";
 
+import ConstructedQuestion from "@/components/ConstructedQuestion";
+import { checkAnswer } from "@/lib/answer-checking";
+import { savePracticeRecord } from "@/lib/practice-records";
 import SiteHeader from "@/components/SiteHeader";
 import { createClient } from "@/lib/supabase/client";
 import {
   practiceTopics,
   questions,
 } from "@/data/questions";
-import { grade2PracticeTopics, grade2PracticeChapters } from "@/data/questions";
+import { grade2PracticeTopics, grade2PracticeChapters, grade3PracticeTopics, grade3PracticeChapters } from "@/data/questions";
 
 /* =========================
    类型定义
@@ -26,18 +30,21 @@ type Topic = (typeof practiceTopics)[number];
    高一每章 5 个专题，高二按章节配置分组
 ========================= */
 
-type Grade = "高一" | "高二";
+type Grade = "高一" | "高二" | "高三";
+const grade3TopicSet = new Set<string>(grade3PracticeTopics);
+const grade3ChapterNames = grade3PracticeChapters.map((chapter) => chapter.title);
+
 
 const grade2TopicSet = new Set<string>(
   grade2PracticeTopics
 );
 
 const grade1PracticeTopics = practiceTopics.filter(
-  (topic) => !grade2TopicSet.has(topic)
+  (topic) => !grade2TopicSet.has(topic) && !grade3TopicSet.has(topic)
 );
 
 const grade1Questions = questions.filter(
-  (question) => !grade2TopicSet.has(question.topic)
+  (question) => !grade2TopicSet.has(question.topic) && !grade3TopicSet.has(question.topic)
 );
 
 const grade2Questions = questions.filter(
@@ -111,29 +118,32 @@ export default function PracticePage() {
   const [sessionWrong, setSessionWrong] =
     useState(0);
 
+  const [selfAssessments, setSelfAssessments] = useState(0);
+  const [answerRevision, setAnswerRevision] = useState(0);
+
   const [saveMessage, setSaveMessage] =
     useState("");
 
   const currentPracticeTopics =
     selectedGrade === "高一"
       ? grade1PracticeTopics
-      : grade2PracticeTopics;
+      : selectedGrade === "高三" ? grade3PracticeTopics : grade2PracticeTopics;
 
   const currentQuestions =
     selectedGrade === "高一"
       ? grade1Questions
-      : grade2Questions;
+      : selectedGrade === "高三" ? questions.filter((question) => grade3TopicSet.has(question.topic)) : grade2Questions;
 
   const chapterNames =
     selectedGrade === "高一"
       ? grade1ChapterNames
-      : grade2ChapterNames;
+      : selectedGrade === "高三" ? grade3ChapterNames : grade2ChapterNames;
 
   const chapters = chapterNames
     .map((name, index) => ({
       number: index + 1,
       name,
-      topics: selectedGrade === "高二"
+      topics: selectedGrade === "高三" ? [...grade3PracticeChapters[index].topics] : selectedGrade === "高二"
         ? [...grade2PracticeChapters[index].topics]
         : currentPracticeTopics.slice(index * 5, index * 5 + 5),
     }))
@@ -184,6 +194,8 @@ export default function PracticePage() {
   ========================= */
 
   useEffect(() => {
+    // 浏览器 URL 是外部状态：首帧读取，并同步前进/后退导航。
+    function applyRequestedTopic() {
     const params = new URLSearchParams(
       window.location.search
     );
@@ -192,7 +204,10 @@ export default function PracticePage() {
 
     if (!requestedTopic) return;
 
-    if (
+    if (grade3TopicSet.has(requestedTopic)) {
+      setSelectedGrade("高三");
+      setSelectedTopic(requestedTopic as Topic);
+    } else if (
       grade2PracticeTopics.some(
         (topic) => topic === requestedTopic
       )
@@ -210,14 +225,25 @@ export default function PracticePage() {
       return;
     }
 
-    const requestedChapters = grade2TopicSet.has(requestedTopic)
+    const requestedChapters = grade3TopicSet.has(requestedTopic)
+      ? grade3PracticeChapters.map((chapter) => [...chapter.topics] as readonly string[])
+      : grade2TopicSet.has(requestedTopic)
       ? grade2PracticeChapters.map((chapter) => [...chapter.topics] as readonly string[])
       : grade1ChapterNames.map((_, index) => grade1PracticeTopics.slice(index * 5, index * 5 + 5));
     setExpandedChapter(requestedChapters.findIndex((topics) => topics.includes(requestedTopic)));
-    setQuestionIndex(0);
+    const requestedId = params.get("question");
+    const requestedQuestions = questions.filter(question => question.topic === requestedTopic);
+    setQuestionIndex(Math.max(0, requestedQuestions.findIndex(question => question.id === requestedId)));
     setSelectedAnswer(null);
     setSubmitted(false);
     setSaveMessage("");
+    }
+    const frame = window.requestAnimationFrame(applyRequestedTopic);
+    window.addEventListener("popstate", applyRequestedTopic);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("popstate", applyRequestedTopic);
+    };
   }, []);
   /* =========================
      题目统计
@@ -308,7 +334,7 @@ export default function PracticePage() {
     const nextTopics =
       grade === "高一"
         ? grade1PracticeTopics
-        : grade2PracticeTopics;
+        : grade === "高三" ? grade3PracticeTopics : grade2PracticeTopics;
 
     setSelectedGrade(grade);
     setSelectedTopic(nextTopics[0] as Topic);
@@ -348,20 +374,20 @@ export default function PracticePage() {
      保留原有 Supabase 保存逻辑
   ========================= */
 
-  async function submitAnswer() {
+  async function submitAnswer(assessment?: { answer: string; correct: boolean }) {
     if (
       !currentQuestion ||
-      !selectedAnswer ||
+      !authChecked ||
+      (!assessment && !selectedAnswer) ||
       submitted ||
       submitting
     ) {
       return;
     }
 
-    const answerKey = selectedAnswer;
+    const answerKey = assessment?.answer ?? selectedAnswer!;
 
-    const answerIsCorrect =
-      answerKey === currentQuestion.correctAnswer;
+    const answerIsCorrect = assessment?.correct ?? checkAnswer(currentQuestion, answerKey);
 
     setSubmitting(true);
     setSaveMessage("");
@@ -369,12 +395,17 @@ export default function PracticePage() {
     /* 先进行本地判题 */
     setSubmitted(true);
 
+    if (currentQuestion.kind === "written") {
+      setSelfAssessments(value => value + 1);
+    } else {
     setSessionTotal((value) => value + 1);
 
     if (answerIsCorrect) {
       setSessionCorrect((value) => value + 1);
     } else {
       setSessionWrong((value) => value + 1);
+    }
+
     }
 
     /* 未登录：只判题，不保存 */
@@ -387,82 +418,12 @@ export default function PracticePage() {
       return;
     }
 
-    /* 保存练习记录 */
-    const { error: attemptError } =
-      await supabase
-        .from("practice_attempts")
-        .insert({
-          user_id: userId,
-          question_id: currentQuestion.id,
-          topic: currentQuestion.topic,
-          selected_answer: answerKey,
-          correct_answer:
-            currentQuestion.correctAnswer,
-          is_correct: answerIsCorrect,
-        });
-
-    if (attemptError) {
-      console.error(
-        "保存练习记录失败：",
-        attemptError
-      );
-
-      setSaveMessage(
-        "判题成功，但云端练习记录保存失败。"
-      );
-
+    try {
+      const result = await savePracticeRecord(supabase, userId, currentQuestion, answerKey, answerIsCorrect);
+      setSaveMessage(result.message);
+    } finally {
       setSubmitting(false);
-      return;
     }
-
-    /* 答错：自动加入错题本 */
-    if (!answerIsCorrect) {
-      const { error: mistakeError } =
-        await supabase
-          .from("mistakes")
-          .insert({
-            user_id: userId,
-            question_id: currentQuestion.id,
-            topic: currentQuestion.topic,
-            question: currentQuestion.question,
-            user_answer: answerKey,
-            correct_answer:
-              currentQuestion.correctAnswer,
-            explanation:
-              currentQuestion.explanation,
-          });
-
-      /*
-       * 23505 表示这道错题已存在。
-       * 保留原有去重处理方式。
-       */
-      if (
-        mistakeError &&
-        mistakeError.code !== "23505"
-      ) {
-        console.error(
-          "保存错题失败：",
-          mistakeError
-        );
-
-        setSaveMessage(
-          "练习记录已保存，但错题保存失败。"
-        );
-
-        setSubmitting(false);
-        return;
-      }
-
-      setSaveMessage(
-        "答题记录已保存，错误题目已加入错题本。"
-      );
-    } else {
-      setSaveMessage(
-        "答题记录已保存到云端。"
-      );
-    }
-
-    setSubmitting(false);
   }
 
   /* =========================
@@ -502,6 +463,7 @@ export default function PracticePage() {
 
   function resetCurrentQuestion() {
     if (submitting) return;
+    setAnswerRevision(value => value + 1);
 
     setSelectedAnswer(null);
     setSubmitted(false);
@@ -547,7 +509,7 @@ export default function PracticePage() {
 
               <p className="mt-4 max-w-2xl text-base leading-8 text-slate-500">
                 按照年级、章节和专题进行分类练习。
-                提交答案后自动判题，
+                客观题提交后自动判题，解答题核对解析后自评，
                 登录后可将练习记录和错题保存到云端。
               </p>
 
@@ -661,18 +623,12 @@ export default function PracticePage() {
                     </p>
                   </button>
 
-                  <div
-                    className="cursor-not-allowed rounded-lg border border-slate-200 bg-slate-50 px-2 py-3 text-center"
-                    title="高三数学专题建设中"
-                    aria-disabled="true"
-                  >
-                    <p className="text-sm font-medium text-slate-400">
-                      高三
-                    </p>
-                    <p className="mt-1 text-[10px] text-slate-400">
-                      建设中
-                    </p>
-                  </div>
+                  <button type="button" onClick={() => changeGrade("高三")} disabled={submitting}
+                    aria-pressed={selectedGrade === "高三"}
+                    className={`rounded-lg border px-2 py-3 text-center transition disabled:opacity-50 ${selectedGrade === "高三" ? "border-blue-200 bg-blue-50 text-blue-700" : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
+                    <p className="text-sm font-semibold">高三</p>
+                    <p className="mt-1 text-[10px]">一轮复习</p>
+                  </button>
                 </div>
               </div>
 
@@ -997,11 +953,12 @@ export default function PracticePage() {
                     <span className="text-xs text-slate-400">
                       {currentQuestion.title}
                     </span>
+                    {currentQuestion.difficulty && <span className="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600">{currentQuestion.difficulty}</span>}
                   </div>
 
                   {/* 题干 */}
-                  <h3 className="mt-5 text-lg font-semibold leading-8 text-slate-900">
-                    {currentQuestion.topic.includes("向量") ? vectorText(currentQuestion.question) : currentQuestion.question}
+                  <h3 className="mt-5 whitespace-pre-wrap text-lg font-semibold leading-8 text-slate-900">
+                    {currentQuestion.topic.includes("向量") ? vectorText(currentQuestion.question) : mathText(currentQuestion.question)}
                   </h3>
 
                   {/* 数学公式 */}
@@ -1013,6 +970,9 @@ export default function PracticePage() {
                     </div>
                   )}
 
+                  {currentQuestion.kind === "fill" || currentQuestion.kind === "written" ? (
+                    <ConstructedQuestion key={currentQuestion.id + ":" + answerRevision} question={currentQuestion} submitted={submitted} submitting={submitting} authReady={authChecked} saveMessage={saveMessage} onSubmit={submitAnswer} onReset={resetCurrentQuestion} />
+                  ) : <>
                   {/* 选项 */}
                   <div className="mt-6 grid gap-3">
                     {currentQuestion.options.map(
@@ -1066,7 +1026,7 @@ export default function PracticePage() {
                             </span>
 
                             <span className="pt-0.5 leading-6">
-                              {currentQuestion.topic.includes("向量") ? vectorText(option.text) : option.text}
+                              {currentQuestion.topic.includes("向量") ? vectorText(option.text) : mathText(option.text)}
                             </span>
                           </button>
                         );
@@ -1079,9 +1039,9 @@ export default function PracticePage() {
                     <button
                       type="button"
                       disabled={
-                        !selectedAnswer || submitting
+                        !selectedAnswer || submitting || !authChecked
                       }
-                      onClick={submitAnswer}
+                      onClick={() => submitAnswer()}
                       className="mt-6 rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-30"
                     >
                       {submitting
@@ -1124,7 +1084,7 @@ export default function PracticePage() {
                             你的答案：
                             {selectedOption.key}
                             .{" "}
-                            {currentQuestion.topic.includes("向量") ? vectorText(selectedOption.text) : selectedOption.text}
+                            {currentQuestion.topic.includes("向量") ? vectorText(selectedOption.text) : mathText(selectedOption.text)}
                           </p>
                         )}
 
@@ -1133,7 +1093,7 @@ export default function PracticePage() {
                             正确选项：
                             {correctOption.key}
                             .{" "}
-                            {currentQuestion.topic.includes("向量") ? vectorText(correctOption.text) : correctOption.text}
+                            {currentQuestion.topic.includes("向量") ? vectorText(correctOption.text) : mathText(correctOption.text)}
                           </p>
                         )}
 
@@ -1143,8 +1103,8 @@ export default function PracticePage() {
                             解析
                           </p>
 
-                          <p className="mt-2 text-sm leading-7 text-slate-600">
-                            {currentQuestion.topic.includes("向量") ? vectorText(currentQuestion.explanation) : currentQuestion.explanation}
+                          <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-600">
+                            {currentQuestion.topic.includes("向量") ? vectorText(currentQuestion.explanation) : mathText(currentQuestion.explanation)}
                           </p>
                         </div>
                       </div>
@@ -1165,6 +1125,7 @@ export default function PracticePage() {
                       </button>
                     </div>
                   )}
+                  </>}
                 </section>
 
                 {/* 上一题 / 下一题 */}
@@ -1210,6 +1171,7 @@ export default function PracticePage() {
                   )}
                 </div>
 
+                <p className="mt-6 text-sm text-slate-500">本次解答题自评：{selfAssessments} 题次，独立于下方客观题统计。</p>
                 {/* 本次练习统计 */}
                 <section className="mt-8 border-t border-slate-200 pt-8">
                   <div className="mb-4">
@@ -1218,7 +1180,7 @@ export default function PracticePage() {
                     </h2>
 
                     <p className="mt-1 text-sm text-slate-500">
-                      统计当前页面打开后的答题情况，
+                      客观题统计当前页面打开后的答题情况，
                       切换专题不会清空本次记录。
                     </p>
                   </div>

@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import { mathText } from "@/components/MathText";
 import { useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
 
@@ -434,9 +435,7 @@ export default function SlopeAnglePage() {
                     <summary className="cursor-pointer text-sm text-blue-600">
                       查看答案与解析
                     </summary>
-                    <p className="mt-2 text-sm leading-7 text-slate-600">
-                      k = tan 150° = −1 / √3。
-                    </p>
+                    <p className="mt-2 text-sm leading-7 text-slate-600">{mathText("k = tan 150° = −1 / √3。")}</p>
                   </details>
                 </div>
 
@@ -486,7 +485,7 @@ export default function SlopeAnglePage() {
                           {question.title}
                         </h3>
                         <p className="mt-2 text-sm leading-7 text-slate-700">
-                          {question.question}
+                          {mathText(question.question)}
                         </p>
                       </div>
                     </div>
@@ -529,7 +528,7 @@ export default function SlopeAnglePage() {
                               className="mt-1 accent-blue-600"
                             />
                             <span className="flex-1 text-sm leading-6 text-slate-700">
-                              {option.key}. {option.text}
+                              {option.key}. {mathText(option.text)}
                             </span>
                             {submitted && isCorrect && (
                               <span className="shrink-0 text-xs font-medium text-emerald-700">
@@ -555,7 +554,7 @@ export default function SlopeAnglePage() {
                             : `回答错误，正确答案是 ${question.answer}`}
                         </p>
                         <p className="mt-2 text-sm leading-7 text-slate-600">
-                          {question.explanation}
+                          {mathText(question.explanation)}
                         </p>
                       </div>
                     )}

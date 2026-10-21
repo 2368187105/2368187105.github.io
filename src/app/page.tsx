@@ -4,7 +4,16 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
-import { grade2PracticeChapters, grade2PracticeTopics } from "@/data/questions";
+import { grade2PracticeChapters, grade2PracticeTopics, questions } from "@/data/questions";
+import { practiceTopics as setsReviewTopics } from "@/data/questions-part5";
+import { practiceTopics as functionsReviewTopics } from "@/data/questions-part6";
+import { practiceTopics as trigReviewTopics } from "@/data/questions-part7";
+import { practiceTopics as vectorReviewTopics } from "@/data/questions-part8";
+import { practiceTopics as sequenceReviewTopics } from "@/data/questions-part9";
+import { practiceTopics as spatialReviewTopics } from "@/data/questions-part10";
+import { practiceTopics as analyticReviewTopics } from "@/data/questions-part11";
+import { practiceTopics as reviewTopics, questions as reviewQuestions } from "@/data/questions-part12";
+import { summarizeLearning } from "@/lib/learning-summary";
 import { createClient } from "@/lib/supabase/client";
 
 /* =========================
@@ -102,9 +111,27 @@ const grade2Percent = Math.round(
   (grade2OpenLessons / grade2TotalLessons) * 100
 );
 
-// 首页展示的全站已开放内容：高一 10 个模块 + 高二已开放章节
+// 高一、高二基础内容单独计数；高三新复习课在首屏另列
 const totalOpenModules = openModules + grade2OpenChapters;
 const totalOpenLessons = openLessons + grade2OpenLessons;
+
+const reviewLessonCount = reviewTopics.length;
+const writtenIds = new Set(questions.filter(question => question.kind === "written").map(question => question.id));
+const reviewQuestionCounts = {
+  choice: reviewQuestions.filter(question => question.kind === "choice").length,
+  fill: reviewQuestions.filter(question => question.kind === "fill").length,
+  written: reviewQuestions.filter(question => question.kind === "written").length,
+};
+const reviewModules = [
+  { title: "集合与逻辑", href: "/grade3/sets-logic", status: "已开放", detail: "5 节复习课 · 45 道配套训练" },
+  { title: "函数与导数", href: "/grade3/functions-derivatives", status: "已开放", detail: "8 节复习课 · 72 道配套训练" },
+  { title: "三角函数与解三角形", href: "/grade3/trigonometry", status: "已开放", detail: "6 节复习课 · 54 道配套训练" },
+  { title: "平面向量", href: "/grade3/plane-vectors", status: "已开放", detail: "6 节复习课 · 54 道配套训练" },
+  { title: "数列", href: "/grade3/sequences", status: "已开放", detail: "6 节复习课 · 54 道配套训练" },
+  { title: "立体几何与空间向量", href: "/grade3/solid-geometry", status: "已开放", detail: "6 节复习课 · 54 道配套训练" },
+  { title: "解析几何", href: "/grade3/analytic-geometry", status: "已开放", detail: "7 节复习课 · 63 道配套训练" },
+  { title: "计数、概率与统计", href: "/grade3/probability-statistics", status: "已开放", detail: "8 节复习课 · 72 道配套训练" },
+];
 
 /* =========================
    首页
@@ -121,6 +148,9 @@ export default function Home() {
 
   const [statsLoading, setStatsLoading] =
     useState(false);
+
+  const [selfAssessed, setSelfAssessed] = useState(0);
+  const [statsError, setStatsError] = useState("");
 
   const [totalAttempts, setTotalAttempts] =
     useState(0);
@@ -152,6 +182,8 @@ export default function Home() {
       setWrongAttempts(0);
       setAccuracy(0);
       setLatestTopic(null);
+      setSelfAssessed(0);
+      setStatsError("");
       setStatsLoading(false);
     }
 
@@ -159,10 +191,11 @@ export default function Home() {
       const requestId = ++requestNumber;
 
       setStatsLoading(true);
+      setStatsError("");
 
       const { data, error } = await supabase
         .from("practice_attempts")
-        .select("is_correct, topic, created_at")
+        .select("question_id, selected_answer, is_correct, topic, created_at")
         .eq("user_id", userId)
         .order("created_at", {
           ascending: false,
@@ -174,30 +207,18 @@ export default function Home() {
 
       if (error) {
         console.error("读取学习数据失败：", error);
+        setStatsError("学习数据暂时读取失败，请刷新重试。");
         setStatsLoading(false);
         return;
       }
 
-      const attempts = data ?? [];
-      const total = attempts.length;
-
-      const correct = attempts.filter(
-        (item) => item.is_correct === true
-      ).length;
-
-      const wrong = total - correct;
-
-      const rate =
-        total === 0
-          ? 0
-          : Math.round((correct / total) * 100);
-
-      setTotalAttempts(total);
-      setCorrectAttempts(correct);
-      setWrongAttempts(wrong);
-      setAccuracy(rate);
-
-      setLatestTopic(attempts[0]?.topic ?? null);
+      const summary = summarizeLearning(data ?? [], writtenIds);
+      setTotalAttempts(summary.total);
+      setCorrectAttempts(summary.correct);
+      setWrongAttempts(summary.wrong);
+      setAccuracy(summary.accuracy);
+      setSelfAssessed(summary.selfAssessed);
+      setLatestTopic(summary.latestTopic);
 
       setStatsLoading(false);
     }
@@ -293,6 +314,7 @@ export default function Home() {
               <p className="mt-6 max-w-2xl text-base leading-8 text-slate-500">
                 面向高中三个年级，
                 系统整理数学知识点，
+                从高一、高二基础课程到高三一轮复习，
                 通过知识讲解、典型例题、专题训练、
                 错题复习和学习数据分析，
                 帮助学生逐步建立完整的数学知识体系。
@@ -303,7 +325,7 @@ export default function Home() {
                   href="/grade1"
                   className="rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-slate-700"
                 >
-                  开始学习
+                  高一数学
                 </Link>
 
                 <Link
@@ -311,6 +333,10 @@ export default function Home() {
                   className="rounded-lg border border-blue-200 bg-blue-50 px-5 py-2.5 text-sm font-medium text-blue-700 transition hover:bg-blue-100"
                 >
                   高二数学
+                </Link>
+
+                <Link href="/grade3" className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700">
+                  高三一轮复习
                 </Link>
 
                 <Link
@@ -336,7 +362,7 @@ export default function Home() {
                   </p>
 
                   <p className="mt-1 text-xs text-slate-400">
-                    已开放模块 / 章节
+                    高一、高二基础章节
                   </p>
                 </div>
 
@@ -346,29 +372,31 @@ export default function Home() {
                   </p>
 
                   <p className="mt-1 text-xs text-slate-400">
-                    已开放课程
+                    高一、高二基础课程
                   </p>
                 </div>
 
                 <div>
                   <p className="text-2xl font-bold text-slate-900">
-                    {grade2OpenChapters}
+                    {reviewLessonCount + setsReviewTopics.length + functionsReviewTopics.length + trigReviewTopics.length + vectorReviewTopics.length + sequenceReviewTopics.length + spatialReviewTopics.length + analyticReviewTopics.length}
                   </p>
 
                   <p className="mt-1 text-xs text-slate-400">
-                    高二已开放章节
+                    高三一轮复习课
                   </p>
                 </div>
+                <div><p className="text-2xl font-bold text-slate-900">{questions.length}</p><p className="mt-1 text-xs text-slate-400">全站训练题</p></div>
               </div>
             </div>
 
-    <div className="rounded-2xl border border-blue-100 bg-blue-50/40 p-6">
-      <div className="flex items-center justify-between gap-3"><p className="text-xs font-medium text-slate-400">最新开放章节</p><span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-600">第九章已开放</span></div>
-      <p className="mt-5 text-xs font-medium text-blue-600">GRADE 11 · CHAPTER 09</p><h2 className="mt-2 text-xl font-bold text-slate-900">统计</h2><p className="mt-3 text-sm leading-7 text-slate-500">学习线性回归分析与独立性检验，通过散点、残差和列联表理解统计关联及其解释边界。</p>
-      <div className="mt-5 flex flex-wrap gap-2">{["线性回归分析", "独立性检验"].map((title) => <span key={title} className="rounded-md bg-white px-2 py-1 text-xs text-slate-500">{title}</span>)}</div>
-      <div className="mt-6 border-t border-blue-100 pt-5"><div className="flex justify-between text-xs"><span className="text-slate-400">本章课程开放情况</span><span className="font-medium text-emerald-600">2 / 2</span></div><div className="mt-3 h-2 rounded-full bg-blue-600" /></div>
-      <Link href="/grade2/statistics" className="mt-6 inline-flex text-sm font-medium text-slate-900 hover:text-blue-600">进入高二第九章 →</Link>
-    </div>
+            <aside aria-label="最新开放课程" className="rounded-2xl border border-blue-200 bg-blue-50/50 p-6 sm:p-7">
+              <div className="flex flex-wrap items-center justify-between gap-3"><p className="text-xs font-medium text-blue-700">最新开放 · 高三一轮复习</p><span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">第八模块已开放</span></div>
+              <h2 className="mt-5 text-2xl font-bold text-slate-900">计数、概率与统计</h2>
+              <p className="mt-3 text-sm leading-7 text-slate-600">从排列组合、二项式定理到条件概率、随机变量、常用分布与统计推断，八节课程逐步衔接。完整说明模型前提、计算步骤和结论边界。</p>
+              <div className="mt-5 grid grid-cols-2 gap-3 border-y border-blue-100 py-4"><div><p className="text-2xl font-bold text-slate-900">{reviewLessonCount}<span className="ml-1 text-sm font-normal">节</span></p><p className="mt-1 text-xs text-slate-500">系统复习课</p></div><div><p className="text-2xl font-bold text-slate-900">{reviewQuestions.length}<span className="ml-1 text-sm font-normal">道</span></p><p className="mt-1 text-xs text-slate-500">分层训练题</p></div></div>
+              <div className="mt-4 flex flex-wrap gap-2">{[["选择题",reviewQuestionCounts.choice],["填空题",reviewQuestionCounts.fill],["解答题",reviewQuestionCounts.written]].map(([name,count])=><span key={name} className="rounded-md bg-white px-2.5 py-1 text-xs text-slate-600">{name} {count} 道</span>)}</div>
+              <Link href="/grade3/probability-statistics" className="mt-6 flex items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-700">开始计数、概率与统计复习 →</Link>
+            </aside>
           </div>
         </div>
       </section>
@@ -377,7 +405,7 @@ export default function Home() {
           高一、高二、高三入口
       ========================= */}
 
-      <section className="mx-auto max-w-6xl px-4 pt-12 sm:px-6 lg:px-8">
+      <section id="curriculum" className="mx-auto max-w-6xl scroll-mt-24 px-4 pt-12 sm:px-6 lg:px-8">
         <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-xs font-medium tracking-wide text-blue-600">
@@ -395,7 +423,7 @@ export default function Home() {
           </div>
 
           <span className="text-xs text-slate-400">
-            高一课程已全部开放 · 高二课程已全部开放
+            高一、高二基础内容已开放 · 高三一轮复习八模块已开放
           </span>
         </div>
 
@@ -472,9 +500,8 @@ export default function Home() {
             </h3>
 
             <p className="mt-3 flex-1 text-sm leading-7 text-slate-500">
-              直线与方程、圆与方程、圆锥曲线与方程、数列、导数及其应用、空间向量与立体几何、计数原理、概率、统计九章已全部开放，
-              共三十节课程，覆盖解析几何、数列、导数、空间向量、计数、概率与统计。
-              可按教材顺序学习，也可进入专题训练巩固。
+              解析几何、数列、导数、空间向量、计数原理、概率与统计，
+              九章三十节课程全部开放。结合交互图形和典型例题，完成知识学习与专题巩固。
             </p>
 
             <div className="mt-6 rounded-xl bg-slate-50 p-4">
@@ -483,7 +510,7 @@ export default function Home() {
                   当前开放内容
                 </p>
                 <span className="text-xs font-medium text-emerald-600">
-                  {grade2OpenLessons}/{grade2OpenLessons} 节
+                  {grade2OpenLessons}/{grade2TotalLessons} 节
                 </span>
               </div>
 
@@ -505,53 +532,20 @@ export default function Home() {
           </Link>
 
           {/* 高三数学 */}
-          <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6">
+          <Link href="/grade3" className="group flex flex-col rounded-2xl border border-blue-200 bg-white p-6 transition hover:border-blue-300 hover:shadow-sm">
             <div className="flex items-center justify-between gap-3">
-              <span className="text-xs font-semibold text-slate-400">
-                GRADE 12
-              </span>
-
-              <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-500">
-                建设中
-              </span>
+              <span className="text-xs font-semibold text-blue-600">GRADE 12</span>
+              <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-600">一轮复习八模块已开放</span>
             </div>
-
-            <h3 className="mt-5 text-xl font-bold text-slate-900">
-              高三数学
-            </h3>
-
-            <p className="mt-3 flex-1 text-sm leading-7 text-slate-500">
-              计划提供高考一轮复习、
-              专题突破、真题训练和综合提升内容，
-              帮助学生建立系统的复习框架。
-            </p>
-
+            <h3 className="mt-5 text-xl font-bold text-slate-900">高三数学</h3>
+            <p className="mt-3 flex-1 text-sm leading-7 text-slate-500">衔接高一、高二基础内容，通过知识梳理、典型题型与分层练习查漏补缺。集合与逻辑、函数与导数、三角函数与解三角形、平面向量、数列、立体几何与空间向量、解析几何、计数概率与统计八个模块已开放，共五十二节复习课，支持三种题型与完整解析。</p>
             <div className="mt-6 rounded-xl bg-slate-50 p-4">
-              <p className="text-xs font-medium text-slate-500">
-                规划内容
-              </p>
-
-              <div className="mt-3 flex flex-wrap gap-2">
-                {[
-                  "一轮复习",
-                  "专题突破",
-                  "真题训练",
-                  "综合提升",
-                ].map((item) => (
-                  <span
-                    key={item}
-                    className="rounded-md bg-white px-2 py-1 text-xs text-slate-500"
-                  >
-                    {item}
-                  </span>
-                ))}
-              </div>
+              <p className="text-xs font-medium text-slate-500">当前开放内容</p>
+              <p className="mt-3 text-sm leading-7 text-slate-700">8 个模块 · 52 节课程 · 468 道配套训练<br />另有 96 道章末综合训练，保留 9 道原有函数复练题</p>
+              <p className="mt-2 text-xs leading-6 text-slate-400">专题突破与真题训练将分阶段补充</p>
             </div>
-
-            <p className="mt-6 border-t border-slate-100 pt-4 text-sm text-slate-400">
-              课程准备中 · 敬请期待
-            </p>
-          </div>
+            <p className="mt-6 border-t border-slate-100 pt-4 text-sm font-medium text-slate-900 group-hover:text-blue-600">进入高三复习 →</p>
+          </Link>
         </div>
       </section>
 
@@ -569,7 +563,7 @@ export default function Home() {
                 </h2>
 
                 <p className="mt-1 text-sm text-slate-500">
-                  根据你的云端练习记录自动统计。
+                  根据云端记录统计客观题表现，解答题自评单独展示。
                 </p>
               </div>
 
@@ -585,11 +579,11 @@ export default function Home() {
               <div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-400">
                 正在读取学习数据...
               </div>
-            ) : (
+            ) : statsError ? (<p role="alert" className="rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-800">{statsError}</p>) : (
               <>
                 <div className="grid grid-cols-2 border-y border-slate-200 bg-white sm:grid-cols-4">
                   <StatItem
-                    label="累计答题"
+                    label="客观题答题"
                     value={String(totalAttempts)}
                     suffix="题次"
                   />
@@ -607,16 +601,17 @@ export default function Home() {
                   />
 
                   <StatItem
-                    label="正确率"
+                    label="客观题正确率"
                     value={`${accuracy}%`}
                   />
                 </div>
 
+                <p className="mt-4 text-sm text-slate-500">解答题自评 {selfAssessed} 题次，未计入客观题正确率。<Link href="/report" className="ml-2 text-blue-600">查看分步自评 →</Link></p>
                 <div className="mt-4 grid gap-4 md:grid-cols-2">
                   {/* 最近学习 */}
                   <div className="rounded-xl border border-slate-200 bg-white p-5">
                     <p className="text-xs text-slate-400">
-                      最近学习
+                      最近练习
                     </p>
 
                     <p className="mt-2 font-semibold text-slate-800">
@@ -624,10 +619,11 @@ export default function Home() {
                     </p>
 
                     <p className="mt-2 text-sm leading-6 text-slate-500">
-                      {totalAttempts > 0
+                      {latestTopic
                         ? "可以继续完成相关专题练习，巩固刚刚学习过的内容。"
                         : "完成第一道练习后，这里会显示最近练习的专题。"}
                     </p>
+                    {latestTopic && <Link href={"/practice/?topic=" + encodeURIComponent(latestTopic)} className="mt-4 inline-flex text-sm font-medium text-blue-600">继续该专题 →</Link>}
                   </div>
 
                   {/* 正确率 */}
@@ -660,7 +656,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                {totalAttempts === 0 && (
+                {!latestTopic && (
                   <div className="mt-4 rounded-xl border border-dashed border-slate-300 bg-white px-5 py-4">
                     <p className="text-sm text-slate-500">
                       你还没有答题记录。
@@ -725,14 +721,14 @@ export default function Home() {
               number="01"
               title="知识学习"
               description="按照完整课程目录，系统学习高中数学知识点。"
-              href="/grade1"
-              action="进入课程"
+              href="#curriculum"
+              action="选择年级"
             />
 
             <EntryCard
               number="02"
               title="专题训练"
-              description="在线选择答案，自动判题并查看详细解析。"
+              description="选择、填空自动判题；解答题对照完整解析分步自评。"
               href="/practice"
               action="开始做题"
             />
@@ -748,7 +744,7 @@ export default function Home() {
             <EntryCard
               number="04"
               title="学习报告"
-              description="查看答题次数、正确率和不同专题的表现。"
+              description="查看客观题表现、薄弱专题和独立记录的解答题自评。"
               href="/report"
               action="查看报告"
             />
@@ -872,37 +868,15 @@ export default function Home() {
           </div>
         </section>
 
-                {/* =========================
-            最新开放模块
-        ========================= */}
-
-
-<section className="border-t border-slate-200 py-12">
-  <div className="flex flex-col justify-between gap-6 rounded-2xl border border-blue-100 bg-white p-6 sm:flex-row sm:items-center sm:p-7">
-    <div>
-      <p className="text-xs font-medium text-blue-600">
-        高二数学 · 第九章
-      </p>
-
-      <h2 className="mt-3 text-xl font-bold text-slate-900">
-        统计
-      </h2>
-
-      <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-500">
-        从散点与列联表出发，学习回归拟合、残差与独立性检验，
-        结合交互图形、典型例题与课堂自测解释统计证据和预测范围。
-      </p>
-    </div>
-
-    <Link
-      href="/grade2/statistics"
-      className="shrink-0 rounded-lg bg-blue-600 px-5 py-3 text-center text-sm font-medium text-white transition hover:bg-blue-700"
-    >
-      学习本章课程 →
-    </Link>
-  </div>
-</section>
-
+        <section aria-labelledby="review-path-heading" className="border-t border-slate-200 py-12">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-medium text-blue-600">高三一轮复习</p><h2 id="review-path-heading" className="mt-3 text-2xl font-bold text-slate-900">八个模块，串起复习主线</h2><p className="mt-3 max-w-2xl text-sm leading-7 text-slate-500">面向江苏考生，一轮复习八个模块均已开放。由集合与函数出发，逐步衔接三角、向量、数列、几何与概率统计，配套三类题型和完整分步解析。</p></div><Link href="/grade3" className="text-sm font-medium text-blue-600">查看高三复习目录 →</Link></div>
+          <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{reviewModules.map((module,index)=><li key={module.title} className={`rounded-xl border p-5 ${module.href ? "border-blue-200 bg-white" : "border-slate-200 bg-slate-50"}`}>
+            <div className="flex items-center justify-between gap-2"><span className="text-xs font-semibold text-slate-400">{String(index+1).padStart(2,"0")}</span><span className={`rounded-full px-2 py-1 text-xs ${module.href ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>{module.status}</span></div>
+            <h3 className="mt-4 font-semibold leading-7 text-slate-900">{module.href ? <Link className="hover:text-blue-600" href={module.href}>{module.title} →</Link> : module.title}</h3>
+            <p className="mt-2 text-xs leading-6 text-slate-500">{module.detail ?? "课程与训练准备中"}</p>
+          </li>)}</ol>
+          <Link href="/grade3/chapter-tests" className="mt-6 block rounded-xl border border-blue-200 bg-blue-50 p-5 text-sm leading-7 text-blue-700"><strong>八章综合训练已开放 →</strong><br />每章 12 题，共 96 题，含 24 道完整解析的解答题。按基础巩固、综合应用与提升检验章节掌握情况。</Link><p className="mt-5 text-xs leading-6 text-slate-500">选择题与填空题用于客观判分；解答题先独立书写，再按关键步骤自评。课程开放状态与个人学习进度分别记录。</p>
+        </section>
 
         {/* =========================
             学习方法
@@ -980,10 +954,10 @@ export default function Home() {
               </div>
 
               <Link
-                href="/grade1"
+                href="#curriculum"
                 className="shrink-0 rounded-lg bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white transition hover:bg-slate-700"
               >
-                开始学习
+                选择年级，开始学习
               </Link>
             </div>
           </div>
@@ -1020,6 +994,8 @@ export default function Home() {
             >
               高二数学
             </Link>
+
+            <Link href="/grade3" className="hover:text-slate-700">高三复习</Link>
 
             <Link
               href="/practice"

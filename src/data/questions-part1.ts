@@ -4,6 +4,11 @@ export type QuestionOption = {
 };
 
 export type Question = {
+  difficulty?: "基础巩固" | "综合应用" | "提升";
+  kind?: "choice" | "fill" | "written";
+  acceptedAnswers?: string[];
+  checkpoints?: string[];
+  hint?: string;
   id: string;
   topic: string;
   title: string;

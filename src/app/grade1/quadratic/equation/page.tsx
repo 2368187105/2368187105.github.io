@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { mathText } from "@/components/MathText";
 import { useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
 
@@ -516,9 +517,7 @@ export default function QuadraticEquationPage() {
               </p>
 
               <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-7">
-                <MathBox>
-                  x = (−b ± √Δ) / 2a
-                </MathBox>
+                <MathBox>{mathText("x = (−b ± √Δ) / 2a")}</MathBox>
               </div>
 
               <ExampleCard title="例如">
@@ -830,7 +829,7 @@ function Section({
         </h2>
       </div>
 
-      {children}
+      {mathText(children)}
     </section>
   );
 }
@@ -842,7 +841,7 @@ function MathBox({
 }) {
   return (
     <div className="my-5 text-center font-serif text-xl text-slate-900 sm:text-2xl">
-      {children}
+      {mathText(children)}
     </div>
   );
 }
@@ -863,11 +862,11 @@ function PropertyCard({
       </p>
 
       <p className="mt-3 font-semibold text-slate-900">
-        {main}
+        {mathText(main)}
       </p>
 
       <p className="mt-2 text-sm leading-6 text-slate-500">
-        {description}
+        {mathText(description)}
       </p>
     </div>
   );
@@ -887,7 +886,7 @@ function ConnectionCard({
       </p>
 
       <p className="mt-2 text-sm font-semibold text-slate-800">
-        {text}
+        {mathText(text)}
       </p>
     </div>
   );
@@ -909,7 +908,7 @@ function DeltaCard({
       </p>
 
       <p className="text-sm font-medium text-slate-800">
-        {roots}
+        {mathText(roots)}
       </p>
 
       <p className="text-sm leading-6 text-slate-500">
@@ -933,7 +932,7 @@ function FormulaCard({
       </p>
 
       <p className="mt-3 font-serif text-xl font-semibold text-slate-900">
-        {formula}
+        {mathText(formula)}
       </p>
     </div>
   );
@@ -953,7 +952,7 @@ function ExampleCard({
       </h3>
 
       <div className="mt-4">
-        {children}
+        {mathText(children)}
       </div>
     </div>
   );
@@ -966,7 +965,7 @@ function AnswerBox({
 }) {
   return (
     <div className="mt-5 rounded-lg bg-emerald-50/60 px-5 py-4 text-center text-sm font-semibold text-emerald-700">
-      {children}
+      {mathText(children)}
     </div>
   );
 }
@@ -982,7 +981,7 @@ function TipBox({
         提示
       </span>
 
-      {children}
+      {mathText(children)}
     </div>
   );
 }
@@ -1058,7 +1057,7 @@ function GraphCard({
       </p>
 
       <p className="mt-1 text-center text-xs text-slate-500">
-        {text}
+        {mathText(text)}
       </p>
     </div>
   );
@@ -1135,7 +1134,7 @@ function StepItem({
         </p>
 
         <p className="mt-1 text-sm leading-6 text-slate-500">
-          {text}
+          {mathText(text)}
         </p>
       </div>
     </div>
@@ -1164,7 +1163,7 @@ function MistakeCard({
           </p>
 
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            {wrong}
+            {mathText(wrong)}
           </p>
         </div>
 
@@ -1174,7 +1173,7 @@ function MistakeCard({
           </p>
 
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            {correct}
+            {mathText(correct)}
           </p>
         </div>
       </div>
@@ -1223,7 +1222,7 @@ function QuestionCard({
       </div>
 
       <p className="mt-4 text-sm leading-7 text-slate-700">
-        {question.question}
+        {mathText(question.question)}
       </p>
 
       <div className="mt-5 grid gap-2">
@@ -1261,7 +1260,7 @@ function QuestionCard({
                 {option.key}.
               </span>
 
-              {option.text}
+              {mathText(option.text)}
             </button>
           );
         })}
@@ -1286,7 +1285,7 @@ function QuestionCard({
             </p>
 
             <p className="mt-2 text-sm leading-7 text-slate-600">
-              {question.explanation}
+              {mathText(question.explanation)}
             </p>
           </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { mathText } from "@/components/MathText";
 import { useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
 
@@ -270,9 +271,7 @@ export default function BasicInequalityPage() {
               </p>
 
               <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-7">
-                <MathBox>
-                  (a + b) / 2 ≥ √(ab)
-                </MathBox>
+                <MathBox>{mathText("(a + b) / 2 ≥ √(ab)")}</MathBox>
 
                 <p className="text-center text-sm text-slate-400">
                   等号当且仅当 a = b 时成立
@@ -283,9 +282,7 @@ export default function BasicInequalityPage() {
                 也可以写成：
               </p>
 
-              <MathBox>
-                a + b ≥ 2√(ab)
-              </MathBox>
+              <MathBox>{mathText("a + b ≥ 2√(ab)")}</MathBox>
 
               <CompareCard
                 left="(a+b)/2"
@@ -361,9 +358,7 @@ export default function BasicInequalityPage() {
                 根据基本不等式：
               </p>
 
-              <MathBox>
-                (a + b) / 2 ≥ √(ab)
-              </MathBox>
+              <MathBox>{mathText("(a + b) / 2 ≥ √(ab)")}</MathBox>
 
               <p className="mt-5 leading-8 text-slate-600">
                 两边平方：
@@ -418,17 +413,13 @@ export default function BasicInequalityPage() {
                 根据基本不等式：
               </p>
 
-              <MathBox>
-                a + b ≥ 2√(ab)
-              </MathBox>
+              <MathBox>{mathText("a + b ≥ 2√(ab)")}</MathBox>
 
               <p className="mt-5 leading-8 text-slate-600">
                 因此：
               </p>
 
-              <MathBox>
-                a + b ≥ 2√P
-              </MathBox>
+              <MathBox>{mathText("a + b ≥ 2√P")}</MathBox>
 
               <ResultCard
                 title="结论"
@@ -441,9 +432,7 @@ export default function BasicInequalityPage() {
                   已知 a&gt;0、b&gt;0，且 ab=16。
                 </p>
 
-                <MathBox>
-                  a + b ≥ 2√16
-                </MathBox>
+                <MathBox>{mathText("a + b ≥ 2√16")}</MathBox>
 
                 <MathBox>
                   a + b ≥ 8
@@ -477,9 +466,7 @@ export default function BasicInequalityPage() {
                 当 x&gt;0、a&gt;0 时：
               </p>
 
-              <MathBox>
-                x + a/x ≥ 2√a
-              </MathBox>
+              <MathBox>{mathText("x + a/x ≥ 2√a")}</MathBox>
 
               <p className="mt-5 leading-8 text-slate-600">
                 等号成立要求：
@@ -489,18 +476,14 @@ export default function BasicInequalityPage() {
                 x = a/x
               </MathBox>
 
-              <MathBox>
-                x = √a
-              </MathBox>
+              <MathBox>{mathText("x = √a")}</MathBox>
 
               <ExampleCard title="例：求 x+4/x 的最小值">
                 <p className="text-sm leading-7 text-slate-600">
                   已知 x&gt;0。
                 </p>
 
-                <MathBox>
-                  x + 4/x ≥ 2√(x·4/x)
-                </MathBox>
+                <MathBox>{mathText("x + 4/x ≥ 2√(x·4/x)")}</MathBox>
 
                 <MathBox>
                   x + 4/x ≥ 4
@@ -597,9 +580,7 @@ export default function BasicInequalityPage() {
                   已知正数 x、y 满足 xy=9，求 x+y 的最小值。
                 </p>
 
-                <MathBox>
-                  x + y ≥ 2√(xy)
-                </MathBox>
+                <MathBox>{mathText("x + y ≥ 2√(xy)")}</MathBox>
 
                 <MathBox>
                   x + y ≥ 6
@@ -623,9 +604,7 @@ export default function BasicInequalityPage() {
                   2x + 8/x
                 </MathBox>
 
-                <MathBox>
-                  ≥ 2√(2x·8/x)
-                </MathBox>
+                <MathBox>{mathText("≥ 2√(2x·8/x)")}</MathBox>
 
                 <MathBox>
                   = 8
@@ -651,8 +630,8 @@ export default function BasicInequalityPage() {
               <div className="space-y-3">
                 <MistakeCard
                   title="忘记正数条件"
-                  wrong="看到 a+b 就直接使用 a+b≥2√ab"
-                  correct="标准基本不等式涉及 √ab 时，需要确认 a、b 为非负；利用其求正数最值时通常要求 a、b>0。"
+                  wrong="看到 a+b 就直接使用 a+b≥2√(ab)"
+                  correct="标准基本不等式涉及 √(ab) 时，需要确认 a、b 为非负；利用其求正数最值时通常要求 a、b>0。"
                 />
 
                 <MistakeCard
@@ -781,7 +760,7 @@ function Section({
         </h2>
       </div>
 
-      {children}
+      {mathText(children)}
     </section>
   );
 }
@@ -793,7 +772,7 @@ function MathBox({
 }) {
   return (
     <div className="my-5 text-center font-serif text-xl text-slate-900 sm:text-2xl">
-      {children}
+      {mathText(children)}
     </div>
   );
 }
@@ -813,7 +792,7 @@ function CompareCard({
     <div className="mt-6 grid gap-3 sm:grid-cols-[1fr_60px_1fr] sm:items-center">
       <div className="rounded-xl border border-slate-200 bg-white p-5 text-center">
         <p className="font-serif text-xl text-slate-900">
-          {left}
+          {mathText(left)}
         </p>
 
         <p className="mt-2 text-xs text-slate-400">
@@ -827,7 +806,7 @@ function CompareCard({
 
       <div className="rounded-xl border border-slate-200 bg-white p-5 text-center">
         <p className="font-serif text-xl text-slate-900">
-          {right}
+          {mathText(right)}
         </p>
 
         <p className="mt-2 text-xs text-slate-400">
@@ -858,7 +837,7 @@ function ConditionCard({
       </h3>
 
       <p className="mt-2 text-sm leading-6 text-slate-500">
-        {description}
+        {mathText(description)}
       </p>
     </div>
   );
@@ -880,11 +859,11 @@ function ResultCard({
       </p>
 
       <p className="mt-2 font-semibold text-slate-900">
-        {main}
+        {mathText(main)}
       </p>
 
       <p className="mt-2 text-sm text-slate-500">
-        {detail}
+        {mathText(detail)}
       </p>
     </div>
   );
@@ -903,7 +882,7 @@ function ExampleCard({
         {title}
       </h3>
 
-      <div className="mt-4">{children}</div>
+      <div className="mt-4">{mathText(children)}</div>
     </div>
   );
 }
@@ -915,7 +894,7 @@ function AnswerBox({
 }) {
   return (
     <div className="mt-5 rounded-lg bg-emerald-50/60 px-5 py-4 text-center text-sm font-semibold text-emerald-700">
-      {children}
+      {mathText(children)}
     </div>
   );
 }
@@ -931,7 +910,7 @@ function TipBox({
         提示
       </span>
 
-      {children}
+      {mathText(children)}
     </div>
   );
 }
@@ -963,7 +942,7 @@ function StepItem({
         </p>
 
         <p className="mt-1 text-sm leading-6 text-slate-500">
-          {text}
+          {mathText(text)}
         </p>
       </div>
     </div>
@@ -992,7 +971,7 @@ function MistakeCard({
           </p>
 
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            {wrong}
+            {mathText(wrong)}
           </p>
         </div>
 
@@ -1002,7 +981,7 @@ function MistakeCard({
           </p>
 
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            {correct}
+            {mathText(correct)}
           </p>
         </div>
       </div>
@@ -1051,7 +1030,7 @@ function QuestionCard({
       </div>
 
       <p className="mt-4 text-sm leading-7 text-slate-700">
-        {question.question}
+        {mathText(question.question)}
       </p>
 
       <div className="mt-5 grid gap-2">
@@ -1089,7 +1068,7 @@ function QuestionCard({
                 {option.key}.
               </span>
 
-              {option.text}
+              {mathText(option.text)}
             </button>
           );
         })}
@@ -1114,7 +1093,7 @@ function QuestionCard({
             </p>
 
             <p className="mt-2 text-sm leading-7 text-slate-600">
-              {question.explanation}
+              {mathText(question.explanation)}
             </p>
           </div>
 

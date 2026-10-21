@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { mathText } from "@/components/MathText";
 import { useState } from "react";
 import {
   BlockMath,
@@ -988,7 +989,7 @@ function SectionTitle({
       </h2>
 
       <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-500">
-        {description}
+        {mathText(description)}
       </p>
     </div>
   );
@@ -1014,7 +1015,7 @@ function GoalCard({
       </h3>
 
       <p className="mt-2 text-sm leading-6 text-slate-500">
-        {description}
+        {mathText(description)}
       </p>
     </div>
   );
@@ -1034,7 +1035,7 @@ function KnowledgeCard({
       </h3>
 
       <div className="mt-4 space-y-4 text-sm leading-7 text-slate-600">
-        {children}
+        {mathText(children)}
       </div>
     </div>
   );
@@ -1047,7 +1048,7 @@ function FormulaBox({
 }) {
   return (
     <div className="overflow-x-auto rounded-xl bg-slate-50 px-4 py-3 text-center">
-      {children}
+      {mathText(children)}
     </div>
   );
 }
@@ -1059,7 +1060,7 @@ function ExampleLine({
 }) {
   return (
     <div className="rounded-lg border border-slate-100 bg-slate-50/50 px-4 py-3 text-center">
-      {children}
+      {mathText(children)}
     </div>
   );
 }
@@ -1078,7 +1079,7 @@ function ImportantBox({
       </p>
 
       <p className="mt-2 text-sm leading-7 text-slate-600">
-        {children}
+        {mathText(children)}
       </p>
     </div>
   );
@@ -1106,7 +1107,7 @@ function ExampleCard({
       </div>
 
       <div className="mt-5">
-        {children}
+        {mathText(children)}
       </div>
     </div>
   );
@@ -1156,7 +1157,7 @@ function TableCell({
       </p>
 
       <div className="mt-3 text-sm font-medium text-slate-700">
-        {content}
+        {mathText(content)}
       </div>
     </div>
   );
@@ -1182,7 +1183,7 @@ function StepCard({
       </h3>
 
       <p className="mt-2 text-sm leading-6 text-slate-500">
-        {description}
+        {mathText(description)}
       </p>
     </div>
   );
@@ -1289,7 +1290,7 @@ function QuizCard({
         </span>
 
         <p className="font-medium text-slate-900">
-          {question.question}
+          {mathText(question.question)}
         </p>
       </div>
 
@@ -1343,7 +1344,7 @@ function QuizCard({
                   {option.key}.
                 </span>
 
-                {option.text}
+                {mathText(option.text)}
               </button>
             );
           }
@@ -1380,7 +1381,7 @@ function QuizCard({
           </p>
 
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            {question.explanation}
+            {mathText(question.explanation)}
           </p>
 
           <button

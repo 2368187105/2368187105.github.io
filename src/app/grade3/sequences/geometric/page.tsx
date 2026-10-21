@@ -1,0 +1,30 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { BlockMath } from "react-katex";
+import "katex/dist/katex.min.css";
+import SiteHeader from "@/components/SiteHeader";
+
+export default function LessonPage() {
+ return <main className="min-h-screen bg-[#fafafa] text-slate-600"><SiteHeader/><article className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+  <Link href="/grade3/sequences" className="text-sm text-blue-600">← 数列复习目录</Link><p className="mt-8 text-sm font-semibold text-blue-600">高三一轮复习 · 第五模块 · 5.3</p><h1 className="mt-3 text-3xl font-bold text-slate-900">等比数列与实际应用</h1><p className="mt-5 leading-8">按非零项与固定公比建立模型，处理负公比、等比中项和累计量；求和必须区分 q=1 与 q≠1。</p>
+  <nav aria-label="本节导航" className="my-7 flex flex-wrap gap-4 text-sm text-blue-600"><a href="#knowledge">知识与方法</a><a href="#explore">图形探索</a><a href="#examples">典型例题</a><a href="#practice">分层训练</a></nav>
+  <section id="knowledge" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8"><h2 className="text-xl font-bold text-slate-900">知识梳理与方法</h2><section className="mt-6"><h3 className="font-semibold text-slate-900">1. 公比固定且各项非零</h3><p className="mt-3 leading-8">本模块按各项非零的教材定义讨论等比数列，q≠0。相隔 k 项的比为 qᵏ；偶次方关系可能保留正负两个公比，奇次方关系的实根则唯一。负公比导致正负交替，不能按正公比的方式判断单调性。</p></section>
+<section className="mt-6"><h3 className="font-semibold text-slate-900">2. 中项与有限求和都要分情况</h3><p className="mt-3 leading-8">a、G、b 成等比时 G²=ab，实数 G 的存在及符号需要检查，不能无条件只取正根。有限和公式在 q=1 时分母为零，必须改用 na₁。q=−1 时按项数奇偶也可直接配对。</p></section>
+<section className="mt-6"><h3 className="font-semibold text-slate-900">3. 实际应用分清单项与累计</h3><p className="mt-3 leading-8">第 n 次的量通常经历 n−1 次变化；前 n 次累计才对应 Sₙ。先明确每次投入、产量或增长量的定义和单位，不把当次值、累计值和有利息账户余额混在一起。</p></section><div className="mt-6 overflow-x-auto rounded-xl bg-slate-50 p-4"><BlockMath math={"a_n=a_1q^{n-1},\\quad a_1\\ne0,\\ q\\ne0;\\qquad S_n=\\begin{cases}na_1,&q=1,\\\\ \\dfrac{a_1(1-q^n)}{1-q},&q\\ne1.\\end{cases}"}/></div><Link href="/grade2/sequences/geometric" className="mt-5 inline-block text-sm text-blue-600">回看高二基础 →</Link></section>
+  <section id="explore" className="mt-8 scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6"><h2 className="text-xl font-bold text-slate-900">图形探索</h2><Explore/></section>
+  <section id="examples" className="mt-8 scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6"><h2 className="text-xl font-bold text-slate-900">典型例题 · 先思考再展开</h2><details className="mt-5 rounded-xl border border-slate-200 p-5"><summary className="cursor-pointer font-semibold text-slate-900">偶次幂关系保留双符号</summary><p className="mt-4 leading-8">等比数列满足 a₂=6、a₄=24，求全部可能的 a₁与 q。</p><ol className="mt-4 list-decimal space-y-3 pl-6 leading-8"><li>a₄/a₂=q²=24/6=4，所以 q=2 或 q=−2。</li><li>若 q=2，a₁=a₂/q=3；若 q=−2，a₁=−3。</li><li>第一组为 3、6、12、24；第二组为 −3、6、−12、24。两组都满足原条件。</li><li>题目未要求正项，不能舍去第二组。各项与公比均非零，符合定义。</li></ol></details>
+<details className="mt-5 rounded-xl border border-slate-200 p-5"><summary className="cursor-pointer font-semibold text-slate-900">同一求和问题先检查 q=1</summary><p className="mt-4 leading-8">求首项为 3、公比为 q≠0 的等比数列前 4 项和。</p><ol className="mt-4 list-decimal space-y-3 pl-6 leading-8"><li>若 q=1，四项都为 3，故 S₄=12。</li><li>若 q≠1，由有限等比和得到 S₄=3(1−q⁴)/(1−q)。</li><li>也可直接写成 S₄=3(1+q+q²+q³)，这个多项式表达式对 q=1 也可代入，结果仍为 12。</li><li>例如 q=−1 时 S₄=3−3+3−3=0，与分式 3(1−1)/2=0 一致；零和并不意味着各项为零。</li></ol></details></section>
+  <aside className="mt-8 rounded-xl border border-amber-200 bg-amber-50 p-6"><h2 className="font-semibold text-slate-900">易错提醒</h2><p className="mt-3 leading-8">把 q=1 代入分母为零的公式；偶次幂开方只取正号；把第 n 次误写成变化 n 次；把当月值当累计值。</p></aside>
+  <section id="practice" className="mt-8 scroll-mt-24 rounded-2xl border border-blue-200 bg-white p-6"><h2 className="text-xl font-bold text-slate-900">分层训练</h2><p className="mt-3 leading-8">4 道选择题、3 道填空题、2 道解答题，均为本站原创。解析写出首项检验、代数变形、求和首尾项和整数边界。解答题先独立完成，再展开完整过程逐步自评；登录后沿用练习记录、错题与学习报告。</p><Link href={"/practice/?topic="+encodeURIComponent("高三数列·等比数列")} className="mt-5 inline-flex rounded-lg bg-blue-600 px-5 py-3 text-white">开始本节 9 道训练 →</Link></section>
+  <div className="mt-8 flex justify-between gap-4 text-sm text-blue-600"><Link href="/grade3/sequences/arithmetic">← 上一节</Link><Link href="/grade3/sequences/summation">下一节 →</Link></div>
+ </article></main>;
+}
+
+function Explore() {
+ const [q,setQ]=useState(2),[first,setFirst]=useState(1),[n,setN]=useState(6),r=(v:number)=>Number(v.toFixed(3));
+ const values=Array.from({length:n},(_,i)=>first*q**i),scale=105/Math.max(1,...values.map(Math.abs));
+ const sum=q===1?n*first:first*(1-q**n)/(1-q);
+ return <div className="mt-5"><div className="flex flex-wrap gap-5"><label>公比 q<select aria-label="公比" value={q} onChange={e=>setQ(Number(e.target.value))} className="ml-2 rounded border p-2">{[-2,-1,0.5,1,2].map(value=><option key={value} value={value}>{value}</option>)}</select></label><label>首项 a₁<select aria-label="首项" value={first} onChange={e=>setFirst(Number(e.target.value))} className="ml-2 rounded border p-2">{[1,2,3].map(value=><option key={value} value={value}>{value}</option>)}</select></label><label>项数 {n}<input aria-label="显示项数" type="range" min="1" max="8" step="1" value={n} onChange={e=>setN(Number(e.target.value))} className="ml-3 align-middle"/></label></div><svg role="img" aria-label="正负公比及公比为一的离散数列" viewBox="0 0 600 320" className="mt-5 h-auto w-full"><title>点表示项值，虚线只是到零线的辅助线</title><line x1="30" x2="580" y1="160" y2="160" stroke="#94a3b8"/>{values.map((value,i)=>{const x=55+i*70,y=r(160-value*scale);return <g key={i}><line x1={x} x2={x} y1="160" y2={y} stroke="#cbd5e1" strokeDasharray="4 3"/><circle cx={x} cy={y} r="5" fill={value>0?'#2563eb':'#d97706'}/><text x={x} y={r(y+(value>=0?-12:20))} fontSize="12" textAnchor="middle">{r(value)}</text><text x={x} y="304" fontSize="12" textAnchor="middle">{i+1}</text></g>})}<text x="580" y="304" fontSize="12">n</text></svg><p role="status" className="mt-3 text-sm leading-8">a({n})={r(values[n-1])}，S({n})={r(sum)}，直接累加={r(values.reduce((a,b)=>a+b,0))}。{q===1?'公比等于 1，使用 Sₙ=na₁。':q<0?'公比为负，项的符号交替；求和仍用有限等比公式。':'公比为正，使用 q≠1 的有限等比公式。'}</p><p className="mt-2 text-xs leading-6 text-slate-500">项号只取正整数；纵轴随参数缩放，各数值最多显示三位小数。</p></div>;
+}

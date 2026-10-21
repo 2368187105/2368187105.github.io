@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { mathText } from "@/components/MathText";
 import { useState } from "react";
 import { BlockMath } from "react-katex";
 import "katex/dist/katex.min.css";
@@ -220,7 +221,7 @@ export default function LineCirclePage() {
                 <details className="mt-4">
                   <summary className="cursor-pointer text-sm font-medium text-blue-600">查看解题过程与答案</summary>
                   <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-7 text-slate-600">
-                    <li>{"圆心 O(0，0)，半径 r=5；d=25/√(3²+4²)=5，因此相切。"}</li>
+                    <li>{mathText("圆心 O(0，0)，半径 r=5；d=25/√(3²+4²)=5，因此相切。")}</li>
                     <li>{"切点是圆心到直线的垂足。垂线方向与法向量 (3，4) 平行，设切点为 (3t，4t)。"}</li>
                     <li>{"代入直线得 9t+16t=25，故 t=1，切点为 (3，4)。"}</li>
                   </ol>
@@ -235,7 +236,7 @@ export default function LineCirclePage() {
                   <summary className="cursor-pointer text-sm font-medium text-blue-600">查看解题过程与答案</summary>
                   <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-7 text-slate-600">
                     <li>{"圆半径为 5，原点到直线 x=3 的距离为 3。"}</li>
-                    <li>{"半弦长为 √(5²−3²)=4，因此弦长为 8。"}</li>
+                    <li>{mathText("半弦长为 √(5²−3²)=4，因此弦长为 8。")}</li>
                     <li>{"也可代入 x=3 得 y=±4，交点为 (3，4)、(3，−4)，与距离法结果一致。"}</li>
                   </ol>
                   <Formula math={String.raw`|PQ|=2\sqrt{25-9}=8`} />
@@ -248,8 +249,8 @@ export default function LineCirclePage() {
                 <details className="mt-4">
                   <summary className="cursor-pointer text-sm font-medium text-blue-600">查看解题过程与答案</summary>
                   <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-7 text-slate-600">
-                    <li>{"圆心为原点，半径为 √2；直线一般式为 x−y+b=0。"}</li>
-                    <li>{"圆心到直线距离为 |b|/√2。相交要求 |b|/√2<√2。"}</li>
+                    <li>{mathText("圆心为原点，半径为 √2；直线一般式为 x−y+b=0。")}</li>
+                    <li>{mathText("圆心到直线距离为 |b|/√2。相交要求 |b|/√2<√2。")}</li>
                     <li>{"解得 |b|<2。b=±2 时相切，不满足两个不同交点的要求。"}</li>
                   </ol>
                   <Formula math={String.raw`-2<b<2`} />
@@ -261,7 +262,7 @@ export default function LineCirclePage() {
               <h2 className="text-xl font-bold">易错提醒</h2>
               <ul className="mt-4 list-disc space-y-3 pl-5 text-sm leading-7 text-slate-700">
                 <li>{"使用点到直线距离公式时，先整理成一般式，分子保留绝对值。"}</li>
-                <li>{"求弦长时，√(r²−d²) 只是半弦长。"}</li>
+                <li>{mathText("求弦长时，√(r²−d²) 只是半弦长。")}</li>
                 <li>{"用斜率法求切线容易漏掉竖直切线，可改用距离法或切线的法向量。"}</li>
               </ul>
             </section>
@@ -273,7 +274,7 @@ export default function LineCirclePage() {
                 {quizQuestions.map((question, questionIndex) => (
                   <fieldset key={question.id} className="min-w-0 rounded-xl border border-slate-200 p-4 sm:p-5" disabled={submitted}>
                     <legend className="px-2 text-sm font-semibold text-slate-800">{questionIndex + 1}. {question.title}</legend>
-                    <p className="text-sm leading-7 text-slate-700">{question.question}</p>
+                    <p className="text-sm leading-7 text-slate-700">{mathText(question.question)}</p>
                     {question.formula && <Formula math={question.formula} />}
                     <div className="mt-4 space-y-2">
                       {question.options.map((option) => {
@@ -283,7 +284,7 @@ export default function LineCirclePage() {
                         return (
                           <label key={option.key} className={`flex items-start gap-3 rounded-xl border p-3 ${style} ${submitted ? "" : "cursor-pointer"}`}>
                             <input type="radio" name={question.id} value={option.key} checked={chosen} onChange={() => setAnswers((old) => ({ ...old, [question.id]: option.key }))} className="mt-1 accent-blue-600" />
-                            <span className="flex-1 text-sm leading-6 text-slate-700">{option.key}. {option.text}</span>
+                            <span className="flex-1 text-sm leading-6 text-slate-700">{option.key}. {mathText(option.text)}</span>
                             {submitted && correct && <span className="text-xs font-medium text-emerald-700">正确答案</span>}
                           </label>
                         );
@@ -292,7 +293,7 @@ export default function LineCirclePage() {
                     {submitted && (
                       <div className="mt-4 rounded-xl bg-slate-50 p-4">
                         <p className={`text-sm font-semibold ${answers[question.id] === question.correctAnswer ? "text-emerald-700" : "text-red-600"}`}>{answers[question.id] === question.correctAnswer ? "回答正确" : `回答错误，正确答案：${question.correctAnswer}`}</p>
-                        <p className="mt-2 text-sm leading-7 text-slate-600">{question.explanation}</p>
+                        <p className="mt-2 text-sm leading-7 text-slate-600">{mathText(question.explanation)}</p>
                       </div>
                     )}
                   </fieldset>

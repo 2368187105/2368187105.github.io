@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { mathText } from "@/components/MathText";
 import { useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import GeometryFigures from "@/components/GeometryFigures";
@@ -282,13 +283,13 @@ export default function SurfaceVolumePage() {
                           key={formula}
                           className="rounded-lg bg-slate-50 px-4 py-3 text-sm font-medium leading-7 text-slate-800"
                         >
-                          {formula}
+                          {mathText(formula)}
                         </div>
                       ))}
                     </div>
 
                     <p className="mt-3 text-xs leading-6 text-slate-500">
-                      {item.note}
+                      {mathText(item.note)}
                     </p>
                   </div>
                 ))}
@@ -389,7 +390,7 @@ export default function SurfaceVolumePage() {
                       </p>
 
                       <h3 className="mt-3 text-sm font-semibold leading-7 text-slate-900">
-                        {q.question}
+                        {mathText(q.question)}
                       </h3>
 
                       <div className="mt-4 grid gap-2 sm:grid-cols-2">
@@ -426,7 +427,7 @@ export default function SurfaceVolumePage() {
                               <strong className="mr-2">
                                 {option.key}.
                               </strong>
-                              {option.text}
+                              {mathText(option.text)}
                             </button>
                           );
                         })}
@@ -447,7 +448,7 @@ export default function SurfaceVolumePage() {
                           </p>
 
                           <p className="mt-2 text-sm leading-7 text-slate-600">
-                            {q.explanation}
+                            {mathText(q.explanation)}
                           </p>
                         </div>
                       )}
@@ -561,7 +562,7 @@ export default function SurfaceVolumePage() {
                     }
                     className="block rounded-lg px-3 py-2 text-sm text-slate-600 transition hover:bg-blue-50 hover:text-blue-700"
                   >
-                    {String(index + 1).padStart(2, "0")}　{item}
+                    {String(index + 1).padStart(2, "0")}　{mathText(item)}
                   </a>
                 ))}
               </div>
@@ -641,7 +642,7 @@ function Example({
               key={index}
               className="text-sm leading-7 text-slate-600"
             >
-              {index + 1}. {step}
+              {index + 1}. {mathText(step)}
             </li>
           ))}
         </ol>

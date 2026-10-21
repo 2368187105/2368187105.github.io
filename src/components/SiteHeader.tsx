@@ -9,6 +9,7 @@ const navItems = [
   { label: "首页", href: "/" },
   { label: "高一数学", href: "/grade1" },
   { label: "高二数学", href: "/grade2" },
+  { label: "高三复习", href: "/grade3" },
   { label: "专题训练", href: "/practice" },
   { label: "我的错题", href: "/mistakes" },
   { label: "学习报告", href: "/report" },
@@ -120,7 +121,7 @@ export default function SiteHeader() {
         </Link>
 
         {/* 桌面导航 */}
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="hidden items-center gap-1 xl:flex">
           {navItems.map((item) => {
             const active = isActive(item.href);
             return (
@@ -133,7 +134,7 @@ export default function SiteHeader() {
         </nav>
 
         {/* 桌面账号 */}
-        <div className="hidden items-center gap-3 lg:flex">
+        <div className="hidden items-center gap-3 xl:flex">
           {checkingUser ? (
             <span className="text-sm text-slate-400">加载中...</span>
           ) : user ? (
@@ -154,7 +155,7 @@ export default function SiteHeader() {
 
         {/* 手机菜单按钮 */}
         <button type="button" onClick={() => setMobileOpen((value) => !value)}
-          className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 lg:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 xl:hidden"
           aria-label={mobileOpen ? "关闭导航菜单" : "打开导航菜单"} aria-expanded={mobileOpen} aria-controls="mobile-navigation">
           <div className="space-y-1.5">
             <span className="block h-0.5 w-5 bg-current" />
@@ -166,7 +167,7 @@ export default function SiteHeader() {
 
       {/* 手机菜单 */}
       {mobileOpen && (
-        <div id="mobile-navigation" className="border-t border-slate-100 bg-white px-4 pb-5 pt-3 lg:hidden">
+        <div id="mobile-navigation" className="border-t border-slate-100 bg-white px-4 pb-5 pt-3 xl:hidden">
           <nav className="mx-auto grid max-w-7xl gap-1">
             {navItems.map((item) => {
               const active = isActive(item.href);

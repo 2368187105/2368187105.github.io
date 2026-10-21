@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import { mathText } from "@/components/MathText";
 import { useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
 
@@ -414,10 +415,10 @@ export default function NumericalCharacteristicsPage() {
                           {item.name}
                         </td>
                         <td className="border-b border-slate-100 px-4 py-3 text-slate-600">
-                          {item.process}
+                          {mathText(item.process)}
                         </td>
                         <td className="border-b border-slate-100 px-4 py-3 font-semibold text-blue-700">
-                          {item.result}
+                          {mathText(item.result)}
                         </td>
                       </tr>
                     ))}
@@ -607,9 +608,7 @@ export default function NumericalCharacteristicsPage() {
                   <p className="mt-3 text-sm leading-7 text-slate-600">
                     标准差等于方差的算术平方根，与原始数据具有相同的量纲。
                   </p>
-                  <div className="mt-3 rounded-lg bg-slate-50 p-3 text-center text-sm font-medium text-slate-800">
-                    标准差 = √方差
-                  </div>
+                  <div className="mt-3 rounded-lg bg-slate-50 p-3 text-center text-sm font-medium text-slate-800">{mathText("标准差 = √方差")}</div>
                 </div>
               </div>
 
@@ -678,9 +677,7 @@ export default function NumericalCharacteristicsPage() {
                     <p className="mt-2 text-sm leading-7 text-slate-600">
                       方差 = (4+0+0+4)÷4 = 2。
                     </p>
-                    <p className="mt-1 text-sm leading-7 text-slate-600">
-                      标准差 = √2。
-                    </p>
+                    <p className="mt-1 text-sm leading-7 text-slate-600">{mathText("标准差 = √2。")}</p>
                   </div>
                 </div>
               </div>
@@ -689,9 +686,7 @@ export default function NumericalCharacteristicsPage() {
                 <p className="text-sm font-semibold text-slate-900">
                   最终结果
                 </p>
-                <p className="mt-2 text-sm leading-7 text-slate-700">
-                  总体方差为 2，标准差为 √2。注意不要把方差与标准差混为一谈。
-                </p>
+                <p className="mt-2 text-sm leading-7 text-slate-700">{mathText("总体方差为 2，标准差为 √2。注意不要把方差与标准差混为一谈。")}</p>
               </div>
             </section>
 
@@ -820,7 +815,7 @@ export default function NumericalCharacteristicsPage() {
                             {question.title}
                           </p>
                           <h3 className="mt-1 text-sm font-semibold leading-7 text-slate-900">
-                            {question.question}
+                            {mathText(question.question)}
                           </h3>
                         </div>
                       </div>
@@ -862,7 +857,7 @@ export default function NumericalCharacteristicsPage() {
                                 {option.key}.
                               </span>
                               <span className="text-slate-700">
-                                {option.text}
+                                {mathText(option.text)}
                               </span>
                             </button>
                           );
@@ -883,7 +878,7 @@ export default function NumericalCharacteristicsPage() {
                               : `回答错误，正确答案：${question.answer}`}
                           </p>
                           <p className="mt-2 text-sm leading-7">
-                            {question.explanation}
+                            {mathText(question.explanation)}
                           </p>
                         </div>
                       )}

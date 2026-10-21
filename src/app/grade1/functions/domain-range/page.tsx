@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { mathText } from "@/components/MathText";
 import { useState } from "react";
 import { BlockMath, InlineMath } from "react-katex";
 import "katex/dist/katex.min.css";
@@ -727,7 +728,7 @@ function LearningSection({
         </h2>
       </div>
 
-      {children}
+      {mathText(children)}
     </section>
   );
 }
@@ -739,7 +740,7 @@ function MathText({
 }) {
   return (
     <div className="my-5 text-center font-serif text-xl text-slate-900 sm:text-2xl">
-      {children}
+      {mathText(children)}
     </div>
   );
 }
@@ -755,7 +756,7 @@ function TipBox({
         提示
       </span>
 
-      {children}
+      {mathText(children)}
     </div>
   );
 }
@@ -782,7 +783,7 @@ function RuleCard({
           </h3>
 
           <p className="mt-2 text-xs leading-5 text-slate-400">
-            {description}
+            {mathText(description)}
           </p>
         </div>
 
@@ -794,14 +795,14 @@ function RuleCard({
           <p>
             条件：
             <span className="ml-1 font-medium text-slate-800">
-              {condition}
+              {mathText(condition)}
             </span>
           </p>
 
           <p className="mt-2">
             得到：
             <span className="ml-1 font-medium text-slate-800">
-              {result}
+              {mathText(result)}
             </span>
           </p>
         </div>
@@ -826,11 +827,11 @@ function InfoCard({
       </p>
 
       <p className="mt-3 font-semibold text-slate-900">
-        {main}
+        {mathText(main)}
       </p>
 
       <p className="mt-2 text-sm text-slate-400">
-        {sub}
+        {mathText(sub)}
       </p>
     </div>
   );
@@ -857,7 +858,7 @@ function MethodCard({
         </h3>
 
         <p className="mt-2 text-sm leading-7 text-slate-500">
-          {description}
+          {mathText(description)}
         </p>
       </div>
     </div>
@@ -878,7 +879,7 @@ function ExampleCard({
       </h3>
 
       <div className="mt-5">
-        {children}
+        {mathText(children)}
       </div>
     </div>
   );
@@ -906,7 +907,7 @@ function MistakeCard({
           </p>
 
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            {wrong}
+            {mathText(wrong)}
           </p>
         </div>
 
@@ -916,7 +917,7 @@ function MistakeCard({
           </p>
 
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            {correct}
+            {mathText(correct)}
           </p>
         </div>
       </div>
@@ -970,7 +971,7 @@ function QuestionCard({
       )}
 
       <p className="text-sm leading-7 text-slate-700">
-        {question.question}
+        {mathText(question.question)}
       </p>
 
       <div className="mt-5 grid gap-2">
@@ -1005,7 +1006,7 @@ function QuestionCard({
                 {option.key}.
               </span>
 
-              {option.text}
+              {mathText(option.text)}
             </button>
           );
         })}
@@ -1024,11 +1025,11 @@ function QuestionCard({
         <div className="mt-5">
           <div className="rounded-lg bg-slate-50 p-4">
             <p className="text-sm font-semibold text-slate-800">
-              正确答案：{question.answer}
+              正确答案：{mathText(question.answer)}
             </p>
 
             <p className="mt-2 text-sm leading-7 text-slate-600">
-              {question.explanation}
+              {mathText(question.explanation)}
             </p>
           </div>
 

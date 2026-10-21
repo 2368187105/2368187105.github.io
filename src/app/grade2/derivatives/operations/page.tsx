@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { mathText } from "@/components/MathText";
 import { useState } from "react";
 import { BlockMath } from "react-katex";
 import "katex/dist/katex.min.css";
@@ -169,7 +170,7 @@ export default function DerivativeOperationsPage() {
                   <h3 className="font-semibold leading-7">{"1. 常数与幂函数"}</h3>
                   <p className="mt-3 text-sm leading-8 text-slate-600">{"常数函数的图象是水平直线，导数为 0。正整数幂函数可用公式求导，推广到实数幂时应在原函数定义域内且可导的点使用，不能忽略零点的特殊情况。"}</p>
                   <Formula math={String.raw`C'=0,\qquad (x^n)'=nx^{n-1}\quad(n\in\mathbb N^*)`} />
-                  <p className="mt-3 rounded-xl border-l-2 border-blue-300 bg-blue-50/60 p-4 text-sm leading-7 text-slate-600">{"例如 (1/x)′=−1/x² 只适用于 x≠0；(√x)′=1/(2√x) 适用于 x>0。"}</p>
+                  <p className="mt-3 rounded-xl border-l-2 border-blue-300 bg-blue-50/60 p-4 text-sm leading-7 text-slate-600">{mathText("例如 (1/x)′=−1/x² 只适用于 x≠0；(√x)′=1/(2√x) 适用于 x>0。")}</p>
                 </article>
 
                 <article>
@@ -262,7 +263,7 @@ export default function DerivativeOperationsPage() {
                 {quizQuestions.map((question, questionIndex) => (
                   <fieldset key={question.id} className="min-w-0 rounded-xl border border-slate-200 p-4 sm:p-5" disabled={submitted}>
                     <legend className="px-2 text-sm font-semibold text-slate-800">{questionIndex + 1}. {question.title}</legend>
-                    <p className="text-sm leading-7 text-slate-700">{question.question}</p>
+                    <p className="text-sm leading-7 text-slate-700">{mathText(question.question)}</p>
                     {question.formula && <Formula math={question.formula} />}
                     <div className="mt-4 space-y-2">
                       {question.options.map((option) => {
@@ -272,7 +273,7 @@ export default function DerivativeOperationsPage() {
                         return (
                           <label key={option.key} className={`flex items-start gap-3 rounded-xl border p-3 ${style} ${submitted ? "" : "cursor-pointer"}`}>
                             <input type="radio" name={question.id} value={option.key} checked={chosen} onChange={() => setAnswers((old) => ({ ...old, [question.id]: option.key }))} className="mt-1 accent-blue-600" />
-                            <span className="flex-1 text-sm leading-6 text-slate-700">{option.key}. {option.text}</span>
+                            <span className="flex-1 text-sm leading-6 text-slate-700">{option.key}. {mathText(option.text)}</span>
                             {submitted && correct && <span className="text-xs font-medium text-emerald-700">正确答案</span>}
                           </label>
                         );
@@ -281,7 +282,7 @@ export default function DerivativeOperationsPage() {
                     {submitted && (
                       <div className="mt-4 rounded-xl bg-slate-50 p-4">
                         <p className={`text-sm font-semibold ${answers[question.id] === question.correctAnswer ? "text-emerald-700" : "text-red-600"}`}>{answers[question.id] === question.correctAnswer ? "回答正确" : `回答错误，正确答案：${question.correctAnswer}`}</p>
-                        <p className="mt-2 text-sm leading-7 text-slate-600">{question.explanation}</p>
+                        <p className="mt-2 text-sm leading-7 text-slate-600">{mathText(question.explanation)}</p>
                       </div>
                     )}
                   </fieldset>

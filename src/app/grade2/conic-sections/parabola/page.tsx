@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { mathText } from "@/components/MathText";
 import { useState } from "react";
 import { BlockMath } from "react-katex";
 import "katex/dist/katex.min.css";
@@ -245,7 +246,7 @@ export default function ParabolaPage() {
                     <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-7 text-slate-600">
                       <li>{"2p=4，所以 p=2，准线为 x=−1。"}</li>
                       <li>{"根据定义，PF 等于 P 到 x=−1 的距离，为 3+1=4。"}</li>
-                      <li>{"代入 x=3 得 y²=12，所以 P 有两个可能位置 (3，±2√3)。"}</li>
+                      <li>{mathText("代入 x=3 得 y²=12，所以 P 有两个可能位置 (3，±2√3)。")}</li>
                     </ol>
                     <Formula math={String.raw`|PF|=4,\qquad P(3,\pm2\sqrt3)`} />
                   </details>
@@ -264,7 +265,7 @@ export default function ParabolaPage() {
                 {quizQuestions.map((question, questionIndex) => (
                   <fieldset key={question.id} className="min-w-0 rounded-xl border border-slate-200 p-4 sm:p-5" disabled={submitted}>
                     <legend className="px-2 text-sm font-semibold text-slate-800">{questionIndex + 1}. {question.title}</legend>
-                    <p className="text-sm leading-7 text-slate-700">{question.question}</p>
+                    <p className="text-sm leading-7 text-slate-700">{mathText(question.question)}</p>
                     {question.formula && <Formula math={question.formula} />}
                     <div className="mt-4 space-y-2">
                       {question.options.map((option) => {
@@ -274,7 +275,7 @@ export default function ParabolaPage() {
                         return (
                           <label key={option.key} className={`flex items-start gap-3 rounded-xl border p-3 ${style} ${submitted ? "" : "cursor-pointer"}`}>
                             <input type="radio" name={question.id} value={option.key} checked={chosen} onChange={() => setAnswers((old) => ({ ...old, [question.id]: option.key }))} className="mt-1 accent-blue-600" />
-                            <span className="flex-1 text-sm leading-6 text-slate-700">{option.key}. {option.text}</span>
+                            <span className="flex-1 text-sm leading-6 text-slate-700">{option.key}. {mathText(option.text)}</span>
                             {submitted && correct && <span className="text-xs font-medium text-emerald-700">正确答案</span>}
                           </label>
                         );
@@ -283,7 +284,7 @@ export default function ParabolaPage() {
                     {submitted && (
                       <div className="mt-4 rounded-xl bg-slate-50 p-4">
                         <p className={`text-sm font-semibold ${answers[question.id] === question.correctAnswer ? "text-emerald-700" : "text-red-600"}`}>{answers[question.id] === question.correctAnswer ? "回答正确" : `回答错误，正确答案：${question.correctAnswer}`}</p>
-                        <p className="mt-2 text-sm leading-7 text-slate-600">{question.explanation}</p>
+                        <p className="mt-2 text-sm leading-7 text-slate-600">{mathText(question.explanation)}</p>
                       </div>
                     )}
                   </fieldset>

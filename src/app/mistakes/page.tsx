@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { BlockMath } from "react-katex";
 import { vectorText } from "@/components/VectorText";
+import { mathText } from "@/components/MathText";
 import "katex/dist/katex.min.css";
 
+import { answerLabel as constructedAnswerLabel } from "@/lib/answer-checking";
 import SiteHeader from "@/components/SiteHeader";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -13,7 +15,7 @@ import {
   questions,
 } from "@/data/questions";
 
-import { grade2PracticeTopics, grade2PracticeChapters } from "@/data/questions";
+import { grade2PracticeTopics, grade2PracticeChapters, grade3PracticeTopics, grade3PracticeChapters } from "@/data/questions";
 
 /* =========================
    数据类型
@@ -54,9 +56,14 @@ const grade1ChapterNames = [
   "概率",
 ];
 
-type Grade = "高一" | "高二";
+type Grade = "高一" | "高二" | "高三";
+const grade3TopicSet = new Set<string>(grade3PracticeTopics);
+const grade3ChapterNames = grade3PracticeChapters.map((chapter) => chapter.title);
+function topicGrade(topic: string): Grade {
+  return grade3TopicSet.has(topic) ? "高三" : grade2TopicSet.has(topic) ? "高二" : "高一";
+}
 const grade2TopicSet = new Set<string>(grade2PracticeTopics);
-const grade1Topics = practiceTopics.filter((topic) => !grade2TopicSet.has(topic));
+const grade1Topics = practiceTopics.filter((topic) => !grade2TopicSet.has(topic) && !grade3TopicSet.has(topic));
 const allTopics: readonly string[] = [...new Set<string>([...practiceTopics, ...grade2PracticeTopics])];
 const knownTopics = new Set<string>(allTopics);
 const grade2ChapterNames = grade2PracticeChapters.map((chapter) => chapter.title);
@@ -111,7 +118,7 @@ function answerLabel(
 
   return option
     ? `${answer}. ${option.text}`
-    : answer;
+    : constructedAnswerLabel(answer);
 }
 
 /* =========================
@@ -120,8 +127,8 @@ function answerLabel(
 
 export default function MistakesPage() {
   const [selectedGrade, setSelectedGrade] = useState<Grade>("高一");
-  const currentPracticeTopics: readonly string[] = selectedGrade === "高一" ? grade1Topics : grade2PracticeTopics;
-  const chapterNames = selectedGrade === "高一" ? grade1ChapterNames : grade2ChapterNames;
+  const currentPracticeTopics: readonly string[] = selectedGrade === "高一" ? grade1Topics : selectedGrade === "高三" ? grade3PracticeTopics : grade2PracticeTopics;
+  const chapterNames = selectedGrade === "高一" ? grade1ChapterNames : selectedGrade === "高三" ? grade3ChapterNames : grade2ChapterNames;
   const supabase = useMemo(
     () => createClient(),
     []
@@ -220,11 +227,11 @@ export default function MistakesPage() {
     };
   }, [supabase]);
 
-  const gradeMistakes = mistakes.filter((item) =>
-    grade2TopicSet.has(resolveTopic(item)) === (selectedGrade === "高二")
-  );
+  const gradeMistakes = useMemo(() => mistakes.filter((item) =>
+    topicGrade(resolveTopic(item)) === selectedGrade
+  ), [mistakes, selectedGrade]);
   const chapters = chapterNames.map((name, index) => ({
-    name, index, topics: selectedGrade === "高二"
+    name, index, topics: selectedGrade === "高三" ? [...grade3PracticeChapters[index].topics] : selectedGrade === "高二"
       ? [...grade2PracticeChapters[index].topics]
       : currentPracticeTopics.slice(index * 5, index * 5 + 5),
   })).filter((chapter) => chapter.topics.length > 0);
@@ -246,7 +253,7 @@ export default function MistakesPage() {
     }
 
     return counts;
-  }, [mistakes, selectedGrade]);
+  }, [gradeMistakes]);
 
   const otherCount = gradeMistakes.filter(
     (mistake) => !knownTopics.has(
@@ -519,13 +526,13 @@ export default function MistakesPage() {
               <aside className="min-w-0">
                 <div className="space-y-4 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-2">
 <div className="my-5 flex gap-3" aria-label="选择年级">
-{(["高一", "高二"] as const).map((grade) => (
+{(["高一", "高二", "高三"] as const).map((grade) => (
 <button key={grade} type="button" aria-pressed={selectedGrade === grade}
 onClick={() => { setSelectedGrade(grade); setExpandedChapter(null); setFilter({ kind: "all" }); }}
 className={`rounded-xl border px-6 py-3 text-sm font-semibold ${selectedGrade === grade ? "border-blue-400 bg-blue-50 text-blue-700" : "border-slate-200 bg-white text-slate-600"}`}>
 {grade}数学
 </button>))}
-<span className="self-center text-xs text-slate-400">高三建设中</span>
+<span className="self-center text-xs text-slate-400">高三已开放函数与导数</span>
 </div>                  {/* 章节导航 */}
                   <div className="rounded-2xl border border-slate-200 bg-white p-4">
                     <div className="px-1">
@@ -774,7 +781,7 @@ className={`rounded-xl border px-6 py-3 text-sm font-semibold ${selectedGrade ==
                         const displayText = (text: string) =>
                           (sourceQuestion?.topic ?? resolveTopic(mistake)).includes("向量")
                             ? vectorText(text)
-                            : text;
+                            : mathText(text);
 
                         return (
                           <article
@@ -812,7 +819,7 @@ className={`rounded-xl border px-6 py-3 text-sm font-semibold ${selectedGrade ==
                             </div>
 
                             {/* 题目 */}
-                            <h3 className="mt-6 text-base font-semibold leading-8 text-slate-900">
+                            <h3 className="mt-6 whitespace-pre-wrap text-base font-semibold leading-8 text-slate-900">
                               {displayText(mistake.question)}
                             </h3>
 
@@ -872,7 +879,7 @@ className={`rounded-xl border px-6 py-3 text-sm font-semibold ${selectedGrade ==
                                   我的答案
                                 </p>
 
-                                <p className="mt-2 text-sm leading-7 text-slate-700">
+                                <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-700">
                                   {displayText(answerLabel(
                                     mistake.question_id,
                                     mistake.user_answer
@@ -882,10 +889,10 @@ className={`rounded-xl border px-6 py-3 text-sm font-semibold ${selectedGrade ==
 
                               <div className="rounded-xl bg-emerald-50 p-4">
                                 <p className="text-xs font-medium text-emerald-700">
-                                  正确答案
+                                  参考答案
                                 </p>
 
-                                <p className="mt-2 text-sm leading-7 text-slate-700">
+                                <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-700">
                                   {displayText(answerLabel(
                                     mistake.question_id,
                                     mistake.correct_answer
@@ -893,6 +900,8 @@ className={`rounded-xl border px-6 py-3 text-sm font-semibold ${selectedGrade ==
                                 </p>
                               </div>
                             </div>
+
+                            {sourceQuestion && <Link href={"/practice/?topic=" + encodeURIComponent(sourceQuestion.topic) + "&question=" + encodeURIComponent(sourceQuestion.id)} className="mt-5 inline-flex rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white">重新练习这道题 →</Link>}
 
                             {/* 解析 */}
                             {explanation && (
