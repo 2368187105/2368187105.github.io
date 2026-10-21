@@ -1,6 +1,7 @@
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import HomeLearningDashboard from "@/components/HomeLearningDashboard";
+import HomeAward from "@/components/HomeAward";
 import CurriculumStats from "@/components/CurriculumStats";
 import { curricula, curriculumTotals } from "@/data/curriculum";
 
@@ -34,6 +35,7 @@ export default function Home() {
         </div>
       </div>
     </section>
+    <HomeAward />
     <HomeLearningDashboard />
     <div className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
       <section id="curriculum" aria-labelledby="curriculum-heading" className="scroll-mt-24 pt-10 sm:pt-12">
