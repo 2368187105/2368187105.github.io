@@ -1,6 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import MistakeReview, { useMistakeReviews } from "@/components/MistakeReview";
+import { reviewCauses, reviewStatuses } from "@/lib/review-plan";
+import { ownRows } from "@/lib/learning-workspace";
 import { useEffect, useMemo, useState } from "react";
 import { BlockMath } from "react-katex";
 import { vectorText } from "@/components/VectorText";
@@ -148,6 +151,9 @@ export default function MistakesPage() {
     useState<string | null>(null);
 
   const [loading, setLoading] = useState(true);
+  const reviewData = useMistakeReviews(userId);
+  const [reviewFilter, setReviewFilter] = useState("全部状态");
+  const [causeFilter, setCauseFilter] = useState("全部错因");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -192,25 +198,9 @@ export default function MistakesPage() {
         setUserId(user.id);
         setEmail(user.email ?? null);
 
-        const { data, error: fetchError } =
-          await supabase
-            .from("mistakes")
-            .select("*")
-            .eq("user_id", user.id)
-            .order("created_at", {
-              ascending: false,
-            });
-
+        const data = await ownRows<Mistake>(supabase,"mistakes",user.id);
         if (!active) return;
-
-        if (fetchError) {
-          console.error(fetchError);
-          setError("错题读取失败，请稍后刷新页面。");
-          setMistakes([]);
-          return;
-        }
-
-        setMistakes((data ?? []) as Mistake[]);
+        setMistakes(data);
       } catch {
         if (active) {
           setError(
@@ -272,6 +262,9 @@ export default function MistakesPage() {
   const filteredMistakes = gradeMistakes.filter(
     (mistake) => {
       const topic = resolveTopic(mistake);
+      const state = reviewData.states.find(row => row.question_id === mistake.question_id);
+      if (reviewFilter !== "全部状态" && (state?.status ?? "待复习") !== reviewFilter) return false;
+      if (causeFilter !== "全部错因" && (state?.cause ?? "未分类") !== causeFilter) return false;
 
       if (filter.kind === "all") {
         return true;
@@ -491,6 +484,15 @@ export default function MistakesPage() {
         ) : (
           <>
             {/* 统计卡片 */}
+            <div className="my-6 rounded-xl border border-slate-200 bg-white p-4 text-sm">
+              <p className="leading-7 text-slate-600">错因与掌握状态按题目保存，标记已掌握后仍保留原题和复习历史。下方章节数量包含全部状态。</p>
+              <div className="mt-3 flex flex-wrap gap-3">
+                <label>状态 <select value={reviewFilter} onChange={e=>setReviewFilter(e.target.value)} className="rounded-lg border p-2">{["全部状态",...reviewStatuses].map(v=><option key={v}>{v}</option>)}</select></label>
+                <label>错因 <select value={causeFilter} onChange={e=>setCauseFilter(e.target.value)} className="rounded-lg border p-2">{["全部错因",...reviewCauses].map(v=><option key={v}>{v}</option>)}</select></label>
+                {filteredMistakes.length>0 && <Link href={"/print/?ids="+encodeURIComponent(filteredMistakes.slice(0,60).map(q=>q.question_id).join(","))} className="rounded-lg border px-3 py-2 text-blue-600">打印当前筛选（最多 60 题） →</Link>}
+              </div>
+              {reviewData.error && <p role="status" className="mt-3 text-amber-700">{reviewData.error} <button onClick={()=>void reviewData.refresh()} className="underline">重新连接</button></p>}
+            </div>
             <section className="grid gap-4 py-8 sm:grid-cols-3">
               <StatCard
                 label="当前错题"
@@ -727,17 +729,17 @@ export default function MistakesPage() {
                 {filteredMistakes.length === 0 ? (
                   <div className="rounded-2xl border border-slate-200 bg-white px-6 py-14 text-center">
                     <p className="text-sm font-medium text-blue-600">
-                      当前没有错题
+                      当前筛选没有错题
                     </p>
 
                     <h3 className="mt-3 text-xl font-bold text-slate-900">
                       {gradeMistakes.length === 0
                         ? "继续保持，巩固知识"
-                        : "这个专题暂时没有错题"}
+                        : "当前条件下暂时没有错题"}
                     </h3>
 
                     <p className="mt-4 text-sm leading-7 text-slate-500">
-                      可以切换其他章节或专题，
+                      可以切换章节、专题、状态或错因，
                       也可以去完成新的训练。
                     </p>
 
@@ -899,6 +901,7 @@ export default function MistakesPage() {
 
                             {sourceQuestion && <Link href={"/practice/?topic=" + encodeURIComponent(sourceQuestion.topic) + "&question=" + encodeURIComponent(sourceQuestion.id)} className="mt-5 inline-flex rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white">重新练习这道题 →</Link>}
 
+                            <MistakeReview key={mistake.question_id+":"+(reviewData.states.find(row=>row.question_id===mistake.question_id)?.updated_at??"")} userId={userId} questionId={mistake.question_id} state={reviewData.states.find(row=>row.question_id===mistake.question_id)} onSaved={reviewData.refresh} unavailable={!!reviewData.error}/>
                             {/* 解析 */}
                             {explanation && (
                               <div className="mt-4 rounded-xl bg-slate-50 p-5">

@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+@media print {
+  @page { size: A4 portrait; margin: 15mm; }
+  .print-controls { display: none !important; }
+  .print-page, .print-page > div, .print-sheet { background: white !important; padding: 0 !important; margin: 0 !important; max-width: none !important; box-shadow: none !important; }
+  .print-sheet { font-size: 11pt; color: #000 !important; }
+  .print-question { break-inside: avoid; page-break-inside: avoid; }
+  .print-workspace { min-height: 60mm; }
+  .print-sheet .katex-display { overflow: visible; }
+  .print-sheet a { color: inherit; text-decoration: none; }
+}
+
 :root {
   --background: #fafafa;
   --foreground: #334155;

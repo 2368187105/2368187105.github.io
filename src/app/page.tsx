@@ -27,7 +27,7 @@ export default function Home() {
           <aside aria-label="复习推荐" className="rounded-2xl border border-blue-100 bg-blue-50/50 p-5 sm:p-7">
             <p className="text-xs font-semibold text-blue-600">复习推荐 · 高三一轮复习</p>
             <h2 className="mt-4 text-2xl font-bold text-slate-900">八章综合训练</h2>
-            <p className="mt-3 text-sm leading-7 text-slate-600">串联知识与方法，用选择、填空和解答题检验章节掌握情况。解答题提供完整过程，并按关键步骤自评。</p>
+            <p className="mt-3 text-sm leading-7 text-slate-600">串联知识与方法，用选择、填空和解答题检验章节掌握情况。支持 45 分钟章末测评；解答题提供完整过程与逐步评分点。</p>
             <p className="mt-5 border-y border-blue-100 py-4 text-sm leading-7 text-slate-700">48 道选择题 · 24 道填空题<br />24 道解答题 · 全部配套解析</p>
             <Link href="/grade3/chapter-tests" className="mt-5 flex items-center justify-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-700">进入章末综合训练 →</Link>
           </aside>
@@ -55,8 +55,8 @@ export default function Home() {
           {[
             { title: "知识课程", description: "按章节学习定义、性质和方法，结合例题与交互图形理解知识。", href: "#curriculum", action: "选择课程" },
             { title: "专题训练", description: "选择、填空自动判题；解答题对照完整解析，分步自评。", href: "/practice", action: "开始训练" },
-            { title: "我的错题", description: "回看错误答案、作答草稿和解析，针对薄弱内容再次练习。", href: "/mistakes", action: "复习错题" },
-            { title: "学习报告", description: "查看客观题表现、薄弱专题和独立记录的解答题自评。", href: "/report", action: "查看报告" },
+            { title: "我的错题", description: "按错因分类、跟踪掌握状态，保留错题与复练历史。", href: "/mistakes", action: "复习错题" },
+            { title: "学习报告", description: "生成本周复习清单，回看课程、完成复练并比较新结果。", href: "/report", action: "查看报告" },
           ].map((tool, index) => { const ToolLink = tool.href.startsWith("#") ? "a" : Link; return <ToolLink key={tool.href} href={tool.href} className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-blue-200"><p className="text-xs font-semibold text-slate-400">0{index + 1}</p><h3 className="mt-3 font-bold text-slate-900">{tool.title}</h3><p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{tool.description}</p><p className="mt-4 text-sm font-medium text-blue-600">{tool.action} →</p></ToolLink>; })}
         </div>
       </section>

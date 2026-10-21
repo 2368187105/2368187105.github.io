@@ -32,7 +32,7 @@ export default function GradeDirectory({ id }: { id: CurriculumId }) {
           </article>)}
         </div>
       </section>
-      {id === "grade3" && <section className="mt-8 rounded-2xl border border-blue-100 bg-white p-5 sm:p-7"><h2 className="text-xl font-bold text-slate-900">章末综合训练</h2><p className="mt-3 text-sm leading-7 text-slate-600">八章共 96 道综合训练，含 48 道选择、24 道填空、24 道解答题，均配套完整解析。已包含在上方训练题总数中。</p><p className="mt-2 text-xs leading-6 text-slate-500">全部 573 道训练题包含 468 道课程配套题、96 道章末综合题与 9 道函数进阶复练题。客观题自动判分，解答题核对解析后分步自评。</p><Link href="/grade3/chapter-tests" className="mt-4 inline-flex rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white">进入章末综合训练 →</Link></section>}
+      {id === "grade3" && <section className="mt-8 rounded-2xl border border-blue-100 bg-white p-5 sm:p-7"><h2 className="text-xl font-bold text-slate-900">章末综合训练</h2><p className="mt-3 text-sm leading-7 text-slate-600">八章共 96 道综合训练，含 48 道选择、24 道填空、24 道解答题，均配套完整解析。可进行 45 分钟限时测评，也可打印题目与完整解析。已包含在上方训练题总数中。</p><p className="mt-2 text-xs leading-6 text-slate-500">全部 573 道训练题包含 468 道课程配套题、96 道章末综合题与 9 道函数进阶复练题。客观题自动判分，解答题核对解析后分步自评。</p><Link href="/grade3/chapter-tests" className="mt-4 inline-flex rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white">进入章末综合训练 →</Link></section>}
       <Link href="/" className="mt-8 inline-flex text-sm text-slate-500 hover:text-blue-600">← 返回首页</Link>
     </div>
   </main>;

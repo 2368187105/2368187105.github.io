@@ -29,7 +29,7 @@ export const STUDY_IDLE_MS = 120_000;
 
 export function isStudyPath(path: string) {
   const normalized = path.replace(/\/+$/, "");
-  return normalized === "/practice" || /^\/grade[123]\/[^/]+/.test(normalized)
+  return normalized === "/practice" || normalized === "/assessment" || /^\/grade[123]\/[^/]+/.test(normalized)
     && normalized !== "/grade3/chapter-tests";
 }
 

@@ -756,7 +756,7 @@ export const curricula = catalog.map((grade, gradeIndex) => {
     const topics: readonly string[] = grade.id === "grade1"
       ? grade1PracticeTopics.slice(chapterIndex * 5, chapterIndex * 5 + 5)
       : grade.id === "grade2" ? grade2PracticeChapters[chapterIndex].topics : grade3PracticeChapters[chapterIndex].topics;
-    return { ...chapter, questionCount: bank.filter(question => topics.includes(question.topic)).length };
+    return { ...chapter, topics, questionCount: bank.filter(question => topics.includes(question.topic)).length };
   });
   return { ...grade, chapters, lessonCount: chapters.reduce((total, chapter) => total + chapter.lessons.length, 0), questionCount: bank.length };
 });

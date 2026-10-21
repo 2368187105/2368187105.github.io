@@ -873,6 +873,7 @@ export default function PracticePage() {
               </div>
             </div>
 
+            <Link href={"/print/?topic="+encodeURIComponent(selectedTopic)} className="mb-5 inline-block text-sm text-blue-600">打印本专题题目 / 完整解析 →</Link>
             {/* 题目进度 */}
             <div className="mb-6 h-2 overflow-hidden rounded-full bg-slate-100">
               <div

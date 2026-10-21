@@ -1,6 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import WeeklyReviewPlan from "@/components/WeeklyReviewPlan";
+import AssessmentHistory from "@/components/AssessmentHistory";
+import { useMistakeReviews } from "@/components/MistakeReview";
+import { ownRows } from "@/lib/learning-workspace";
 import { useEffect, useMemo, useState } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import GradeSelector from "@/components/GradeSelector";
@@ -372,6 +376,8 @@ export default function ReportPage() {
     []
   );
 
+  const [userId, setUserId] = useState<string | null>(null);
+  const reviewData = useMistakeReviews(userId);
   const [attempts, setAttempts] =
     useState<Attempt[]>([]);
 
@@ -423,26 +429,11 @@ export default function ReportPage() {
         }
 
         setEmail(user.email ?? null);
+        setUserId(user.id);
 
-        const { data, error } = await supabase
-          .from("practice_attempts")
-          .select("*")
-          .eq("user_id", user.id)
-          .order("created_at", {
-            ascending: false,
-          });
-
+        const data = await ownRows<Attempt>(supabase,"practice_attempts",user.id);
         if (!active) return;
-
-        if (error) {
-          setErrorMessage(
-            "学习数据读取失败，请稍后刷新页面。"
-          );
-          setAttempts([]);
-          return;
-        }
-
-        setAttempts((data ?? []) as Attempt[]);
+        setAttempts(data);
       } catch {
         if (active) {
           setErrorMessage(
@@ -716,6 +707,8 @@ export default function ReportPage() {
           </div>
         )}
 
+        {userId && <WeeklyReviewPlan key={userId+selectedGrade} userId={userId} grade={selectedGrade==="高一"?"grade1":selectedGrade==="高二"?"grade2":"grade3"} attempts={attempts} states={reviewData.states}/>}
+        {userId && selectedGrade==="高三" && <AssessmentHistory userId={userId}/>}
         {/* 总体统计 */}
         <section className="border-t border-slate-200 py-10">
           <div className="mb-6">
