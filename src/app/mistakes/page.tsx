@@ -905,7 +905,7 @@ function MistakesPageContent() {
                               </div>
                             </div>
 
-                            {sourceQuestion && <Link href={"/practice/?topic=" + encodeURIComponent(sourceQuestion.topic) + "&question=" + encodeURIComponent(sourceQuestion.id)} className="mt-5 inline-flex rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white">重新练习这道题 →</Link>}
+                            {sourceQuestion && <Link href={"/practice/?topic=" + encodeURIComponent(sourceQuestion.topic) + "&question=" + encodeURIComponent(sourceQuestion.id) + "&queue=" + encodeURIComponent(sourceQuestion.id)} className="mt-5 inline-flex rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white">重新练习这道题 →</Link>}
 
                             <MistakeReview key={mistake.question_id+":"+(reviewData.states.find(row=>row.question_id===mistake.question_id)?.updated_at??"")} userId={userId} questionId={mistake.question_id} state={reviewData.states.find(row=>row.question_id===mistake.question_id)} onSaved={reviewData.refresh} unavailable={!!reviewData.error}/>
                             {/* 解析 */}

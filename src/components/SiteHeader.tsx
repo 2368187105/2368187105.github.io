@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 
 const navItems = [
   { label: "首页", href: "/" },
+  { label: "搜索", href: "/search" },
   { label: "高一数学", href: "/grade1" },
   { label: "高二数学", href: "/grade2" },
   { label: "高三数学", href: "/grade3" },
@@ -127,7 +128,7 @@ export default function SiteHeader() {
             const active = isActive(item.href);
             return (
               <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined}
-                className={`rounded-lg px-3.5 py-2 text-sm font-medium transition ${active ? "bg-blue-50 text-blue-700" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"}`}>
+                className={`rounded-lg px-2 py-2 text-sm font-medium transition ${active ? "bg-blue-50 text-blue-700" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"}`}>
                 {item.label}
               </Link>
             );

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SearchForm from "@/components/SearchForm";
 import SiteHeader from "@/components/SiteHeader";
 import HomeLearningDashboard from "@/components/HomeLearningDashboard";
 import TodayLearning from "@/components/TodayLearning";
@@ -22,6 +23,7 @@ export default function Home() {
               <Link href="/practice" className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700">专题训练</Link>
               <Link href="/mistakes" className="rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50">我的错题</Link>
             </div>
+            <div className="mt-6 max-w-xl"><SearchForm /></div>
             <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 border-t border-slate-100 pt-6 sm:grid-cols-4">
               {[["覆盖年级", curriculumTotals.grades], ["课程章节", curriculumTotals.chapters], ["课程节数", curriculumTotals.lessons], ["训练题数", curriculumTotals.questions]].map(([label, value]) => <div key={label}><dt className="text-xs text-slate-500">{label}</dt><dd className="mt-2 text-2xl font-bold tabular-nums text-slate-900">{value}</dd></div>)}
             </dl>

@@ -1,6 +1,6 @@
 
 "use client";
-import SolutionText from "@/components/SolutionText";
+import PracticeBatch from "@/components/PracticeBatch";
 import AccountBoundary from "@/components/AccountBoundary";
 import { practiceQueue, practiceHref } from "@/lib/daily-learning";
 import type { Question } from "@/data/questions";
@@ -8,18 +8,11 @@ import LoginLink from "@/components/LoginLink";
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { BlockMath } from "react-katex";
-import { vectorText } from "@/components/VectorText";
-import { mathText } from "@/components/MathText";
 import "katex/dist/katex.min.css";
 
-import ConstructedQuestion from "@/components/ConstructedQuestion";
-import { checkAnswer } from "@/lib/answer-checking";
-import { savePracticeRecord } from "@/lib/practice-records";
 import SiteHeader from "@/components/SiteHeader";
 import GradeSelector from "@/components/GradeSelector";
 import { gradeFromQuery, gradeUrl } from "@/lib/grade-query";
-import { accuracyPercent } from "@/lib/learning-summary";
 import { createClient } from "@/lib/supabase/client";
 import {
   practiceTopics,
@@ -99,12 +92,6 @@ function PracticeContent() {
   const [questionIndex, setQuestionIndex] =
     useState(0);
 
-  const [selectedAnswer, setSelectedAnswer] =
-    useState<string | null>(null);
-
-  const [submitted, setSubmitted] =
-    useState(false);
-
   const [submitting, setSubmitting] =
     useState(false);
 
@@ -117,22 +104,6 @@ function PracticeContent() {
 
   const [authChecked, setAuthChecked] =
     useState(false);
-
-  /* 本次练习数据 */
-  const [sessionTotal, setSessionTotal] =
-    useState(0);
-
-  const [sessionCorrect, setSessionCorrect] =
-    useState(0);
-
-  const [sessionWrong, setSessionWrong] =
-    useState(0);
-
-  const [selfAssessments, setSelfAssessments] = useState(0);
-  const [answerRevision, setAnswerRevision] = useState(0);
-
-  const [saveMessage, setSaveMessage] =
-    useState("");
 
   const currentPracticeTopics =
     selectedGrade === "高一"
@@ -224,9 +195,6 @@ function PracticeContent() {
         setSelectedTopic(topics[0] as Topic);
         setExpandedChapter(0);
         setQuestionIndex(0);
-        setSelectedAnswer(null);
-        setSubmitted(false);
-        setSaveMessage("");
       }
       return;
     }
@@ -260,9 +228,6 @@ function PracticeContent() {
     setExpandedChapter(requestedChapters.findIndex((topics) => topics.includes(requestedTopic)));
     const requestedQuestions = loadedQueue.length ? loadedQueue : questions.filter(question => question.topic === requestedTopic);
     setQuestionIndex(Math.max(0, requestedQuestions.findIndex(question => question.id === requestedId)));
-    setSelectedAnswer(null);
-    setSubmitted(false);
-    setSaveMessage("");
     }
     const frame = window.requestAnimationFrame(applyRequestedTopic);
     window.addEventListener("popstate", applyRequestedTopic);
@@ -324,26 +289,6 @@ function PracticeContent() {
             100
         );
 
-  const sessionAccuracy =
-    sessionTotal === 0
-      ? 0
-      : accuracyPercent(sessionCorrect, sessionTotal);
-
-  const selectedOption =
-    currentQuestion?.options.find(
-      (option) => option.key === selectedAnswer
-    );
-
-  const correctOption =
-    currentQuestion?.options.find(
-      (option) =>
-        option.key === currentQuestion.correctAnswer
-    );
-
-  const isCorrect =
-    submitted &&
-    selectedAnswer === currentQuestion?.correctAnswer;
-
   /* =========================
      展开 / 收起章节
   ========================= */
@@ -371,9 +316,6 @@ function PracticeContent() {
     setSelectedTopic(nextTopics[0] as Topic);
     setExpandedChapter(0);
     setQuestionIndex(0);
-    setSelectedAnswer(null);
-    setSubmitted(false);
-    setSaveMessage("");
   }
 
   /* =========================
@@ -388,81 +330,7 @@ function PracticeContent() {
     if (first) window.history.replaceState(null, "", practiceHref(first));
     setSelectedTopic(topic);
     setQuestionIndex(0);
-    setSelectedAnswer(null);
-    setSubmitted(false);
-    setSaveMessage("");
   }
-
-  /* =========================
-     选择答案
-  ========================= */
-
-  function chooseAnswer(answerKey: string) {
-    if (submitted || submitting) return;
-
-    setSelectedAnswer(answerKey);
-  }
-
-  /* =========================
-     提交答案
-     保留原有 Supabase 保存逻辑
-  ========================= */
-
-  async function submitAnswer(assessment?: { answer: string; correct: boolean }) {
-    if (
-      !currentQuestion ||
-      !authChecked ||
-      (!assessment && !selectedAnswer) ||
-      submitted ||
-      submitting
-    ) {
-      return;
-    }
-
-    const answerKey = assessment?.answer ?? selectedAnswer!;
-
-    const answerIsCorrect = assessment?.correct ?? checkAnswer(currentQuestion, answerKey);
-
-    setSubmitting(true);
-    setSaveMessage("");
-
-    /* 先进行本地判题 */
-    setSubmitted(true);
-
-    if (currentQuestion.kind === "written") {
-      setSelfAssessments(value => value + 1);
-    } else {
-    setSessionTotal((value) => value + 1);
-
-    if (answerIsCorrect) {
-      setSessionCorrect((value) => value + 1);
-    } else {
-      setSessionWrong((value) => value + 1);
-    }
-
-    }
-
-    /* 未登录：只判题，不保存 */
-    if (!userId) {
-      setSaveMessage(
-        "当前未登录，本次答题不会保存到云端。"
-      );
-
-      setSubmitting(false);
-      return;
-    }
-
-    try {
-      const result = await savePracticeRecord(supabase, userId, currentQuestion, answerKey, answerIsCorrect);
-      setSaveMessage(result.message);
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  /* =========================
-     上一题
-  ========================= */
 
   function moveToQuestion(index: number) {
     const question = topicQuestions[index];
@@ -472,46 +340,6 @@ function PracticeContent() {
     setExpandedChapter(chapters.findIndex(chapter => chapter.topics.some(topic => topic === question.topic)));
     window.history.replaceState(null, "", practiceHref(question, queueItems.map(q => q.id)));
     document.getElementById("practice-question")?.scrollIntoView({ block: "start", behavior: "smooth" });
-  }
-
-  function previousQuestion() {
-    if (questionIndex <= 0 || submitting) return;
-
-    moveToQuestion(questionIndex - 1);
-    setSelectedAnswer(null);
-    setSubmitted(false);
-    setSaveMessage("");
-  }
-
-  /* =========================
-     下一题
-  ========================= */
-
-  function nextQuestion() {
-    if (
-      questionIndex >= topicQuestions.length - 1 ||
-      submitting
-    ) {
-      return;
-    }
-
-    moveToQuestion(questionIndex + 1);
-    setSelectedAnswer(null);
-    setSubmitted(false);
-    setSaveMessage("");
-  }
-
-  /* =========================
-     重新作答
-  ========================= */
-
-  function resetCurrentQuestion() {
-    if (submitting) return;
-    setAnswerRevision(value => value + 1);
-
-    setSelectedAnswer(null);
-    setSubmitted(false);
-    setSaveMessage("");
   }
 
   /* =========================
@@ -553,7 +381,7 @@ function PracticeContent() {
 
               <p className="mt-4 max-w-2xl text-base leading-8 text-slate-500">
                 按照年级、章节和专题进行分类练习。
-                客观题提交后自动判题，解答题核对解析后自评，
+                整组完成后统一提交，客观题自动判题，解答题核对解析后自评，
                 登录后可将练习记录和错题保存到云端。
               </p>
 
@@ -824,7 +652,7 @@ function PracticeContent() {
                     </p>
 
                     <p className="mt-2 text-xs leading-6 text-emerald-600">
-                      练习记录将自动保存到云端
+                      整组提交后，练习记录保存到云端
                     </p>
                   </>
                 ) : (
@@ -878,7 +706,7 @@ function PracticeContent() {
                   </p>
 
                   <h2 className="mt-2 text-xl font-bold leading-8 text-slate-900">
-                    {queueItems.length ? "今日训练 · " + selectedTopic : selectedTopic}
+                    {queueItems.length ? (queueItems.length === 1 ? "单题练习 · " : "今日训练 · ") + selectedTopic : selectedTopic}
                   </h2>
 
                   <p className="mt-2 text-sm text-slate-500">
@@ -902,7 +730,7 @@ function PracticeContent() {
               </div>
             </div>
 
-            {queueItems.length > 0 && <p className="mb-4 text-sm text-slate-600">按今日安排练习 {queueItems.length} 题；题目来自现有题库。<Link href="/#today" className="ml-3 text-blue-600">返回今日安排 →</Link><button onClick={() => changeTopic(selectedTopic)} className="ml-3 text-blue-600">改为自主选题</button></p>}
+            {queueItems.length > 0 && <p className="mb-4 text-sm text-slate-600">本组练习 {queueItems.length} 题；题目来自现有题库。<Link href="/#today" className="ml-3 text-blue-600">返回今日安排 →</Link><button onClick={() => changeTopic(selectedTopic)} className="ml-3 text-blue-600">改为自主选题</button></p>}
             <Link href={queueItems.length ? "/print/?ids="+encodeURIComponent(queueItems.map(q=>q.id).join(",")) : "/print/?topic="+encodeURIComponent(selectedTopic)} className="mb-5 inline-block text-sm text-blue-600">{queueItems.length ? "打印本组题目 / 完整解析 →" : "打印本专题题目 / 完整解析 →"}</Link>
             {/* 题目进度 */}
             <div className="mb-6 h-2 overflow-hidden rounded-full bg-slate-100">
@@ -914,322 +742,11 @@ function PracticeContent() {
               />
             </div>
 
-            {!currentQuestion ? (
-              <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center">
-                <h2 className="text-lg font-bold text-slate-900">
-                  当前专题暂无题目
-                </h2>
-
-                <p className="mt-2 text-sm text-slate-500">
-                  请从左侧选择其他专题。
-                </p>
-              </div>
-            ) : (
-              <>
-                {/* 题目卡片 */}
-                <section id="practice-question" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
-                  {/* 题目序号与标题 */}
-                  <div className="flex flex-wrap items-center gap-3">
-                    <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600">
-                      第 {questionIndex + 1} 题
-                    </span>
-
-                    <span className="text-xs text-slate-400">
-                      {currentQuestion.title}
-                    </span>
-                    {currentQuestion.difficulty && <span className="rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600">{currentQuestion.difficulty}</span>}
-                  </div>
-
-                  {/* 题干 */}
-                  <h3 className="mt-5 whitespace-pre-wrap text-lg font-semibold leading-8 text-slate-900">
-                    {currentQuestion.topic.includes("向量") ? vectorText(currentQuestion.question) : mathText(currentQuestion.question)}
-                  </h3>
-
-                  {/* 数学公式 */}
-                  {currentQuestion.formula && (
-                    <div className="my-6 overflow-x-auto rounded-xl bg-slate-50 px-4 py-5 text-center">
-                      <BlockMath
-                        math={currentQuestion.formula}
-                      />
-                    </div>
-                  )}
-
-                  {currentQuestion.kind === "fill" || currentQuestion.kind === "written" ? (
-                    <ConstructedQuestion key={currentQuestion.id + ":" + answerRevision} question={currentQuestion} submitted={submitted} submitting={submitting} authReady={authChecked} saveMessage={saveMessage} onSubmit={submitAnswer} onReset={resetCurrentQuestion} />
-                  ) : <>
-                  {/* 选项 */}
-                  <div className="mt-6 grid gap-3">
-                    {currentQuestion.options.map(
-                      (option) => {
-                        const chosen =
-                          selectedAnswer === option.key;
-
-                        const correct =
-                          submitted &&
-                          option.key ===
-                            currentQuestion.correctAnswer;
-
-                        const wrong =
-                          submitted &&
-                          chosen &&
-                          option.key !==
-                            currentQuestion.correctAnswer;
-
-                        return (
-                          <button
-                            key={option.key}
-                            type="button"
-                            disabled={
-                              submitted || submitting
-                            }
-                            onClick={() =>
-                              chooseAnswer(option.key)
-                            }
-                            className={`flex w-full items-start gap-3 rounded-xl border px-4 py-4 text-left text-sm transition ${
-                              correct
-                                ? "border-emerald-300 bg-emerald-50 text-emerald-700"
-                                : wrong
-                                  ? "border-red-300 bg-red-50 text-red-600"
-                                  : chosen
-                                    ? "border-blue-400 bg-blue-50 text-blue-700"
-                                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
-                            }`}
-                          >
-                            <span
-                              className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md border text-xs font-semibold ${
-                                correct
-                                  ? "border-emerald-300 bg-white text-emerald-600"
-                                  : wrong
-                                    ? "border-red-300 bg-white text-red-500"
-                                    : chosen
-                                      ? "border-blue-300 bg-white text-blue-600"
-                                      : "border-slate-200 bg-slate-50 text-slate-500"
-                              }`}
-                            >
-                              {option.key}
-                            </span>
-
-                            <span className="pt-0.5 leading-6">
-                              {currentQuestion.topic.includes("向量") ? vectorText(option.text) : mathText(option.text)}
-                            </span>
-                          </button>
-                        );
-                      }
-                    )}
-                  </div>
-
-                  {/* 提交答案 */}
-                  {!submitted ? (
-                    <button
-                      type="button"
-                      disabled={
-                        !selectedAnswer || submitting || !authChecked
-                      }
-                      onClick={() => submitAnswer()}
-                      className="mt-6 rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-30"
-                    >
-                      {submitting
-                        ? "正在提交..."
-                        : "提交答案"}
-                    </button>
-                  ) : (
-                    /* 答题结果 */
-                    <div className="mt-7 border-t border-slate-200 pt-6">
-                      <div
-                        className={`rounded-xl p-5 ${
-                          isCorrect
-                            ? "bg-emerald-50/70"
-                            : "bg-red-50/70"
-                        }`}
-                      >
-                        <div className="flex flex-wrap items-center gap-3">
-                          <p
-                            className={`font-semibold ${
-                              isCorrect
-                                ? "text-emerald-700"
-                                : "text-red-600"
-                            }`}
-                          >
-                            {isCorrect
-                              ? "回答正确"
-                              : "回答错误"}
-                          </p>
-
-                          {!isCorrect && (
-                            <span className="text-sm text-slate-500">
-                              正确答案：
-                              {currentQuestion.correctAnswer}
-                            </span>
-                          )}
-                        </div>
-
-                        {!isCorrect && selectedOption && (
-                          <p className="mt-3 text-sm leading-6 text-slate-500">
-                            你的答案：
-                            {selectedOption.key}
-                            .{" "}
-                            {currentQuestion.topic.includes("向量") ? vectorText(selectedOption.text) : mathText(selectedOption.text)}
-                          </p>
-                        )}
-
-                        {correctOption && (
-                          <p className="mt-3 text-sm leading-6 text-slate-600">
-                            正确选项：
-                            {correctOption.key}
-                            .{" "}
-                            {currentQuestion.topic.includes("向量") ? vectorText(correctOption.text) : mathText(correctOption.text)}
-                          </p>
-                        )}
-
-                        {/* 解析 */}
-                        <div className="mt-4 border-t border-black/5 pt-4">
-                          <p className="text-xs font-medium text-slate-400">
-                            解析
-                          </p>
-
-                          <SolutionText text={currentQuestion.explanation} vectors={currentQuestion.topic.includes("向量")} className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-600" />
-                        </div>
-                      </div>
-
-                      {saveMessage && (
-                        <p className="mt-3 text-xs text-slate-500">
-                          {saveMessage}
-                        </p>
-                      )}
-
-                      <button
-                        type="button"
-                        disabled={submitting}
-                        onClick={resetCurrentQuestion}
-                        className="mt-4 text-sm text-slate-400 transition hover:text-slate-700 disabled:opacity-40"
-                      >
-                        重新作答
-                      </button>
-                    </div>
-                  )}
-                  </>}
-                </section>
-
-                {/* 上一题 / 下一题 */}
-                <div className="mt-5 flex items-center justify-between gap-3">
-                  <button
-                    type="button"
-                    disabled={
-                      questionIndex === 0 ||
-                      submitting
-                    }
-                    onClick={previousQuestion}
-                    className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-30"
-                  >
-                    ← 上一题
-                  </button>
-
-                  {questionIndex <
-                  topicQuestions.length - 1 ? (
-                    <button
-                      type="button"
-                      disabled={submitting}
-                      onClick={nextQuestion}
-                      className="rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-700 disabled:opacity-40"
-                    >
-                      下一题 →
-                    </button>
-                  ) : (
-                    <div className="flex flex-wrap gap-3">
-                      <Link
-                        href={gradeUrl("/mistakes", selectedGrade)}
-                        className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50"
-                      >
-                        查看错题
-                      </Link>
-
-                      <Link
-                        href={gradeUrl("/report", selectedGrade)}
-                        className="rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-slate-700"
-                      >
-                        查看报告
-                      </Link>
-                    </div>
-                  )}
-                </div>
-
-                <p className="mt-6 text-sm text-slate-500">本次解答题自评：{selfAssessments} 题次，独立于下方客观题统计。</p>
-                {/* 本次练习统计 */}
-                <section className="mt-8 border-t border-slate-200 pt-8">
-                  <div className="mb-4">
-                    <h2 className="text-lg font-bold text-slate-900">
-                      本次练习
-                    </h2>
-
-                    <p className="mt-1 text-sm text-slate-500">
-                      客观题统计当前页面打开后的答题情况，
-                      切换专题不会清空本次记录。
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-slate-200 bg-slate-200 sm:grid-cols-4">
-                    <SessionStat
-                      label="已答"
-                      value={sessionTotal}
-                      suffix="题次"
-                    />
-
-                    <SessionStat
-                      label="答对"
-                      value={sessionCorrect}
-                      suffix="题次"
-                    />
-
-                    <SessionStat
-                      label="答错"
-                      value={sessionWrong}
-                      suffix="题次"
-                    />
-
-                    <SessionStat
-                      label="正确率"
-                      value={sessionAccuracy}
-                      suffix="%"
-                    />
-                  </div>
-                </section>
-              </>
-            )}
+            {authChecked && <PracticeBatch key={(userId ?? "guest") + ":" + topicQuestions.map(q => q.id).join(",")} items={topicQuestions} index={questionIndex} onNavigate={moveToQuestion} userId={userId} client={supabase} onBusy={setSubmitting} />}
+            <div className="mt-6 flex flex-wrap gap-4 text-sm text-blue-600"><Link href={gradeUrl("/mistakes", selectedGrade)}>查看错题 →</Link><Link href={gradeUrl("/report", selectedGrade)}>查看报告 →</Link></div>
           </div>
         </div>
       </div>
     </main>
-  );
-}
-
-/* =========================
-   本次练习统计组件
-========================= */
-
-function SessionStat({
-  label,
-  value,
-  suffix,
-}: {
-  label: string;
-  value: number;
-  suffix: string;
-}) {
-  return (
-    <div className="bg-white p-5">
-      <p className="text-xs text-slate-400">
-        {label}
-      </p>
-
-      <div className="mt-2 flex items-end gap-1">
-        <span className="text-xl font-bold text-slate-900">
-          {value}
-        </span>
-
-        <span className="pb-0.5 text-xs text-slate-400">
-          {suffix}
-        </span>
-      </div>
-    </div>
   );
 }
