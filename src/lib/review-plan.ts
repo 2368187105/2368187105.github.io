@@ -41,8 +41,10 @@ export function reviewWeek(now = new Date()) {
 export function courseForTopic(topic: string) {
     for (const grade of curricula) {
         const chapter = grade.chapters.find(chapter => chapter.topics.includes(topic));
-        if (chapter)
-            return { grade: grade.id, title: chapter.title, href: chapter.href };
+        if (chapter) {
+            const lesson = chapter.lessons[chapter.topics.indexOf(topic)];
+            return { grade: grade.id, title: lesson?.title ?? chapter.title, href: lesson?.href ?? chapter.href };
+        }
     }
     return null;
 }

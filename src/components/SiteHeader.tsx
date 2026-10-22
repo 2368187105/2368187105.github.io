@@ -1,4 +1,5 @@
 "use client";
+import LoginLink from "@/components/LoginLink";
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -149,7 +150,7 @@ export default function SiteHeader() {
               </button>
             </>
           ) : (
-            <Link href="/login" className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700">登录 / 注册</Link>
+            <LoginLink className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700">登录 / 注册</LoginLink>
           )}
         </div>
 
@@ -195,8 +196,8 @@ export default function SiteHeader() {
                 </button>
               </div>
             ) : (
-              <Link href="/login" onClick={() => setMobileOpen(false)}
-                className="block rounded-xl bg-slate-900 px-4 py-3 text-center text-sm font-medium text-white">登录 / 注册</Link>
+              <LoginLink onClick={() => setMobileOpen(false)}
+                className="block rounded-xl bg-slate-900 px-4 py-3 text-center text-sm font-medium text-white">登录 / 注册</LoginLink>
             )}
           </div>
         </div>

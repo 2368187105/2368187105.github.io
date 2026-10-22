@@ -53,3 +53,7 @@ body {
 .math-radical .katex {
   font-size: 1.12em;
 }
+
+/* Plain-text expressions wrap within the page; full long derivations scroll locally. */
+.math-copy, .solution-text { overflow-wrap: anywhere; }
+@media print { .solution-line { overflow: visible !important; white-space: pre-wrap !important; overflow-wrap: anywhere; } }

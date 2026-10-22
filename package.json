@@ -14,7 +14,8 @@
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
-    "check:workspace": "node scripts/verify-learning-workspace.cjs"
+    "check:workspace": "node scripts/verify-learning-workspace.cjs",
+    "check:daily": "node scripts/verify-daily-learning.cjs"
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.20.12",

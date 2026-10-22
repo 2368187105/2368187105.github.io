@@ -15,5 +15,6 @@ export function queryAfterGradeChange(search: string, grade: GradeLabel) {
   params.set("grade", gradeIds[grade]);
   params.delete("topic");
   params.delete("question");
+  params.delete("queue");
   return `?${params.toString()}`;
 }

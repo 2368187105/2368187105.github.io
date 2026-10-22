@@ -1,4 +1,5 @@
 "use client";
+import SolutionText from "@/components/SolutionText";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BlockMath } from "react-katex";
@@ -7,7 +8,7 @@ import { mathText } from "@/components/MathText";
 import { vectorText } from "@/components/VectorText";
 import { createClient } from "@/lib/supabase/client";
 import { checkAnswer } from "@/lib/answer-checking";
-import { chapterAssessments, newAssessment, assessmentResult, remainingSeconds, scoringSteps, validAssessmentDraft, type AssessmentDraft } from "@/lib/assessment";
+import { hasAssessmentAnswer, chapterAssessments, newAssessment, assessmentResult, remainingSeconds, scoringSteps, validAssessmentDraft, type AssessmentDraft } from "@/lib/assessment";
 import { workspaceSetupMessage } from "@/lib/learning-workspace";
 export default function AssessmentPage() {
     const client = useMemo(() => createClient(), []);
@@ -113,7 +114,7 @@ export default function AssessmentPage() {
                 return current;
             const scores = { ...current.scores };
             for (const question of paper.questions.filter(q => q.kind === "written"))
-                if (!current.answers[question.id]?.trim())
+                if (!hasAssessmentAnswer(current, question))
                     scores[question.id] = scoringSteps(question).map(() => 0);
             return { ...current, scores, submittedAt: new Date(Math.max(Date.parse(current.startedAt), Math.min(time, Date.parse(current.deadline)))).toISOString() };
         });
@@ -141,6 +142,22 @@ export default function AssessmentPage() {
         }
         setDraft({ ...draft, answers: { ...draft.answers, [id]: value } });
     }
+    function markPaper(id: string, checked: boolean) {
+        if (!draft || draft.submittedAt) return;
+        // Check the real deadline inside this user event, before accepting a change.
+        // eslint-disable-next-line react-hooks/purity
+        if (Date.now() >= Date.parse(draft.deadline)) { seal(); return; }
+        setDraft({ ...draft, paperAnswers: { ...draft.paperAnswers, [id]: checked } });
+    }
+    function flagQuestion(id: string) {
+        if (!draft || draft.submittedAt) return;
+        // Check the real deadline inside this user event, before accepting a change.
+        // eslint-disable-next-line react-hooks/purity
+        if (Date.now() >= Date.parse(draft.deadline)) { seal(); return; }
+        const flagged = new Set(draft.flagged ?? []);
+        if (flagged.has(id)) flagged.delete(id); else flagged.add(id);
+        setDraft({ ...draft, flagged: [...flagged] });
+    }
     async function save() {
         if (!paper || !draft?.submittedAt || !userId || busy || saved)
             return;
@@ -158,7 +175,7 @@ export default function AssessmentPage() {
                 const points = draft.scores[question.id] ?? [];
                 const checks = scoringSteps(question).map((s, i) => points[i] === s.points ? 2 : points[i] > 0 ? 1 : 0);
                 return { question_id: question.id, topic: question.topic, question: question.question, explanation: question.explanation, correct_answer: question.correctAnswer,
-                    answer: written ? "self:" + JSON.stringify({ work: draft.answers[question.id] ?? "", checks, points }) : draft.answers[question.id] ?? "",
+                    answer: written ? "self:" + JSON.stringify({ mode: draft.paperAnswers?.[question.id] ? "paper" : "typed", work: draft.answers[question.id] ?? "", checks, points }) : draft.answers[question.id] ?? "",
                     is_correct: written ? points.reduce((a, b) => a + b, 0) === 8 : !!draft.answers[question.id]?.trim() && checkAnswer(question, draft.answers[question.id]) };
             });
             const { data, error } = await client.rpc("save_chapter_assessment", { p_run: { ...draft, title: paper.title, objective: result.objective, selfScore: result.selfScore }, p_items: items });
@@ -179,22 +196,23 @@ export default function AssessmentPage() {
     const seconds = draft ? remainingSeconds(draft, now) : 0;
     const sealed = !!draft?.submittedAt;
     const render = (text: string) => paper?.title.includes("向量") ? vectorText(text) : mathText(text);
-    return <main className="min-h-screen bg-[#fafafa]"><SiteHeader /><div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+    return <main className="math-copy min-h-screen bg-[#fafafa]"><SiteHeader /><div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
   <Link href="/grade3/chapter-tests/" className="text-sm text-blue-600">← 八章综合训练</Link><h1 className="mt-5 text-3xl font-bold text-slate-900">{paper ? `${paper.title} · 章末测评` : "章末限时测评"}</h1>
   {accountChanged ? <section className="mt-6 rounded-xl border bg-white p-6"><p>{message}</p><button onClick={() => window.location.reload()} className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-white">按当前账号重新进入</button></section> : !ready ? <p className="mt-6">正在读取测评与本机草稿…</p> : !paper ? <div className="mt-6 space-y-3">{chapterAssessments.map(p => <a key={p.id} href={`/assessment/?chapter=${p.id}`} className="block rounded-xl border bg-white p-4 text-blue-600">{p.title} · 45 分钟 / 60 分 →</a>)}</div> : <>
    <p className="mt-4 text-sm leading-7 text-slate-600">12 题 · 45 分钟 · 60 分。选择、填空各题 4 分，共 36 分；解答题每题 8 分，共 24 分，交卷后按步骤自评。本站原创自学测评，含自评分数。</p>
    {storageError && <p role="alert" className="mt-4 rounded-xl bg-amber-50 p-4 text-sm text-amber-800">{storageError}</p>}
    {!draft ? <section className="mt-6 rounded-2xl border bg-white p-6"><h2 className="text-lg font-semibold">准备好后开始计时</h2><p className="mt-3 text-sm leading-7 text-slate-600">刷新后从本机草稿继续，时间按截止时刻计算；切走页面也会计时。未交卷前不展示答案和解析。{userId ? "完成自评后可一键保存到当前账号。" : "当前为游客模式，仅在本机暂存；登录后请在原账号下另开一场测评。"}</p><button onClick={() => { setDraft(newAssessment(paper, crypto.randomUUID())); setNow(Date.now()); setMessage(""); }} disabled={!!new URLSearchParams(typeof window !== "undefined" ? window.location.search : "").get("run")} className="mt-5 rounded-lg bg-blue-600 px-5 py-3 text-white disabled:opacity-40">开始 45 分钟测评</button><Link href={`/print/?topic=${encodeURIComponent(paper.topic)}`} className="ml-4 inline-block py-3 text-sm text-blue-600">先打印空白试卷 →</Link></section> : <>
     <section className="sticky top-16 z-20 mt-6 rounded-xl border border-blue-200 bg-white p-4 shadow-sm" aria-label="测评进度">
-     {!sealed ? <div className="flex flex-wrap items-center justify-between gap-3"><p className={`text-sm font-semibold ${seconds < 300 ? "text-red-600" : "text-blue-600"}`}>剩余 {Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, "0")} · 已填 {paper.questions.filter(q => draft.answers[q.id]?.trim()).length}/12</p><button onClick={() => setConfirming(true)} className="rounded-lg bg-slate-900 px-4 py-2 text-sm text-white">检查并交卷</button>{confirming && <div className="w-full rounded-lg bg-amber-50 p-3 text-sm leading-7"><p>交卷后不能再修改答案，未答客观题计 0 分；解答题将展开解析和评分点。</p><button onClick={() => seal()} className="mr-4 rounded-lg bg-blue-600 px-4 py-2 text-white">确认交卷</button><button onClick={() => setConfirming(false)} className="underline">继续作答</button></div>}</div> : <><h2 className="font-bold text-slate-900">已交卷 · 客观题 {result!.objective}/36 分</h2><p className="mt-2 text-sm leading-7">解答题自评 {result!.complete ? `${result!.selfScore}/24 分；总分 ${result!.total}/60 分（含自评）` : "待完成，不显示最终总分"} · 用时 {Math.max(1, Math.ceil((Date.parse(draft.submittedAt!) - Date.parse(draft.startedAt)) / 60000))} 分钟</p></>}
+     {!sealed ? <div className="flex flex-wrap items-center justify-between gap-3"><p className={`text-sm font-semibold ${seconds < 300 ? "text-red-600" : "text-blue-600"}`}>剩余 {Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, "0")} · 已填 {paper.questions.filter(q => hasAssessmentAnswer(draft, q)).length}/12</p><button onClick={() => setConfirming(true)} className="rounded-lg bg-slate-900 px-4 py-2 text-sm text-white">检查并交卷</button>{confirming && <div className="w-full rounded-lg bg-amber-50 p-3 text-sm leading-7"><p>交卷后不能再修改答案，未答客观题计 0 分；解答题将展开解析和评分点。</p><button onClick={() => seal()} className="mr-4 rounded-lg bg-blue-600 px-4 py-2 text-white">确认交卷</button><button onClick={() => setConfirming(false)} className="underline">继续作答</button></div>}</div> : <><h2 className="font-bold text-slate-900">已交卷 · 客观题 {result!.objective}/36 分</h2><p className="mt-2 text-sm leading-7">解答题自评 {result!.complete ? `${result!.selfScore}/24 分；总分 ${result!.total}/60 分（含自评）` : "待完成，不显示最终总分"} · 用时 {Math.max(1, Math.ceil((Date.parse(draft.submittedAt!) - Date.parse(draft.startedAt)) / 60000))} 分钟</p></>}
+      <details className="mt-3"><summary className="cursor-pointer text-sm text-blue-700">答题卡 · 快速跳题与检查未答</summary><nav aria-label="测评答题卡" className="mt-3 grid grid-cols-6 gap-2">{paper.questions.map((q, i) => <a key={q.id} href={`#exam-question-${i + 1}`} aria-label={`第${i + 1}题${hasAssessmentAnswer(draft, q) ? "已答" : "未答"}${draft.flagged?.includes(q.id) ? "，待检查" : ""}`} className={`rounded-lg border px-1 py-2 text-center text-xs ${draft.flagged?.includes(q.id) ? "border-amber-400 bg-amber-50 text-amber-800" : hasAssessmentAnswer(draft, q) ? "border-blue-300 bg-blue-50 text-blue-700" : "border-slate-200 text-slate-500"}`}>{i + 1}{draft.flagged?.includes(q.id) ? "★" : ""}</a>)}</nav><p className="mt-2 text-xs leading-6 text-slate-500">蓝色为已答，星标为待检查；点击题号直接定位。</p></details>
     </section>
     <div className="mt-6 space-y-6">{paper.questions.map((question, index) => {
                     const value = draft.answers[question.id] ?? "";
                     const written = question.kind === "written";
-                    return <article key={question.id} className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7"><h2 className="text-sm font-semibold text-blue-600">第 {index + 1} 题 · {written ? "解答题 · 8 分" : question.kind === "fill" ? "填空题 · 4 分" : "选择题 · 4 分"}</h2><p className="mt-3 whitespace-pre-wrap font-semibold leading-8 text-slate-900">{render(question.question)}</p>{question.formula && <div className="my-4 overflow-x-auto"><BlockMath math={question.formula}/></div>}
-      {written ? <label className="mt-4 block text-sm text-slate-600">书写步骤（可在纸上完成，再将关键步骤录入）<textarea aria-label={`第${index + 1}题作答`} disabled={sealed} value={value} maxLength={4000} rows={7} onChange={e => handleAnswer(question.id, e.target.value)} className="mt-2 block w-full rounded-lg border border-slate-200 p-3 leading-7 disabled:bg-slate-50"/></label> : question.kind === "fill" ? <label className="mt-4 block text-sm">答案<input aria-label={`第${index + 1}题答案`} disabled={sealed} value={value} maxLength={200} onChange={e => handleAnswer(question.id, e.target.value)} className="mt-2 block w-full rounded-lg border border-slate-200 p-3 disabled:bg-slate-50"/></label> : <fieldset className="mt-4 space-y-2"><legend className="sr-only">第 {index + 1} 题选项</legend>{question.options.map(option => <label key={option.key} className={`flex items-start gap-3 rounded-xl border p-3 text-sm leading-7 ${value === option.key ? "border-blue-500 bg-blue-50" : "border-slate-200"}`}><input type="radio" name={question.id} value={option.key} checked={value === option.key} disabled={sealed} onChange={() => handleAnswer(question.id, option.key)} className="mt-2"/><span>{option.key}. {render(option.text)}</span></label>)}</fieldset>}
-      {sealed && <div className="mt-5 space-y-4 border-t border-slate-100 pt-5"><p className={`text-sm font-semibold ${!written && checkAnswer(question, value) ? "text-emerald-700" : "text-slate-700"}`}>{written ? "参考解答" : !value.trim() ? "未作答 · 0 分" : checkAnswer(question, value) ? "答对 · 4 分" : "需订正 · 0 分"}：{render(question.correctAnswer)}</p><div className="rounded-xl bg-slate-50 p-4"><h3 className="text-sm font-semibold">完整解析</h3><p className="mt-2 whitespace-pre-wrap text-sm leading-8 text-slate-600">{render(question.explanation)}</p></div>
-       {written && <div><h3 className="text-sm font-semibold">逐步自评 · 共 8 分</h3><p className="mt-2 text-xs leading-6 text-slate-500">完整完成且理由充分给满分；思路正确但推导不全可给部分分；关键错误或未完成给 0 分。空白作答计 0 分。自评不等同于教师阅卷。</p>{scoringSteps(question).map((step, i) => <fieldset key={i} className="mt-3 rounded-lg border border-slate-200 p-3"><legend className="px-1 text-sm leading-7">{i + 1}. {render(step.label)}（{step.points} 分）</legend><div className="flex flex-wrap gap-4">{Array.from({ length: step.points + 1 }, (_, score) => <label key={score} className="flex items-center gap-1 text-sm"><input type="radio" name={`${question.id}-step-${i}`} disabled={saved || busy || !value.trim()} checked={draft.scores[question.id]?.[i] === score} onChange={() => { const steps = [...(draft.scores[question.id] ?? scoringSteps(question).map(() => -1))]; steps[i] = score; setDraft({ ...draft, scores: { ...draft.scores, [question.id]: steps } }); }}/>{score} 分</label>)}</div></fieldset>)}</div>}
+                    return <article id={`exam-question-${index + 1}`} key={question.id} className="scroll-mt-64 rounded-2xl border border-slate-200 bg-white p-5 sm:p-7"><h2 className="text-sm font-semibold text-blue-600">第 {index + 1} 题 · {written ? "解答题 · 8 分" : question.kind === "fill" ? "填空题 · 4 分" : "选择题 · 4 分"}</h2>{!sealed && <button aria-pressed={draft.flagged?.includes(question.id) ?? false} onClick={() => flagQuestion(question.id)} className="mt-2 text-sm text-amber-800">{draft.flagged?.includes(question.id) ? "★ 已标记待检查" : "☆ 标记待检查"}</button>}<p className="mt-3 whitespace-pre-wrap font-semibold leading-8 text-slate-900">{render(question.question)}</p>{question.formula && <div className="my-4 overflow-x-auto"><BlockMath math={question.formula}/></div>}
+      {written ? <div className="mt-4 text-sm leading-7 text-slate-600"><p>可在纸上独立作答，交卷后按步骤核对解析。纸上过程不会自动上传，分数为学生自评。</p><label className="mt-3 flex items-start gap-2"><input type="checkbox" aria-label={`第${index + 1}题已在纸上作答`} checked={draft.paperAnswers?.[question.id] ?? false} disabled={sealed} onChange={e => markPaper(question.id, e.target.checked)} className="mt-2"/>我已在纸上尝试作答</label><details className="mt-3" open={sealed && !!value || undefined}><summary className="cursor-pointer text-blue-600">录入步骤或订正备注（选填）</summary><label className="mt-3 block">书写步骤或备注<textarea aria-label={`第${index + 1}题作答`} disabled={sealed} value={value} maxLength={4000} rows={4} onChange={e => handleAnswer(question.id, e.target.value)} className="mt-2 block w-full rounded-lg border border-slate-200 p-3 leading-7 disabled:bg-slate-50"/></label></details></div> : question.kind === "fill" ? <label className="mt-4 block text-sm">答案<input aria-label={`第${index + 1}题答案`} disabled={sealed} value={value} maxLength={200} onChange={e => handleAnswer(question.id, e.target.value)} className="mt-2 block w-full rounded-lg border border-slate-200 p-3 disabled:bg-slate-50"/></label> : <fieldset className="mt-4 space-y-2"><legend className="sr-only">第 {index + 1} 题选项</legend>{question.options.map(option => <label key={option.key} className={`flex items-start gap-3 rounded-xl border p-3 text-sm leading-7 ${value === option.key ? "border-blue-500 bg-blue-50" : "border-slate-200"}`}><input type="radio" name={question.id} value={option.key} checked={value === option.key} disabled={sealed} onChange={() => handleAnswer(question.id, option.key)} className="mt-2"/><span>{option.key}. {render(option.text)}</span></label>)}</fieldset>}
+      {sealed && <div className="mt-5 space-y-4 border-t border-slate-100 pt-5"><p className={`text-sm font-semibold ${!written && checkAnswer(question, value) ? "text-emerald-700" : "text-slate-700"}`}>{written ? "参考解答" : !value.trim() ? "未作答 · 0 分" : checkAnswer(question, value) ? "答对 · 4 分" : "需订正 · 0 分"}：{render(question.correctAnswer)}</p><div className="rounded-xl bg-slate-50 p-4"><h3 className="text-sm font-semibold">完整解析</h3><SolutionText text={question.explanation} vectors={question.topic.includes("向量")} className="mt-2 text-sm leading-8 text-slate-600" /></div>
+       {written && <div><h3 className="text-sm font-semibold">逐步自评 · 共 8 分</h3><p className="mt-2 text-xs leading-6 text-slate-500">完整完成且理由充分给满分；思路正确但推导不全可给部分分；关键错误或未完成给 0 分。空白作答计 0 分。自评不等同于教师阅卷。</p>{scoringSteps(question).map((step, i) => <fieldset key={i} className="mt-3 rounded-lg border border-slate-200 p-3"><legend className="px-1 text-sm leading-7">{i + 1}. {render(step.label)}（{step.points} 分）</legend><div className="flex flex-wrap gap-4">{Array.from({ length: step.points + 1 }, (_, score) => <label key={score} className="flex items-center gap-1 text-sm"><input type="radio" name={`${question.id}-step-${i}`} disabled={saved || busy || !hasAssessmentAnswer(draft, question)} checked={draft.scores[question.id]?.[i] === score} onChange={() => { const steps = [...(draft.scores[question.id] ?? scoringSteps(question).map(() => -1))]; steps[i] = score; setDraft({ ...draft, scores: { ...draft.scores, [question.id]: steps } }); }}/>{score} 分</label>)}</div></fieldset>)}</div>}
       </div>}
      </article>;
                 })}</div>

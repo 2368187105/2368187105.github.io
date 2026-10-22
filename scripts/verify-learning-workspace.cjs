@@ -59,15 +59,20 @@ const {ownRows}=require('../src/lib/learning-workspace.ts');
  await assert.rejects(db.query(`update public.mistake_reviews set correct_streak=999`),/permission denied/);
  const paper=chapterAssessments[0],draft=newAssessment(paper,'cccccccc-cccc-4ccc-8ccc-cccccccccccc',new Date('2026-10-21T01:00:00Z'));
  draft.submittedAt='2026-10-21T01:40:00Z';for(const q of paper.questions){draft.answers[q.id]=q.correctAnswer;if(q.kind==='written')draft.scores[q.id]=scoringSteps(q).map(s=>s.points);}
+ const paperQuestion=paper.questions.find(q=>q.kind==='written');draft.paperAnswers={[paperQuestion.id]:true};draft.flagged=[paperQuestion.id];draft.answers[paperQuestion.id]='';
  const run={...draft,title:paper.title,objective:36,selfScore:24};
- const items=paper.questions.map(q=>({question_id:q.id,question:q.question,topic:q.topic,explanation:q.explanation,correct_answer:q.correctAnswer,answer:q.kind==='written'?'self:'+JSON.stringify({work:q.correctAnswer,checks:[2,2,2]}):q.correctAnswer,is_correct:true}));
+ const items=paper.questions.map(q=>({question_id:q.id,question:q.question,topic:q.topic,explanation:q.explanation,correct_answer:q.correctAnswer,answer:q.kind==='written'?'self:'+JSON.stringify({mode:draft.paperAnswers?.[q.id]?'paper':'typed',work:draft.answers[q.id],checks:[2,2,2]}):q.correctAnswer,is_correct:true}));
  const save=(r=run,i=items)=>db.query('select public.save_chapter_assessment($1,$2)',[JSON.stringify(r),JSON.stringify(i)]);
  await save();await save();assert.equal((await db.query('select * from public.chapter_assessments')).rows.length,1);
+ assert.equal((await db.query('select payload from public.chapter_assessments')).rows[0].payload.paperAnswers[paperQuestion.id],true);
+
  await assert.rejects(save({...run,selfScore:23}),/different answers/);
  await assert.rejects(save({...run,id:'dddddddd-dddd-4ddd-8ddd-dddddddddddd'},items.map((item,i)=>i===11?{...item,question:null}:item)),/Invalid answer/);
  assert.equal((await db.query('select * from public.chapter_assessments')).rows.length,1,'transaction rolls back invalid run');
  await uid(b);assert.equal((await db.query('select * from public.chapter_assessments')).rows.length,0);await assert.rejects(save(),/unavailable/);assert.equal((await db.query('select * from public.weekly_review_plans')).rows.length,0);
- await db.exec('reset role');assert.equal((await db.query('select count(*)::int n from public.practice_attempts')).rows[0].n,15);assert.equal((await db.query('select count(*)::int n from public.mistakes')).rows[0].n,1);
+ await db.exec('reset role');
+ const paperSaved=(await db.query('select selected_answer from public.practice_attempts where question_id=$1',[paperQuestion.id])).rows[0].selected_answer;assert.equal(JSON.parse(paperSaved.slice(5)).mode,'paper');assert.equal(JSON.parse(paperSaved.slice(5)).work,'');
+ assert.equal((await db.query('select count(*)::int n from public.practice_attempts')).rows[0].n,15);assert.equal((await db.query('select count(*)::int n from public.mistakes')).rows[0].n,1);
  await db.exec('set role anon');await assert.rejects(save(),/permission denied/);await assert.rejects(db.query('select * from public.mistake_reviews'),/permission denied/);
- await db.close();console.log(JSON.stringify({papers:8,questions:96,rubrics:24,timerAndDraft:'passed',weeklyPlanAndPagination:'passed',migrationIdempotency:'passed',retainedLegacyRecords:'passed',rlsIsolation:'passed',atomicAssessmentAndRetry:'passed',actualCloudWrites:false}));
+ await db.close();console.log(JSON.stringify({papers:8,questions:96,rubrics:24,timerAndDraft:'passed',weeklyPlanAndPagination:'passed',migrationIdempotency:'passed',retainedLegacyRecords:'passed',rlsIsolation:'passed',atomicAssessmentAndRetry:'passed',paperSelfAssessment:'passed',actualCloudWrites:false}));
 })().catch(error=>{console.error(error);process.exit(1);});

@@ -1,6 +1,9 @@
 "use client";
+import LoginLink from "@/components/LoginLink";
+import AccountBoundary from "@/components/AccountBoundary";
 
 import Link from "next/link";
+import SpacedReview from "@/components/SpacedReview";
 import WeeklyReviewPlan from "@/components/WeeklyReviewPlan";
 import AssessmentHistory from "@/components/AssessmentHistory";
 import { useMistakeReviews } from "@/components/MistakeReview";
@@ -367,6 +370,10 @@ function normalizeTopic(
 ========================= */
 
 export default function ReportPage() {
+  return <AccountBoundary title="我的学习报告"><ReportPageContent /></AccountBoundary>;
+}
+
+function ReportPageContent() {
   const [selectedGrade, setSelectedGrade] = useState<Grade>("高一");
   useGradeQuery(setSelectedGrade);
   const currentPracticeTopics: readonly string[] = selectedGrade === "高一" ? grade1Topics : selectedGrade === "高三" ? grade3PracticeTopics : grade2PracticeTopics;
@@ -624,12 +631,11 @@ export default function ReportPage() {
               </p>
             )}
 
-            <Link
-              href="/login"
+            <LoginLink
               className="mt-6 inline-block rounded-lg bg-slate-900 px-6 py-3 text-sm font-medium text-white"
             >
               登录 / 注册
-            </Link>
+            </LoginLink>
           </div>
         </div>
       </main>
@@ -707,6 +713,7 @@ export default function ReportPage() {
           </div>
         )}
 
+        {userId && <SpacedReview attempts={attempts} states={reviewData.states} grade={selectedGrade==="高一"?"grade1":selectedGrade==="高二"?"grade2":"grade3"} />}
         {userId && <WeeklyReviewPlan key={userId+selectedGrade} userId={userId} grade={selectedGrade==="高一"?"grade1":selectedGrade==="高二"?"grade2":"grade3"} attempts={attempts} states={reviewData.states}/>}
         {userId && selectedGrade==="高三" && <AssessmentHistory userId={userId}/>}
         {/* 总体统计 */}

@@ -1,5 +1,10 @@
 
 "use client";
+import SolutionText from "@/components/SolutionText";
+import AccountBoundary from "@/components/AccountBoundary";
+import { practiceQueue, practiceHref } from "@/lib/daily-learning";
+import type { Question } from "@/data/questions";
+import LoginLink from "@/components/LoginLink";
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -73,7 +78,9 @@ const grade2ChapterNames = grade2PracticeChapters.map((chapter) => chapter.title
    页面主体
 ========================= */
 
-export default function PracticePage() {
+export default function PracticePage() { return <AccountBoundary title="高中数学专题训练"><PracticeContent /></AccountBoundary>; }
+function PracticeContent() {
+  const [queueItems, setQueueItems] = useState<Question[]>([]);
   const supabase = useMemo(
     () => createClient(),
     []
@@ -203,7 +210,11 @@ export default function PracticePage() {
       window.location.search
     );
 
-    const requestedTopic = params.get("topic");
+    const loadedQueue = practiceQueue(params.get("queue"));
+    setQueueItems(loadedQueue);
+    const requestedId = params.get("question");
+    const queued = loadedQueue.find(q => q.id === requestedId) ?? loadedQueue[0];
+    const requestedTopic = queued?.topic ?? params.get("topic");
 
     if (!requestedTopic) {
       const grade = gradeFromQuery(window.location.search);
@@ -247,8 +258,7 @@ export default function PracticePage() {
       ? grade2PracticeChapters.map((chapter) => [...chapter.topics] as readonly string[])
       : grade1ChapterNames.map((_, index) => grade1PracticeTopics.slice(index * 5, index * 5 + 5));
     setExpandedChapter(requestedChapters.findIndex((topics) => topics.includes(requestedTopic)));
-    const requestedId = params.get("question");
-    const requestedQuestions = questions.filter(question => question.topic === requestedTopic);
+    const requestedQuestions = loadedQueue.length ? loadedQueue : questions.filter(question => question.topic === requestedTopic);
     setQuestionIndex(Math.max(0, requestedQuestions.findIndex(question => question.id === requestedId)));
     setSelectedAnswer(null);
     setSubmitted(false);
@@ -282,12 +292,18 @@ export default function PracticePage() {
      当前专题的题目
   ========================= */
 
-  const topicQuestions = currentQuestions.filter(
+  const topicQuestions = queueItems.length ? queueItems : currentQuestions.filter(
     (question) => question.topic === selectedTopic
   );
 
   const currentQuestion =
     topicQuestions[questionIndex];
+
+  useEffect(() => {
+    if (!queueItems.length) return;
+    const frame = requestAnimationFrame(() => document.getElementById("practice-question")?.scrollIntoView({ block: "start" }));
+    return () => cancelAnimationFrame(frame);
+  }, [queueItems.length, currentQuestion?.id]);
 
   const currentChapterIndex =
     chapters.findIndex((chapter) =>
@@ -350,6 +366,7 @@ export default function PracticePage() {
         ? grade1PracticeTopics
         : grade === "高三" ? grade3PracticeTopics : grade2PracticeTopics;
 
+    setQueueItems([]);
     setSelectedGrade(grade);
     setSelectedTopic(nextTopics[0] as Topic);
     setExpandedChapter(0);
@@ -366,6 +383,9 @@ export default function PracticePage() {
   function changeTopic(topic: Topic) {
     if (submitting) return;
 
+    setQueueItems([]);
+    const first = questions.find(q => q.topic === topic);
+    if (first) window.history.replaceState(null, "", practiceHref(first));
     setSelectedTopic(topic);
     setQuestionIndex(0);
     setSelectedAnswer(null);
@@ -444,10 +464,20 @@ export default function PracticePage() {
      上一题
   ========================= */
 
+  function moveToQuestion(index: number) {
+    const question = topicQuestions[index];
+    if (!question) return;
+    setQuestionIndex(index);
+    setSelectedTopic(question.topic as Topic);
+    setExpandedChapter(chapters.findIndex(chapter => chapter.topics.some(topic => topic === question.topic)));
+    window.history.replaceState(null, "", practiceHref(question, queueItems.map(q => q.id)));
+    document.getElementById("practice-question")?.scrollIntoView({ block: "start", behavior: "smooth" });
+  }
+
   function previousQuestion() {
     if (questionIndex <= 0 || submitting) return;
 
-    setQuestionIndex((index) => index - 1);
+    moveToQuestion(questionIndex - 1);
     setSelectedAnswer(null);
     setSubmitted(false);
     setSaveMessage("");
@@ -465,7 +495,7 @@ export default function PracticePage() {
       return;
     }
 
-    setQuestionIndex((index) => index + 1);
+    moveToQuestion(questionIndex + 1);
     setSelectedAnswer(null);
     setSubmitted(false);
     setSaveMessage("");
@@ -489,7 +519,7 @@ export default function PracticePage() {
   ========================= */
 
   return (
-    <main className="min-h-screen bg-[#fafafa]">
+    <main className="math-copy min-h-screen bg-[#fafafa]">
       <SiteHeader />
 
       <div className="mx-auto max-w-7xl px-4 pb-20 pt-10 sm:px-6 lg:px-8">
@@ -563,12 +593,12 @@ export default function PracticePage() {
         </section>
 
         {/* 主体布局 */}
-        <div className="grid gap-8 pt-8 lg:grid-cols-[310px_minmax(0,1fr)]">
+        <div className={queueItems.length ? "mx-auto grid max-w-4xl gap-8 pt-8" : "grid gap-8 pt-8 lg:grid-cols-[310px_minmax(0,1fr)]"}>
           {/* =========================
               左侧导航
           ========================= */}
 
-          <aside className="min-w-0">
+          <aside className={queueItems.length ? "hidden" : "min-w-0"}>
             <div className="space-y-4 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-2">
               {/* 年级选择 */}
               <div className="rounded-2xl border border-slate-200 bg-white p-5">
@@ -804,12 +834,11 @@ export default function PracticePage() {
                       但练习记录不会保存。
                     </p>
 
-                    <Link
-                      href="/login"
+                    <LoginLink
                       className="mt-3 inline-block text-sm font-medium text-blue-600"
                     >
                       登录 / 注册 →
-                    </Link>
+                    </LoginLink>
                   </>
                 )}
               </div>
@@ -849,11 +878,11 @@ export default function PracticePage() {
                   </p>
 
                   <h2 className="mt-2 text-xl font-bold leading-8 text-slate-900">
-                    {selectedTopic}
+                    {queueItems.length ? "今日训练 · " + selectedTopic : selectedTopic}
                   </h2>
 
                   <p className="mt-2 text-sm text-slate-500">
-                    本专题共{" "}
+                    {queueItems.length ? "本组共" : "本专题共"}{" "}
                     {topicQuestions.length}
                     {" "}道练习题
                   </p>
@@ -873,7 +902,8 @@ export default function PracticePage() {
               </div>
             </div>
 
-            <Link href={"/print/?topic="+encodeURIComponent(selectedTopic)} className="mb-5 inline-block text-sm text-blue-600">打印本专题题目 / 完整解析 →</Link>
+            {queueItems.length > 0 && <p className="mb-4 text-sm text-slate-600">按今日安排练习 {queueItems.length} 题；题目来自现有题库。<Link href="/#today" className="ml-3 text-blue-600">返回今日安排 →</Link><button onClick={() => changeTopic(selectedTopic)} className="ml-3 text-blue-600">改为自主选题</button></p>}
+            <Link href={queueItems.length ? "/print/?ids="+encodeURIComponent(queueItems.map(q=>q.id).join(",")) : "/print/?topic="+encodeURIComponent(selectedTopic)} className="mb-5 inline-block text-sm text-blue-600">{queueItems.length ? "打印本组题目 / 完整解析 →" : "打印本专题题目 / 完整解析 →"}</Link>
             {/* 题目进度 */}
             <div className="mb-6 h-2 overflow-hidden rounded-full bg-slate-100">
               <div
@@ -897,7 +927,7 @@ export default function PracticePage() {
             ) : (
               <>
                 {/* 题目卡片 */}
-                <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
+                <section id="practice-question" className="scroll-mt-24 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
                   {/* 题目序号与标题 */}
                   <div className="flex flex-wrap items-center gap-3">
                     <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600">
@@ -1057,9 +1087,7 @@ export default function PracticePage() {
                             解析
                           </p>
 
-                          <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-600">
-                            {currentQuestion.topic.includes("向量") ? vectorText(currentQuestion.explanation) : mathText(currentQuestion.explanation)}
-                          </p>
+                          <SolutionText text={currentQuestion.explanation} vectors={currentQuestion.topic.includes("向量")} className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-600" />
                         </div>
                       </div>
 

@@ -15,7 +15,12 @@ export type AssessmentDraft = {
     submittedAt: string | null;
     answers: Record<string, string>;
     scores: Record<string, number[]>;
+    paperAnswers?: Record<string, boolean>;
+    flagged?: string[];
 };
+export function hasAssessmentAnswer(draft: AssessmentDraft, question: Question) {
+    return !!draft.answers[question.id]?.trim() || question.kind === "written" && draft.paperAnswers?.[question.id] === true;
+}
 export function newAssessment(paper: AssessmentPaper, id: string, now = new Date()): AssessmentDraft {
     return { id, chapter: paper.id, startedAt: now.toISOString(), deadline: new Date(now.getTime() + paper.minutes * 60000).toISOString(), submittedAt: null, answers: {}, scores: {} };
 }
@@ -38,5 +43,5 @@ export function validAssessmentDraft(value: unknown, paper: AssessmentPaper): va
     if (!value || typeof value !== "object")
         return false;
     const d = value as AssessmentDraft;
-    return typeof d.id === "string" && /^[0-9a-f-]{36}$/i.test(d.id) && d.chapter === paper.id && Number.isFinite(Date.parse(d.startedAt)) && Number.isFinite(Date.parse(d.deadline)) && Date.parse(d.deadline) - Date.parse(d.startedAt) === paper.minutes * 60000 && (d.submittedAt === null || typeof d.submittedAt === "string" && Number.isFinite(Date.parse(d.submittedAt))) && !!d.answers && typeof d.answers === "object" && !Array.isArray(d.answers) && Object.values(d.answers).every(a => typeof a === "string" && a.length <= 4000) && !!d.scores && typeof d.scores === "object" && Object.values(d.scores).every(s => Array.isArray(s) && s.every(x => Number.isInteger(x) && x >= -1 && x <= 8));
+    return typeof d.id === "string" && /^[0-9a-f-]{36}$/i.test(d.id) && d.chapter === paper.id && Number.isFinite(Date.parse(d.startedAt)) && Number.isFinite(Date.parse(d.deadline)) && Date.parse(d.deadline) - Date.parse(d.startedAt) === paper.minutes * 60000 && (d.submittedAt === null || typeof d.submittedAt === "string" && Number.isFinite(Date.parse(d.submittedAt))) && !!d.answers && typeof d.answers === "object" && !Array.isArray(d.answers) && Object.values(d.answers).every(a => typeof a === "string" && a.length <= 4000) && (d.paperAnswers === undefined || !!d.paperAnswers && typeof d.paperAnswers === "object" && !Array.isArray(d.paperAnswers) && Object.entries(d.paperAnswers).every(([id, v]) => typeof v === "boolean" && paper.questions.some(q => q.id === id && q.kind === "written"))) && (d.flagged === undefined || Array.isArray(d.flagged) && d.flagged.every(id => typeof id === "string" && paper.questions.some(q => q.id === id))) && !!d.scores && typeof d.scores === "object" && Object.values(d.scores).every(s => Array.isArray(s) && s.every(x => Number.isInteger(x) && x >= -1 && x <= 8));
 }

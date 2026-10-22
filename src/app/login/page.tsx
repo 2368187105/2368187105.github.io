@@ -4,6 +4,7 @@ import { type FormEvent, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { safeReturnPath } from "@/lib/login-return";
 import { passwordResetPath } from "@/lib/password-recovery";
 
 export default function LoginPage() {
@@ -76,7 +77,7 @@ export default function LoginPage() {
         setMessage("登录成功，正在进入学习平台...");
       }
       setRedirecting(true);
-      router.push("/");
+      router.replace(safeReturnPath(new URLSearchParams(window.location.search).get("returnTo")));
       router.refresh();
     } catch {
       setRedirecting(false);

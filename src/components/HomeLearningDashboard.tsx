@@ -1,4 +1,5 @@
 "use client";
+import LoginLink from "@/components/LoginLink";
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -140,7 +141,7 @@ export default function HomeLearningDashboard() {
         </div>
 
         {checking ? <p role="status" className="py-10 text-sm text-slate-500">正在确认登录状态…</p> : !userId ? (
-          <div className="mt-6 rounded-xl bg-blue-50 p-6"><p className="font-medium text-slate-800">登录后查看学习时长、正确率、答题数量和个人排名</p><p className="mt-2 text-sm leading-7 text-slate-500">学习记录跨设备同步。排行榜仅显示自愿参与同学的昵称和汇总成绩。</p>{authError && <p role="alert" className="mt-2 text-sm text-amber-700">登录状态暂时读取失败，请刷新或重新登录。</p>}<Link href="/login" className="mt-4 inline-flex rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white">登录 / 注册</Link></div>
+          <div className="mt-6 rounded-xl bg-blue-50 p-6"><p className="font-medium text-slate-800">登录后查看学习时长、正确率、答题数量和个人排名</p><p className="mt-2 text-sm leading-7 text-slate-500">学习记录跨设备同步。排行榜仅显示自愿参与同学的昵称和汇总成绩。</p>{authError && <p role="alert" className="mt-2 text-sm text-amber-700">登录状态暂时读取失败，请刷新或重新登录。</p>}<LoginLink className="mt-4 inline-flex rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white">登录 / 注册</LoginLink></div>
         ) : <>
           <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm"><p className="text-slate-500">{period === "all" ? "累计学习记录" : "北京时间今天及前 6 天的学习记录"}</p><div className="flex items-center gap-4"><button type="button" disabled={loading} onClick={() => setRefresh(value => value + 1)} className="text-blue-600 disabled:text-slate-400">{loading ? "读取中…" : "刷新数据"}</button><Link href="/report" className="text-slate-500 hover:text-blue-600">完整学习报告 →</Link></div></div>
           {error ? <p role="alert" className="mt-5 rounded-xl bg-amber-50 p-5 text-sm text-amber-800">{error}</p> : (loading || loadedKey !== requestKey) ? <p role="status" className="py-10 text-sm text-slate-500">正在读取学习数据…</p> : <>

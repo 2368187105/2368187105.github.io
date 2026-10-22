@@ -43,7 +43,7 @@ export function checkAnswer(question: Question, answer: string): boolean {
 export function answerLabel(answer: string): string {
   if (!answer.startsWith("self:")) return answer;
   try {
-    const saved = JSON.parse(answer.slice(5)) as { work: string; checks: number[] };
-    return `解答题自评：${saved.checks.map((score, i) => `步骤${i + 1} ${["未掌握", "部分完成", "完整完成"][score] ?? "未评"}`).join("；")}\n作答草稿：${saved.work}`;
+    const saved = JSON.parse(answer.slice(5)) as { mode?: string; work: string; checks: number[] };
+    return `解答题自评：${saved.checks.map((score, i) => `步骤${i + 1} ${["未掌握", "部分完成", "完整完成"][score] ?? "未评"}`).join("；")}\n${saved.mode === "paper" ? "纸上作答，订正备注" : "作答草稿"}：${saved.work || (saved.mode === "paper" ? "未填写（纸上过程未上传）" : "未录入")}`;
   } catch { return "解答题自评记录"; }
 }

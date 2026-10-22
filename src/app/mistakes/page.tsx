@@ -1,4 +1,7 @@
 "use client";
+import SolutionText from "@/components/SolutionText";
+import LoginLink from "@/components/LoginLink";
+import AccountBoundary from "@/components/AccountBoundary";
 
 import Link from "next/link";
 import MistakeReview, { useMistakeReviews } from "@/components/MistakeReview";
@@ -132,6 +135,10 @@ function answerLabel(
 ========================= */
 
 export default function MistakesPage() {
+  return <AccountBoundary title="我的错题本"><MistakesPageContent /></AccountBoundary>;
+}
+
+function MistakesPageContent() {
   const [selectedGrade, setSelectedGrade] = useState<Grade>("高一");
   useGradeQuery(setSelectedGrade);
   const currentPracticeTopics: readonly string[] = selectedGrade === "高一" ? grade1Topics : selectedGrade === "高三" ? grade3PracticeTopics : grade2PracticeTopics;
@@ -390,7 +397,7 @@ export default function MistakesPage() {
   ========================= */
 
   return (
-    <main className="min-h-screen bg-[#fafafa]">
+    <main className="math-copy min-h-screen bg-[#fafafa]">
       <SiteHeader />
 
       <div className="mx-auto max-w-7xl px-4 pb-20 pt-10 sm:px-6 lg:px-8">
@@ -474,12 +481,11 @@ export default function MistakesPage() {
               </p>
             )}
 
-            <Link
-              href="/login"
+            <LoginLink
               className="mt-6 inline-block rounded-lg bg-slate-900 px-6 py-3 text-sm font-medium text-white"
             >
               登录 / 注册
-            </Link>
+            </LoginLink>
           </div>
         ) : (
           <>
@@ -909,9 +915,7 @@ export default function MistakesPage() {
                                   题目解析
                                 </p>
 
-                                <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-600">
-                                  {displayText(explanation)}
-                                </p>
+                                <SolutionText text={explanation} vectors={(sourceQuestion?.topic ?? resolveTopic(mistake)).includes("向量")} className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-600" />
                               </div>
                             )}
                           </article>

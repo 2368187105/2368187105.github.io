@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { buildReviewTasks, reviewWeek, taskProgress, type ReviewAttempt, type ReviewState, type ReviewTask } from "@/lib/review-plan";
+import { buildReviewTasks, courseForTopic, reviewWeek, taskProgress, type ReviewAttempt, type ReviewState, type ReviewTask } from "@/lib/review-plan";
 import { workspaceSetupMessage } from "@/lib/learning-workspace";
 type Plan = {
     tasks: ReviewTask[];
@@ -58,10 +58,11 @@ export default function WeeklyReviewPlan({ userId, grade, attempts, states }: {
       {!plan && <p className="mt-3 text-sm text-amber-700">下方为建议预览，保存后固定本周清单与比较起点。</p>}
       {tasks.length === 0 ? <p className="mt-4 text-sm text-slate-600">当前年级暂无待复习题。完成专题训练后，这里会根据错题与复练状态给出建议。</p> : <ol className="mt-5 space-y-4">{tasks.map(task => {
                     const progress = plan ? taskProgress(task, attempts, plan.created_at) : null;
+                    const course = courseForTopic(task.topic);
                     return <li key={task.questionId} className="rounded-xl bg-slate-50 p-4 text-sm leading-7">
           <p className="font-semibold text-slate-900">{progress?.done ? "✓ " : "○ "}{task.title} · {task.kind === "written" ? "解答题" : "客观题"}</p>
           <p className="text-slate-500">{progress ? progress.done ? progress.written ? "本次自评完整，仍建议隔日复练" : "已重新答对，可继续隔日巩固" : progress.attempted ? "已复练，仍需订正" : "待独立复练" : "待保存清单"}</p>
-          <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2"><Link href={task.courseHref} className="text-blue-600">回看《{task.courseTitle}》课程 →</Link><Link href={"/practice/?topic=" + encodeURIComponent(task.topic) + "&question=" + encodeURIComponent(task.questionId)} className="text-blue-600">复练这道题 →</Link></div>
+          <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2"><Link href={course?.href ?? task.courseHref} className="text-blue-600">回看《{course?.title ?? task.courseTitle}》课程 →</Link><Link href={"/practice/?topic=" + encodeURIComponent(task.topic) + "&question=" + encodeURIComponent(task.questionId)} className="text-blue-600">复练这道题 →</Link></div>
           {progress && !progress.written && <p className="mt-2 text-xs text-slate-500">同专题客观题：清单前 {progress.before === null ? "暂无样本" : `${progress.before}%（${progress.beforeCount} 题次）`}；清单后 {progress.after === null ? "等待新作答" : `${progress.after}%（${progress.afterCount} 题次）`}。样本较少或重复作答时，仅作参考。</p>}
         </li>;
                 })}</ol>}
